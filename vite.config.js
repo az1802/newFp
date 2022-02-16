@@ -1,0 +1,30 @@
+/*
+ * @Author: sunjie
+ * @Date: 2022-01-20 18:54:05
+ * @LastEditors: sunj
+ * @LastEditTime: 2022-02-11 16:24:34
+ * @FilePath: /new-fanpiao-uniapp/vite.config.js
+ */
+import { defineConfig } from 'vite'
+import uni from '@dcloudio/vite-plugin-uni'
+
+const { resolve } = require('path')
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [
+    uni(),
+  ],
+  resolve: {
+    alias: [
+      { find: '@', replacement: resolve(__dirname, 'src') },
+      { find: '@api', replacement: resolve(__dirname, 'src/api') },
+      { find: '@utils', replacement: resolve(__dirname, 'src/utils') },
+      { find: '@com', replacement: resolve(__dirname, 'src/components') },
+      { find: '@state', replacement: resolve(__dirname, 'src/state') },
+      { find: '@design', replacement: resolve(__dirname, 'src/design') },
+      { find: '@static', replacement: resolve(__dirname, 'src/static') },
+      { find: '@mockData', replacement: resolve(__dirname, 'src/mockData') }
+    ]
+  }
+})
