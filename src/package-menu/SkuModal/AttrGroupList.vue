@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-02-11 17:28:03
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 16:04:39
+ * @LastEditTime: 2022-02-16 18:52:35
  * @FilePath: /new-fanpiao-uniapp/src/package-menu/SkuModal/AttrGroupList.vue
 -->
 <template>
@@ -40,11 +40,7 @@ export default {
   },
   setup(props, { emit }) {
     let { selAttrIds } = props;
-    console.log(
-      "%cselAttrIds: ",
-      "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-      selAttrIds
-    );
+
     return {
       toggleAttr({ id }) {
         let selIndex = selAttrIds.indexOf(id);

@@ -1,9 +1,9 @@
 /*
  * @Author: sunjie
- * @Date: 2022-02-10 14:39:03
+ * @Date: 2022-02-16 17:58:00
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 18:00:51
- * @FilePath: /new-fanpiao-uniapp/src/utils/commonHooks.js
+ * @LastEditTime: 2022-02-16 18:00:47
+ * @FilePath: /new-fanpiao-uniapp/src/utils/hooks/commonHooks.js
  */
 import { computed, ref, reactive } from 'vue'
 import { getDishInfoById } from "@utils/common.js";
@@ -15,6 +15,8 @@ export function useSystemInfo() {
   // TODO 根据系统信息做二次处理
   return systemInfo;
 }
+
+
 
 export function useScrollViewScroll() {
 
@@ -41,11 +43,7 @@ export function useUserInfo() {
 
 }
 
-export function useMerchantInfo() {
-  const { setMerchantInfo } = useMutations("merchant", ["setMerchantInfo"]);
-  const { merchantInfo } = useState("merchant", ['merchantInfo'])
-  return { merchantInfo, setMerchantInfo }
-}
+
 
 export function useCategoryActive() {
 }

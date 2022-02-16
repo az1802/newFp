@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-02-11 11:32:44
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 17:15:01
+ * @LastEditTime: 2022-02-16 18:48:17
  * @FilePath: /new-fanpiao-uniapp/src/package-menu/DishItem/DishOperation.vue
 -->
 <template>
@@ -16,8 +16,8 @@
 </template>
 <script>
 import { getDishInfoById } from "@utils/common.js";
-import { useState, useGetters, useMutations } from "@utils/storeHooks";
 import { computed, watch, ref } from "vue";
+import { useDish, useSkuDish } from "@hooks/menuHooks";
 export default {
   props: {
     dishId: {
@@ -31,14 +31,9 @@ export default {
   },
   setup(props, context) {
     let { dishId, isSku } = props;
-    let { dishCountMap } = useGetters("menu", ["dishCountMap"]);
-    let { addDish, reduceDish, setCurSkuDish, toggleShowSkuModal } =
-      useMutations("menu", [
-        "addDish",
-        "reduceDish",
-        "setCurSkuDish",
-        "toggleShowSkuModal",
-      ]);
+
+    let { addDish, reduceDish, dishCountMap } = useDish();
+    let { setCurSkuDish, toggleShowSkuModal } = useSkuDish();
     let quantity = ref(0);
 
     watch(dishCountMap, (nval) => {

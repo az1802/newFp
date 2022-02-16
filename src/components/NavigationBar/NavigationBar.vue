@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-02-10 13:55:41
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-15 16:07:26
+ * @LastEditTime: 2022-02-16 18:20:31
  * @FilePath: /new-fanpiao-uniapp/src/components/NavigationBar/NavigationBar.vue
 -->
 <template>
@@ -20,7 +20,8 @@
   </div>
 </template>
 <script>
-import { useSystemInfo } from "@utils/commonHooks";
+import { useSystemInfo } from "@hooks/commonHooks";
+
 export default {
   props: {
     showArrow: {

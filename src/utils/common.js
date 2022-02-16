@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-02-09 14:28:26
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 17:34:00
+ * @LastEditTime: 2022-02-16 17:57:05
  * @FilePath: /new-fanpiao-uniapp/src/utils/common.js
  */
 
@@ -58,4 +58,22 @@ export function getDishInfoById(dishId) {
 
 export function noop() {
 
+}
+
+export function getGlobalData(key, defaultVal) {
+  return getApp().globalData[key] === undefined ? defaultVal : getApp().globalData[key];
+}
+
+// 设置全局globalData
+export function setGlobalData(key, data) {
+  getApp().globalData[key] = data;
+}
+
+
+export function setStorage(key, val) {
+  uni.setStorageSync(key, val);
+}
+
+export function getStorage(key, val) {
+  uni.getStorageSync(key);
 }

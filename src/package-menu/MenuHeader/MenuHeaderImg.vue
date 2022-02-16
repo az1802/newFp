@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-02-15 16:10:57
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 10:23:02
+ * @LastEditTime: 2022-02-16 18:54:21
  * @FilePath: /new-fanpiao-uniapp/src/package-menu/MenuHeader/MenuHeaderImg.vue
 -->
 <template>
@@ -19,12 +19,12 @@
   </div>
 </template>
 <script>
-import { useState, useMutations } from "@utils/storeHooks";
-import { useSystemInfo } from "@utils/commonHooks";
+import { useSystemInfo } from "@hooks/commonHooks";
+import { useMerchantInfo } from "@hooks/merchantHooks";
 import { ref } from "vue";
 export default {
   setup() {
-    const { merchantInfo } = useState("merchant", ["merchantInfo"]);
+    const { merchantInfo } = useMerchantInfo();
     const { statusBarHeight, screenWidth } = useSystemInfo();
 
     const headerStyle = ref({

@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-02-15 17:01:20
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 12:16:48
+ * @LastEditTime: 2022-02-16 18:55:19
  * @FilePath: /new-fanpiao-uniapp/src/package-menu/MenuHeader/MenuHeaderBanner.vue
 -->
 <template>
@@ -22,12 +22,10 @@
   </div>
 </template>
 <script>
-import { useGetters } from "@utils/storeHooks";
+import { useFanpiaoInfo } from "@hooks/merchantHooks";
 export default {
   setup() {
-    const { maxDiscountFanpiao } = useGetters("merchant", [
-      "maxDiscountFanpiao",
-    ]);
+    const { maxDiscountFanpiao } = useFanpiaoInfo();
 
     return {
       maxDiscountFanpiao,

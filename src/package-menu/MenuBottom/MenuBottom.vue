@@ -30,16 +30,11 @@
   </div>
 </template>
 <script>
-import { useState, useMutations } from "@utils/storeHooks";
+import { useCart, useDish } from "@hooks/menuHooks";
 export default {
   setup() {
-    const { showCartModal, selectedDishes } = useState("menu", [
-      "selectedDishes",
-      "showCartModal",
-    ]);
-    const { toggleShowCartModal } = useMutations("menu", [
-      "toggleShowCartModal",
-    ]);
+    const { showCartModal, toggleShowCartModal } = useCart();
+    const { selectedDishes } = useDish();
 
     return {
       toggleShowCartModal,

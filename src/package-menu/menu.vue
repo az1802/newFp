@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-02-10 10:05:15
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 16:29:11
+ * @LastEditTime: 2022-02-16 18:37:41
  * @FilePath: /new-fanpiao-uniapp/src/package-menu/menu.vue
 -->
 <template>
@@ -34,8 +34,12 @@ const {
 } = API.Merchant;
 
 import { sleep, handleDishList } from "@utils/common";
-import { useMerchantInfo, useSystemInfo } from "@utils/commonHooks";
-import { useState, useMutations } from "@utils/storeHooks";
+import { useSystemInfo } from "@hooks/commonHooks";
+import {
+  useMerchantInfo,
+  useFanpiaoInfo,
+  useCouponInfo,
+} from "@hooks/merchantHooks";
 export default {
   components: {
     MenuList,
@@ -50,38 +54,21 @@ export default {
 
     let dishList = reactive([]);
     let userInfo = reactive({});
+    const { requestMerchantInfo } = useMerchantInfo();
     const { statusBarHeight, screenWidth } = useSystemInfo();
-    const { setMerchantInfo, setFanpiaoList, setCouponList } = useMutations(
-      "merchant",
-      ["setMerchantInfo", "setFanpiaoList", "setCouponList"]
-    );
+    const { requestFanpiaoList } = useFanpiaoInfo();
+    const { requestCouponList } = useCouponInfo();
 
     onBeforeMount(async () => {
       let tableInfo = await getDishCatalogScene(scene);
       let { merchantId } = tableInfo;
-      let merchantInfo = await getMerchantInfo(merchantId);
-      setMerchantInfo(merchantInfo);
-
+      requestMerchantInfo(merchantId);
       getMerchantDishCategory(merchantId).then((res) => {
         let dishListRes = handleDishList(res.dishes);
         dishList.push(...dishListRes);
       });
-      getFanpiaoList(merchantId).then((fanpiaoList) =>
-        setFanpiaoList(fanpiaoList)
-      );
-      getCouponList(merchantId).then((couponList) =>
-        setCouponList(couponList.couponPackages)
-      );
-
-      // let res = await getMerchantDishCategory(merchantId);
-      // let dishListRes = handleDishList(res.dishes);
-      // dishList.push(...dishListRes);
-
-      // let fanpiaoList = await getFanpiaoList(merchantId);
-      // setFanpiaoList(fanpiaoList);
-
-      // let couponList = await getCouponList(merchantId);
-      // setCouponList(couponList.couponPackages);
+      requestFanpiaoList(merchantId);
+      requestCouponList(merchantId);
     });
 
     let menuWrapperStyle = ref({

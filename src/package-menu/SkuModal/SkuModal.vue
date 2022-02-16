@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-02-11 14:32:18
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 16:22:54
+ * @LastEditTime: 2022-02-16 18:52:00
  * @FilePath: /new-fanpiao-uniapp/src/package-menu/SkuModal/SkuModal.vue
 -->
 <template>
@@ -45,7 +45,7 @@
 import AttrGroupList from "./AttrGroupList.vue";
 import SupplyCondimentList from "./SupplyCondimentList.vue";
 import ChildDishList from "./ChildDishList.vue";
-import { useState, useMutations } from "@utils/storeHooks";
+import { useSkuDish, useDish } from "@hooks/menuHooks";
 import { reactive, watch, watchEffect, ref, computed, toRaw, unref } from "vue";
 export default {
   components: {
@@ -67,14 +67,9 @@ export default {
     let selAttrIds = reactive([]);
     let selCondiments = reactive({});
     let childDishList = reactive([]);
-    const { curSkuDish, showSkuModal } = useState("menu", [
-      "curSkuDish",
-      "showSkuModal",
-    ]);
-    const { addDish, toggleShowSkuModal } = useMutations("menu", [
-      "addDish",
-      "toggleShowSkuModal",
-    ]);
+
+    const { curSkuDish, showSkuModal, toggleShowSkuModal } = useSkuDish();
+    const { addDish } = useDish();
 
     const attrMap = {},
       condimentMap = {};

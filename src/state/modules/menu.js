@@ -2,12 +2,11 @@
  * @Author: sunjie
  * @Date: 2022-02-09 16:32:28
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 17:29:29
+ * @LastEditTime: 2022-02-16 18:41:37
  * @FilePath: /new-fanpiao-uniapp/src/state/modules/menu.js
  */
 export default {
   state: {
-    count: 1,
     selectedDishes: [],
     curSkuDish: {
       attrList: [],

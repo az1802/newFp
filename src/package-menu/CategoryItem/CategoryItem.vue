@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-02-10 16:06:16
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 17:18:52
+ * @LastEditTime: 2022-02-16 18:43:51
  * @FilePath: /new-fanpiao-uniapp/src/package-menu/CategoryItem/categoryItem.vue
 -->
 <template>
@@ -14,8 +14,7 @@
   </div>
 </template>
 <script>
-// import { menuComputed } from "@state/helpers";
-import { useState, useGetters } from "@utils/storeHooks";
+import { useCategory } from "@hooks/menuHooks";
 export default {
   props: {
     active: {
@@ -28,8 +27,9 @@ export default {
     },
   },
   setup() {
+    const { categoryCountMap } = useCategory();
     return {
-      ...useGetters("menu", ["categoryCountMap"]),
+      categoryCountMap,
     };
   },
 };

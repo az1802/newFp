@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-02-15 15:44:59
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 17:51:55
+ * @LastEditTime: 2022-02-16 19:00:06
  * @FilePath: /new-fanpiao-uniapp/src/package-menu/CartModal/CartModal.vue
 -->
 <template>
@@ -41,19 +41,15 @@
 </template>
 <script>
 import { noop } from "@utils/common";
-import { useState, useMutations } from "@utils/storeHooks";
+import { useCart, useDish } from "@hooks/menuHooks";
 export default {
   setup() {
-    const { showCartModal, selectedDishes } = useState("menu", [
-      "selectedDishes",
-      "showCartModal",
-    ]);
-    const { toggleShowCartModal } = useMutations("menu", [
-      "toggleShowCartModal",
-    ]);
+    const { showCartModal, toggleShowCartModal } = useCart();
+    const { selectedDishes } = useDish();
+
     return {
-      showCartModal,
       toggleShowCartModal,
+      showCartModal,
       selectedDishes,
       noop,
     };

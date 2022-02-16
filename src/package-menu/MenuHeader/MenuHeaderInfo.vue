@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-02-15 17:07:53
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 11:28:47
+ * @LastEditTime: 2022-02-16 18:53:39
  * @FilePath: /new-fanpiao-uniapp/src/package-menu/MenuHeader/MenuHeaderInfo.vue
 -->
 <template>
@@ -26,11 +26,11 @@
   </div>
 </template>
 <script>
-import { useState } from "@utils/storeHooks";
 import { computed } from "vue";
+import { useMerchantInfo } from "@hooks/merchantHooks";
 export default {
   setup() {
-    const { merchantInfo } = useState("merchant", ["merchantInfo"]);
+    const { merchantInfo } = useMerchantInfo();
     const welcomeText = computed(() => {
       let { merchantSystemMessage } = merchantInfo.value;
       if (merchantSystemMessage) {
@@ -48,11 +48,10 @@ export default {
 <style lang="less" scoped>
 @import "@design/index.less";
 .header-info-container {
-  .box-size(100%,66px);
+  .box-size(100%,66px,white);
   padding: 12px 12px 6px 12px;
   border-radius: 16px 16px 0 0;
   margin-top: -16px;
-  background: white;
   display: flex;
   z-index: 10;
   .logo {
