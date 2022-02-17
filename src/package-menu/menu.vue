@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-02-10 10:05:15
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 18:37:41
+ * @LastEditTime: 2022-02-17 13:41:43
  * @FilePath: /new-fanpiao-uniapp/src/package-menu/menu.vue
 -->
 <template>
@@ -33,13 +33,14 @@ const {
   getCouponList,
 } = API.Merchant;
 
-import { sleep, handleDishList } from "@utils/common";
+import { sleep, handleDishList, getStorage } from "@utils/common";
 import { useSystemInfo } from "@hooks/commonHooks";
 import {
   useMerchantInfo,
   useFanpiaoInfo,
   useCouponInfo,
 } from "@hooks/merchantHooks";
+import { useDish } from "@hooks/menuHooks";
 export default {
   components: {
     MenuList,
@@ -58,6 +59,8 @@ export default {
     const { statusBarHeight, screenWidth } = useSystemInfo();
     const { requestFanpiaoList } = useFanpiaoInfo();
     const { requestCouponList } = useCouponInfo();
+    const { resetSelDishes } = useDish();
+    resetSelDishes(getStorage("selected-dishes") || []);
 
     onBeforeMount(async () => {
       let tableInfo = await getDishCatalogScene(scene);

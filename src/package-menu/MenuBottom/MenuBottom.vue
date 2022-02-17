@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-02-16 16:27:12
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 17:28:27
+ * @LastEditTime: 2022-02-17 14:43:05
  * @FilePath: /new-fanpiao-uniapp/src/package-menu/MenuBottom/MenuBottom.vue
 -->
 <template>
@@ -14,11 +14,13 @@
       <div class="cart-info">
         <div class="cart-icon">
           <span class="iconfont icon-gouwuchekong"></span>
-          <div class="count" v-show="selectedDishes.length">
-            {{ selectedDishes.length }}
+          <div class="count" v-show="selectedDishesTotalQuantity">
+            {{ selectedDishesTotalQuantity }}
           </div>
         </div>
-        <div class="total-price">¥5</div>
+        <div class="total-price">
+          ¥{{ fenToYuan(selectedDishesTotalPrice) }}
+        </div>
       </div>
       <div
         class="text-wrapper"
@@ -31,15 +33,25 @@
 </template>
 <script>
 import { useCart, useDish } from "@hooks/menuHooks";
+import { useTransformPrice } from "@hooks/commonHooks";
+
 export default {
   setup() {
     const { showCartModal, toggleShowCartModal } = useCart();
-    const { selectedDishes } = useDish();
+    const {
+      selectedDishes,
+      selectedDishesTotalQuantity,
+      selectedDishesTotalPrice,
+    } = useDish();
+    let { fenToYuan } = useTransformPrice();
 
     return {
       toggleShowCartModal,
       showCartModal,
       selectedDishes,
+      selectedDishesTotalQuantity,
+      selectedDishesTotalPrice,
+      fenToYuan,
     };
   },
 };

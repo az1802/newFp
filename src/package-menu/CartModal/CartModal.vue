@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-02-15 15:44:59
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 19:00:06
+ * @LastEditTime: 2022-02-17 14:42:35
  * @FilePath: /new-fanpiao-uniapp/src/package-menu/CartModal/CartModal.vue
 -->
 <template>
@@ -12,8 +12,12 @@
     @click="toggleShowCartModal(false)"
   >
     <div class="cart-container" @click.stop="noop">
-      <div class="title"><span class="iconfont icon-guanbi1"></span>清空</div>
-      <div class="dish-list-wrapper">
+      <div class="title">
+        <div class="text-wrapper" @click="resetSelDishes([])">
+          <span class="iconfont icon-shanchu"></span>清空
+        </div>
+      </div>
+      <scroll-view class="dish-list-wrapper" :scroll-y="true">
         <div
           class="dish-info"
           v-for="(dish, index) in selectedDishes"
@@ -21,37 +25,49 @@
         >
           <img :src="dish.thumbImage" alt="" class="img" mode="aspectFill" />
           <div class="info">
-            <div class="name">{{ dish.name }}</div>
-            <!-- <div v-if="dish.attrs">
-            {{ dish.attrs.map((item) => item.name).join("-") }}
+            <div class="name">
+              {{ dish.name }}
+              <div v-if="dish.isSku" class="describe-text">
+                {{ genDishDescribeText(dish) }}
+              </div>
+            </div>
+            <div class="price">{{ fenToYuan(calcSkuDishPrice(dish)) }}</div>
           </div>
-          <div
-            v-if="dish.supplyCondiments"
-            v-for="condiment in dish.supplyCondiments"
-            :key="condiment.id"
-          >
-            {{ condiment.name }}---{{ condiment.quantity }}
-          </div> -->
-            <div class="price">{{ dish.price }}</div>
-          </div>
+          <QuantityOperation
+            v-if="dish.quantity"
+            :num="dish.quantity"
+            class="cart-dish-operation"
+            @add="addCartDish(index)"
+            @reduce="reduceCartDish(index)"
+          />
         </div>
-      </div>
+      </scroll-view>
     </div>
   </div>
 </template>
 <script>
 import { noop } from "@utils/common";
-import { useCart, useDish } from "@hooks/menuHooks";
+import { useCart, useDish, useSkuDish } from "@hooks/menuHooks";
+import { useTransformPrice } from "@hooks/commonHooks";
 export default {
   setup() {
-    const { showCartModal, toggleShowCartModal } = useCart();
-    const { selectedDishes } = useDish();
+    const { showCartModal, toggleShowCartModal, addCartDish, reduceCartDish } =
+      useCart();
+    const { selectedDishes, addDish, reduceDish, resetSelDishes } = useDish();
+    const { genDishDescribeText, calcSkuDishPrice } = useSkuDish();
+    let { fenToYuan } = useTransformPrice();
 
     return {
       toggleShowCartModal,
       showCartModal,
       selectedDishes,
       noop,
+      fenToYuan,
+      addCartDish,
+      reduceCartDish,
+      genDishDescribeText,
+      resetSelDishes,
+      calcSkuDishPrice,
     };
   },
 };
@@ -62,22 +78,29 @@ export default {
   z-index: 10;
 }
 .cart-container {
-  .box-size(100%,100px,white);
+  .box-size(100%,unset,white);
   min-height: 200px;
-  max-height: 400px;
+  max-height: 506px;
   .pos-bl-absolute(0,0);
   border-radius: 10px 10px 0 0;
   padding-bottom: 102px;
+  overflow: hidden;
   .title {
     .box-size(100%,42px,#f8f8f8);
     .flex-simple(flex-start,center);
-    .normal-font(14px,red);
     padding-left: 12px;
+    .text-wrapper {
+      .normal-font(14px,#666);
+    }
   }
   .dish-list-wrapper {
+    min-height: 200px;
+    max-height: 336px;
     .dish-info {
       display: flex;
-      padding: 7.5px 0;
+      padding: 7.5px 12px;
+      box-sizing: border-box;
+      position: relative;
       .img {
         .box-size(80px,80px,#eee);
         border-radius: 3px;
@@ -88,11 +111,19 @@ export default {
         .flex-between(column);
         .name {
           .bold-font(17px,#333);
+          .describe-text {
+            .normal-font(12px,#999);
+            .line-center(18px);
+            .no-wrap();
+          }
         }
         .price {
           .bold-font(17px,#f25643);
           .price-symbol();
         }
+      }
+      .cart-dish-operation {
+        .pos-br-absolute(7.5px,12px);
       }
     }
   }

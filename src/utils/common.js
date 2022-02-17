@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-02-09 14:28:26
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 17:57:05
+ * @LastEditTime: 2022-02-16 19:24:50
  * @FilePath: /new-fanpiao-uniapp/src/utils/common.js
  */
 
@@ -40,7 +40,6 @@ export function handleDishList(dishes) {
   // 更新菜品滚动距离表
 
 
-
   getApp().globalData.dishMap = dishesMap;
   getApp().globalData.dishSrollTops = dishSrollTops;
   getApp().globalData.categoryScrollTops = categoryScrollTops;
@@ -54,7 +53,6 @@ export function getDishInfoById(dishId) {
   let dishesMap = getApp().globalData.dishMap || {};
   return dishesMap[dishId] || "";
 }
-
 
 export function noop() {
 
@@ -75,5 +73,5 @@ export function setStorage(key, val) {
 }
 
 export function getStorage(key, val) {
-  uni.getStorageSync(key);
+  return uni.getStorageSync(key);
 }

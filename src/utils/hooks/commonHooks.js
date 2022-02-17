@@ -2,13 +2,13 @@
  * @Author: sunjie
  * @Date: 2022-02-16 17:58:00
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 18:00:47
+ * @LastEditTime: 2022-02-17 11:42:26
  * @FilePath: /new-fanpiao-uniapp/src/utils/hooks/commonHooks.js
  */
 import { computed, ref, reactive } from 'vue'
 import { getDishInfoById } from "@utils/common.js";
 import { getDishCatalogScene, getMerchantInfo, getMerchantDishCategory } from "@api/merchant"
-import { useState, useGetters, useMutations } from "@utils/storeHooks";
+import { useState, useGetters, useMutations } from "@hooks/storeHooks";
 
 export function useSystemInfo() {
   let systemInfo = getApp().globalData.systemInfo;
@@ -27,41 +27,19 @@ export function useScrollViewScroll() {
   }
 }
 
-export function userDishOperaton() {
-  let store = useStore();
 
+export function useTransformPrice() {
 
-
-
-  return {
-
+  function fenToYuan(price) {
+    return Math.abs(Number(price / 100).toFixed(2));
   }
 
-}
+  function yuanToFen(price) {
+    return Number(price * 100);
+  }
 
-export function useUserInfo() {
-
-}
-
-
-
-export function useCategoryActive() {
-}
-
-
-export function useDishList() {
-
-}
-
-export function useCouponInfo() {
-
-}
-
-export function useFanpiaoInfo() {
-
-}
-
-// 已选菜品的添加 删除  清空
-export function useSelFoodOperation() {
-
+  return {
+    fenToYuan,
+    yuanToFen
+  }
 }

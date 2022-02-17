@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-02-11 11:32:44
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 18:48:17
+ * @LastEditTime: 2022-02-16 19:29:07
  * @FilePath: /new-fanpiao-uniapp/src/package-menu/DishItem/DishOperation.vue
 -->
 <template>
@@ -16,7 +16,7 @@
 </template>
 <script>
 import { getDishInfoById } from "@utils/common.js";
-import { computed, watch, ref } from "vue";
+import { computed, watch, ref, watchEffect } from "vue";
 import { useDish, useSkuDish } from "@hooks/menuHooks";
 export default {
   props: {
@@ -36,9 +36,8 @@ export default {
     let { setCurSkuDish, toggleShowSkuModal } = useSkuDish();
     let quantity = ref(0);
 
-    watch(dishCountMap, (nval) => {
-      //使用watch,优惠更新当前菜品组件
-      quantity.value = (nval && nval[dishId]) || 0;
+    watchEffect(() => {
+      quantity.value = dishCountMap.value[dishId] || 0;
     });
 
     return {

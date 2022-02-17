@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-02-11 14:32:18
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 18:52:00
+ * @LastEditTime: 2022-02-17 14:56:10
  * @FilePath: /new-fanpiao-uniapp/src/package-menu/SkuModal/SkuModal.vue
 -->
 <template>
@@ -17,7 +17,7 @@
         />
         <div class="info">
           <div class="name">{{ curSkuDish.name }}</div>
-          <div class="price">{{ totalPrice }}</div>
+          <div class="price">{{ fenToYuan(totalPrice) }}</div>
         </div>
       </div>
       <scroll-view class="other-info" scroll-y="true">
@@ -46,7 +46,9 @@ import AttrGroupList from "./AttrGroupList.vue";
 import SupplyCondimentList from "./SupplyCondimentList.vue";
 import ChildDishList from "./ChildDishList.vue";
 import { useSkuDish, useDish } from "@hooks/menuHooks";
+import { useTransformPrice } from "@hooks/commonHooks";
 import { reactive, watch, watchEffect, ref, computed, toRaw, unref } from "vue";
+
 export default {
   components: {
     AttrGroupList,
@@ -70,6 +72,7 @@ export default {
 
     const { curSkuDish, showSkuModal, toggleShowSkuModal } = useSkuDish();
     const { addDish } = useDish();
+    let { fenToYuan } = useTransformPrice();
 
     const attrMap = {},
       condimentMap = {};
@@ -110,6 +113,7 @@ export default {
       curSkuDish,
       showSkuModal,
       totalPrice,
+      fenToYuan,
       toggleShowSkuModal,
       selOK() {
         let dishInfo = unref(curSkuDish),

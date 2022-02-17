@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-02-10 16:05:56
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 12:32:42
+ * @LastEditTime: 2022-02-17 12:08:02
  * @FilePath: /new-fanpiao-uniapp/src/package-menu/DishItem/DishItem.vue
 -->
 <template>
@@ -21,7 +21,7 @@
       <div class="name">
         {{ dish.name }}
       </div>
-      <div class="price">{{ dish.price }}起</div>
+      <div class="price">{{ fenToYuan(dish.price) }}</div>
     </div>
     <DishOperation :dishId="dish.id" :isSku="dish.isSku" />
   </div>
@@ -29,6 +29,7 @@
 <script>
 import DishOperation from "./DishOperation.vue";
 import { ref, onMounted } from "vue";
+import { useTransformPrice } from "@hooks/commonHooks";
 export default {
   components: {
     DishOperation,
@@ -41,11 +42,13 @@ export default {
   },
   setup({ dish }) {
     let showPlaceHolder = ref(true);
+    let { fenToYuan } = useTransformPrice();
     return {
       showPlaceHolder,
       imgLoaded(e) {
         showPlaceHolder.value = false;
       },
+      fenToYuan,
     };
   },
 };

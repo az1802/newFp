@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-02-10 15:51:23
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 16:14:28
+ * @LastEditTime: 2022-02-17 15:01:54
  * @FilePath: /new-fanpiao-uniapp/src/package-menu/MenuList/MenuList.vue
 -->
 <template>
@@ -16,6 +16,7 @@
         v-for="(categoryItem, index) in dishList"
         :key="categoryItem.category.id"
         :id="'category-index-' + index"
+        class="category-item-wrapper"
         @click="changeCategory(index)"
       >
         <CategoryItem
@@ -38,6 +39,7 @@
         v-for="(categoryItem, index) in dishList"
         :key="categoryItem.category.id"
         :id="'category-view-' + index"
+        class="category-view-wrapper"
       >
         <div class="category-title">{{ categoryItem.category.name }}</div>
         <DishItem
@@ -99,10 +101,16 @@ export default {
     .box-size(80px,100%);
     flex-basis: 80px;
     background: #f8f8f8;
+    .category-item-wrapper:last-child {
+      padding-bottom: 30px;
+    }
   }
   .foods-container {
     flex: 1;
     height: 100%;
+    .category-view-wrapper:last-child {
+      padding-bottom: 60px;
+    }
     .category-title {
       .box-size(100%,50px);
       .normal-font(14px,#333);

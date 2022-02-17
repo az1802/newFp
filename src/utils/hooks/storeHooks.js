@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-02-16 18:22:48
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 18:22:49
+ * @LastEditTime: 2022-02-17 10:39:49
  * @FilePath: /new-fanpiao-uniapp/src/utils/hooks/storeHooks.js
  */
 import { computed } from 'vue'
@@ -10,8 +10,8 @@ import { mapGetters, mapState, useStore, createNamespacedHelpers, mapMutations, 
 
 
 const useMapper = (mapper, mapFn, useComputed = false) => {
-  const store = useStore()
 
+  const store = useStore()
   const storeStateFns = mapFn(mapper)
   const storeState = {}
   Object.keys(storeStateFns).forEach((keyFn) => {
@@ -21,7 +21,7 @@ const useMapper = (mapper, mapFn, useComputed = false) => {
   return storeState
 }
 
-export const useState = (moduleName, mapper) => {
+export function useState(moduleName, mapper) {
   let mapperFn = mapState
   if (typeof moduleName === 'string' && moduleName.length > 0) {
     mapperFn = createNamespacedHelpers(moduleName).mapState
@@ -31,7 +31,7 @@ export const useState = (moduleName, mapper) => {
   return useMapper(mapper, mapperFn, true)
 }
 
-export const useGetters = (moduleName, mapper) => {
+export function useGetters(moduleName, mapper) {
   let mapperFn = mapGetters
   if (typeof moduleName === 'string' && moduleName.length > 0) {
     mapperFn = createNamespacedHelpers(moduleName).mapGetters
@@ -41,7 +41,7 @@ export const useGetters = (moduleName, mapper) => {
   return useMapper(mapper, mapperFn, true)
 }
 
-export const useMutations = (moduleName, mapper) => {
+export function useMutations(moduleName, mapper) {
   let mapperFn = mapMutations
   if (typeof moduleName === 'string' && moduleName.length > 0) {
     mapperFn = createNamespacedHelpers(moduleName).mapMutations
@@ -52,7 +52,7 @@ export const useMutations = (moduleName, mapper) => {
   return useMapper(mapper, mapperFn)
 }
 
-export const useActions = (moduleName, mapper) => {
+export function useActions(moduleName, mapper) {
   let mapperFn = mapActions
   if (typeof moduleName === 'string' && moduleName.length > 0) {
     mapperFn = createNamespacedHelpers(moduleName).mapActions

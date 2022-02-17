@@ -2,12 +2,12 @@
  * @Author: sunjie
  * @Date: 2022-02-16 17:58:06
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 18:58:02
+ * @LastEditTime: 2022-02-16 19:14:49
  * @FilePath: /new-fanpiao-uniapp/src/utils/hooks/merchantHooks.js
  */
 import { computed, ref, reactive } from 'vue'
 import { getDishInfoById } from "@utils/common.js";
-import { useState, useGetters, useMutations } from "@utils/storeHooks";
+import { useState, useGetters, useMutations } from "@hooks/storeHooks";
 import API from "@api";
 const {
   getDishCatalogScene,

@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-02-11 19:08:00
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 16:04:41
+ * @LastEditTime: 2022-02-17 14:56:09
  * @FilePath: /new-fanpiao-uniapp/src/package-menu/SkuModal/SupplyCondimentList.vue
 -->
 <template>
@@ -14,7 +14,7 @@
       :key="condimentItem.id"
     >
       <div class="name">{{ condimentItem.name }}</div>
-      <div class="price">¥{{ condimentItem.marketPrice }}</div>
+      <div class="price">¥{{ fenToYuan(condimentItem.marketPrice) }}</div>
       <QuantityOperation
         :num="selCondiments[condimentItem.id]"
         @add="addCondiment(condimentItem)"
@@ -25,6 +25,7 @@
   </div>
 </template>
 <script>
+import { useTransformPrice } from "@hooks/commonHooks";
 export default {
   props: {
     condimentList: {
@@ -38,6 +39,8 @@ export default {
   },
   setup(props) {
     let { selCondiments } = props;
+
+    let { fenToYuan } = useTransformPrice();
     return {
       addCondiment({ id }) {
         selCondiments[id] == undefined
@@ -47,6 +50,7 @@ export default {
       reduceCondiment({ id }) {
         selCondiments[id] -= 1;
       },
+      fenToYuan,
     };
   },
 };
