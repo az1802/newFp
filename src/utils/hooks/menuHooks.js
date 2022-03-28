@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-02-16 18:42:01
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-17 14:42:34
+ * @LastEditTime: 2022-02-18 18:18:54
  * @FilePath: /new-fanpiao-uniapp/src/utils/hooks/menuHooks.js
  */
 import { computed, ref, reactive, toRaw, unref } from 'vue'
@@ -45,7 +45,6 @@ export function useDish() {
     saveSelectedDishesStorage()
   }
 
-
   return {
     ...useState("menu", [
       "selectedDishes",
@@ -68,7 +67,6 @@ export function useSkuDish() {
   }
 
   function calcSkuDishPrice(dish) {
-    console.log('%cdish: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', dish);
     let { supplyCondiments = [], attrs = [], childDishGroups = [], price, quantity = 0 } = dish;
     let attrPrice = attrs.reduce((sum, { reprice }) => sum += reprice, 0);
     let condimentPrice = supplyCondiments.reduce((sum, { marketPrice, quantity = 0 }) => sum += marketPrice * quantity, 0);

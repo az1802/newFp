@@ -2,12 +2,12 @@
  * @Author: sunjie
  * @Date: 2022-02-10 13:55:41
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 18:20:31
+ * @LastEditTime: 2022-02-18 19:06:27
  * @FilePath: /new-fanpiao-uniapp/src/components/NavigationBar/NavigationBar.vue
 -->
 <template>
   <div class="nav-container" :style="{ paddingTop: statusBarHeight + 'px' }">
-    <div class="arrow" v-if="showArrow">
+    <div class="arrow" v-if="showArrow" @click="navigateBack">
       <span
         class="iconfont icon-dajiantouzuo"
         :style="{ color: iconColor }"
@@ -20,7 +20,7 @@
   </div>
 </template>
 <script>
-import { useSystemInfo } from "@hooks/commonHooks";
+import { useSystemInfo, useNavigate } from "@hooks/commonHooks";
 
 export default {
   props: {
@@ -47,27 +47,27 @@ export default {
   },
   setup(props, context) {
     let { statusBarHeight } = useSystemInfo();
-
+    let { navigateBack } = useNavigate();
     return {
       statusBarHeight,
+      navigateBack,
     };
   },
 };
 </script>
 <style lang="less" scoped>
+@import "@design/index.less";
 .nav-container {
+  .flex-center();
   height: 44px;
   background: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   position: relative;
   .arrow {
-    position: absolute;
-    left: 10px;
+    .pos-tl-absolute(unset,10px);
   }
   .title {
     display: inline-block;
+    .bold-font(18px,black);
   }
 }
 </style>

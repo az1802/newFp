@@ -2,17 +2,17 @@
  * @Author: sunjie
  * @Date: 2022-02-16 16:27:12
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-17 14:43:05
+ * @LastEditTime: 2022-02-18 18:18:52
  * @FilePath: /new-fanpiao-uniapp/src/package-menu/MenuBottom/MenuBottom.vue
 -->
 <template>
-  <div class="menu-bottom-container" @click="toggleShowCartModal(true)">
+  <div class="menu-bottom-container">
     <!-- <div class="discount-tooltip">
       使用饭票支付,本单可再减
     </div> -->
     <div class="cart-wrapper">
       <div class="cart-info">
-        <div class="cart-icon">
+        <div class="cart-icon" @click="toggleShowCartModal(!showCartModal)">
           <span class="iconfont icon-gouwuchekong"></span>
           <div class="count" v-show="selectedDishesTotalQuantity">
             {{ selectedDishesTotalQuantity }}
@@ -25,6 +25,7 @@
       <div
         class="text-wrapper"
         :class="[selectedDishes.length > 0 ? 'has-dish' : '']"
+        @click="createOrder"
       >
         {{ selectedDishes.length > 0 ? "去下单" : "请先点菜" }}
       </div>
@@ -33,7 +34,8 @@
 </template>
 <script>
 import { useCart, useDish } from "@hooks/menuHooks";
-import { useTransformPrice } from "@hooks/commonHooks";
+import { useTransformPrice, useNavigate } from "@hooks/commonHooks";
+import { unref } from "vue";
 
 export default {
   setup() {
@@ -44,7 +46,12 @@ export default {
       selectedDishesTotalPrice,
     } = useDish();
     let { fenToYuan } = useTransformPrice();
-
+    let { navigateTo } = useNavigate();
+    function createOrder() {
+      if (unref(selectedDishes).length > 0) {
+        navigateTo("ORDER/CREATE_ORDER");
+      }
+    }
     return {
       toggleShowCartModal,
       showCartModal,
@@ -52,6 +59,7 @@ export default {
       selectedDishesTotalQuantity,
       selectedDishesTotalPrice,
       fenToYuan,
+      createOrder,
     };
   },
 };

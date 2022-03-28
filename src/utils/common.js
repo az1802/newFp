@@ -2,9 +2,12 @@
  * @Author: sunjie
  * @Date: 2022-02-09 14:28:26
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 19:24:50
+ * @LastEditTime: 2022-02-18 18:18:28
  * @FilePath: /new-fanpiao-uniapp/src/utils/common.js
  */
+
+
+import routes from './routes';
 
 export async function sleep(time) {
   return new Promise(resolve => {
@@ -74,4 +77,36 @@ export function setStorage(key, val) {
 
 export function getStorage(key, val) {
   return uni.getStorageSync(key);
+}
+
+
+export async function navigateTo(path) {
+  let pathArr = path.split("/");
+  let url = "";
+
+  pathArr.forEach(item => {
+    url = url ? url[item] : routes[item]
+  });
+
+  if (url) {
+    return new Promise(resolve => {
+      uni.navigateTo({
+        url,
+        success() {
+          resolve(true)
+        },
+        fail() {
+          resolve(false)
+        }
+      })
+    })
+  } else {
+    throw new Error(`路径解析错误${path}`)
+  }
+
+}
+
+
+export async function navigateBack(...args) {
+  uni.navigateBack(...args)
 }

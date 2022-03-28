@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-02-17 15:03:20
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-17 15:04:55
+ * @LastEditTime: 2022-02-18 18:11:09
  * @FilePath: /new-fanpiao-uniapp/src/api/order.js
  */
 import URLS from './urls'
@@ -18,5 +18,11 @@ http.setHeaders({
 export async function getOrderDetail(orderId) {
   let url = `${URLS.GET_COUPON_PACKAGE}/${orderId}`;
   let res = await http.get(url);
+  return res;
+}
+
+export async function createOrder(merchantId, orderInfo) {
+  let url = `${URLS.CREATE_ORDER}/${merchantId}`;
+  let res = await http.post(url, orderInfo);
   return res;
 }

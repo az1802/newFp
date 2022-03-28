@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-01-20 18:54:05
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-14 17:13:45
+ * @LastEditTime: 2022-02-18 18:18:56
  * @FilePath: /new-fanpiao-uniapp/src/App.vue
 -->
 <script>
@@ -10,21 +10,21 @@ export default {
   globalData: {
     systemInfo: {},
     dishesMap: {},
-    dishSrollTops: [],
-    categoryScrollTops: [],
+    // dishSrollTops: [],
+    // categoryScrollTops: [],
   },
   onLaunch: function () {
     this._initSystemInfo();
   },
   onShow: function () {
-    console.log("App Show");
+    // console.log("App Show");
   },
   onHide: function () {
-    console.log("App Hide");
+    // console.log("App Hide");
   },
   methods: {
     _initSystemInfo() {
-      this.globalData.systemInfo = uni.getSystemInfoSync();
+      // this.globalData.systemInfo = uni.getSystemInfoSync();
     },
   },
 };

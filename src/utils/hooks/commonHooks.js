@@ -2,11 +2,11 @@
  * @Author: sunjie
  * @Date: 2022-02-16 17:58:00
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-17 11:42:26
+ * @LastEditTime: 2022-02-18 12:21:46
  * @FilePath: /new-fanpiao-uniapp/src/utils/hooks/commonHooks.js
  */
 import { computed, ref, reactive } from 'vue'
-import { getDishInfoById } from "@utils/common.js";
+import { getDishInfoById, navigateTo,navigateBack } from "@utils/common.js";
 import { getDishCatalogScene, getMerchantInfo, getMerchantDishCategory } from "@api/merchant"
 import { useState, useGetters, useMutations } from "@hooks/storeHooks";
 
@@ -41,5 +41,15 @@ export function useTransformPrice() {
   return {
     fenToYuan,
     yuanToFen
+  }
+}
+
+
+export function useNavigate() {
+
+
+  return {
+    navigateTo,
+    navigateBack
   }
 }

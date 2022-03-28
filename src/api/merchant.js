@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-02-08 14:46:34
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-16 11:54:29
+ * @LastEditTime: 2022-02-21 14:00:32
  * @FilePath: /new-fanpiao-uniapp/src/api/merchant.js
  */
 /*
@@ -16,8 +16,8 @@ import URLS from './urls'
 import http from './http';
 import { reduceRight } from 'lodash';
 
-import catalogScene from '@mockData/catalogScene.js'
-import dishCategory from '@mockData/dishCategory.js'
+// import catalogScene from '@mockData/catalogScene.js'
+// import dishCategory from '@mockData/dishCategory.js'
 
 http.setHeaders({
   userId: "d4848915-b103-4e1a-abfd-a04886fa61e6"
@@ -25,7 +25,6 @@ http.setHeaders({
 
 
 export async function getMerchantInfo(merchantId) {
-  console.log('%cmerchantId: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', merchantId);
   let url = `${URLS.GET_MERCHANT_INFO}/${merchantId}`;
   let res = await http.get(url)
   return res;

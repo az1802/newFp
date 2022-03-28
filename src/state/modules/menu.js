@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-02-09 16:32:28
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-17 14:56:54
+ * @LastEditTime: 2022-02-18 13:59:51
  * @FilePath: /new-fanpiao-uniapp/src/state/modules/menu.js
  */
 import { setStorage } from "@utils/common"
@@ -136,7 +136,6 @@ export default {
       state.curSkuDish = dishInfo
     },
     saveSelectedDishesStorage({ selectedDishes }) {
-      console.log('%cselectedDishes: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', selectedDishes);
       setStorage("selected-dishes", selectedDishes)
     },
     addDishQuantity() {

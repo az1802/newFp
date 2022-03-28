@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-02-11 14:32:18
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-17 14:56:10
+ * @LastEditTime: 2022-02-18 18:18:21
  * @FilePath: /new-fanpiao-uniapp/src/package-menu/SkuModal/SkuModal.vue
 -->
 <template>
@@ -137,7 +137,6 @@ export default {
         });
 
         addDish(dishInfo);
-        console.log(dishInfo);
 
         toggleShowSkuModal(false);
       },

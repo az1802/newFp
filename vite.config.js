@@ -2,7 +2,7 @@
  * @Author: sunjie
  * @Date: 2022-01-20 18:54:05
  * @LastEditors: sunj
- * @LastEditTime: 2022-02-11 16:24:34
+ * @LastEditTime: 2022-02-18 16:24:40
  * @FilePath: /new-fanpiao-uniapp/vite.config.js
  */
 import { defineConfig } from 'vite'
@@ -18,6 +18,7 @@ export default defineConfig({
   resolve: {
     alias: [
       { find: '@', replacement: resolve(__dirname, 'src') },
+      { find: '@components', replacement: resolve(__dirname, 'src/components') },
       { find: '@api', replacement: resolve(__dirname, 'src/api') },
       { find: '@utils', replacement: resolve(__dirname, 'src/utils') },
       { find: '@hooks', replacement: resolve(__dirname, 'src/utils/hooks') },
