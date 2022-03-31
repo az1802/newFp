@@ -7,12 +7,12 @@
  */
 export default {
   state: {
-    userId: "",
-    fanpaoBalance: "",
-    redPacket: "",
-    memberBalance: "",
-    phone: "",
-    userCoupons: []
+    userId: "",//用户id
+    fanpaoBalance: "",//饭票余额
+    redPacket: "", //红包余额
+    memberBalance: "", //储值余额
+    phone: "",//手机号码
+    userCoupons: [],//用户券包
   },
   getters: {},
   mutations: {

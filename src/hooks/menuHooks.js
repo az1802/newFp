@@ -7,7 +7,9 @@
  */
 import { computed, ref, reactive, toRaw, unref } from 'vue'
 import { useState, useGetters, useMutations } from "@hooks/storeHooks.js";
-import { setStorage } from "@utils/common"
+import { setStorage, genDishDescribeText, calcSkuDishPrice } from "@utils"
+
+
 
 export function useCategory() {
 
@@ -58,21 +60,6 @@ export function useDish() {
 
 export function useSkuDish() {
 
-
-
-  function genDishDescribeText(dish) {
-    let attrTexts = dish.attrs.map((item) => item.name);
-    let condimentTexts = dish.supplyCondiments.map(item => `${item.name}*${item.quantity}`);
-    return attrTexts.concat(condimentTexts).join(",")
-  }
-
-  function calcSkuDishPrice(dish) {
-    let { supplyCondiments = [], attrs = [], childDishGroups = [], price, quantity = 0 } = dish;
-    let attrPrice = attrs.reduce((sum, { reprice }) => sum += reprice, 0);
-    let condimentPrice = supplyCondiments.reduce((sum, { marketPrice, quantity = 0 }) => sum += marketPrice * quantity, 0);
-    return (price + attrPrice + condimentPrice) * quantity;
-  }
-
   return {
     ...useState("menu", [
       "curSkuDish",
@@ -81,6 +68,21 @@ export function useSkuDish() {
     ...useMutations("menu", [
       "setCurSkuDish",
       "toggleShowSkuModal",
+    ]),
+    genDishDescribeText,
+    calcSkuDishPrice
+  }
+}
+export function useChildSkuDish() {
+
+  return {
+    ...useState("menu", [
+      "curChildSkuDish",
+      "showChildSkuModal",
+    ]),
+    ...useMutations("menu", [
+      "setCurChildSkuDish",
+      "toggleShowChildSkuModal",
     ]),
     genDishDescribeText,
     calcSkuDishPrice

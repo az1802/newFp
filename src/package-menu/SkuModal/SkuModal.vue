@@ -7,7 +7,10 @@
 -->
 <template>
   <div class="modal-wrapper" v-show="showSkuModal">
-    <div class="container">
+    <div
+      class="container"
+      :class="[curSkuDish.childDishGroups.length > 0 ? 'higher' : '']"
+    >
       <div class="dish-info">
         <img
           :src="curSkuDish.thumbImage"
@@ -31,7 +34,10 @@
           :condimentList="curSkuDish.supplyCondiments"
           :selCondiments="selCondiments"
         />
-        <ChildDishList v-show="curSkuDish.childDishGroups.length > 0" />
+        <ChildDishList
+          v-show="curSkuDish.childDishGroups.length > 0"
+          :childDishGroups="curSkuDish.childDishGroups"
+        />
       </scroll-view>
       <div class="sel-ok-btn" @click="selOK">选好了</div>
       <span
@@ -151,6 +157,12 @@ export default {
   .pos-bl-absolute();
   border-radius: 10px 10px 0 0;
   padding: 20px 12px 30px 12px;
+  &.higher {
+    height: max(70%, 700px);
+    .other-info {
+      height: calc(max(70%, 700px) - 50px - 100px - 45px);
+    }
+  }
   .dish-info {
     display: flex;
     margin-bottom: 20px;

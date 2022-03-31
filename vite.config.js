@@ -21,12 +21,12 @@ export default defineConfig({
       { find: '@components', replacement: resolve(__dirname, 'src/components') },
       { find: '@api', replacement: resolve(__dirname, 'src/api') },
       { find: '@utils', replacement: resolve(__dirname, 'src/utils') },
-      { find: '@hooks', replacement: resolve(__dirname, 'src/utils/hooks') },
-      { find: '@com', replacement: resolve(__dirname, 'src/components') },
+      { find: '@hooks', replacement: resolve(__dirname, 'src/hooks') },
       { find: '@state', replacement: resolve(__dirname, 'src/state') },
       { find: '@design', replacement: resolve(__dirname, 'src/design') },
       { find: '@static', replacement: resolve(__dirname, 'src/static') },
-      { find: '@mockData', replacement: resolve(__dirname, 'src/mockData') }
+      { find: '@mockData', replacement: resolve(__dirname, 'src/mockData') },
+      { find: '@assets', replacement: resolve(__dirname, 'src/assets') }
     ]
   }
 })

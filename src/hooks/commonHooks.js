@@ -6,7 +6,7 @@
  * @FilePath: /new-fanpiao-uniapp/src/utils/hooks/commonHooks.js
  */
 import { computed, ref, reactive } from 'vue'
-import { getDishInfoById, navigateTo,navigateBack } from "@utils/common.js";
+import { getDishInfoById, navigateTo, navigateBack } from "@utils";
 import { getDishCatalogScene, getMerchantInfo, getMerchantDishCategory } from "@api/merchant"
 import { useState, useGetters, useMutations } from "@hooks/storeHooks";
 
@@ -46,7 +46,6 @@ export function useTransformPrice() {
 
 
 export function useNavigate() {
-
 
   return {
     navigateTo,

@@ -6,7 +6,7 @@
  * @FilePath: /new-fanpiao-uniapp/src/utils/hooks/orderHooks.js
  */
 import { computed, ref, reactive, unref } from 'vue'
-import { getDishInfoById } from "@utils/common.js";
+import { getDishInfoById } from "@utils";
 import { useState, useGetters, useMutations } from "@hooks/storeHooks";
 import API from "@api";
 
@@ -16,8 +16,9 @@ import API from "@api";
 export function useOrder() {
 
   let merchantId = "4146f4810c74424b819d7fcfb84826e8";
-  const { orderInfo } = useState("order", ["orderInfo"])
+  const { orderInfo, payMethod } = useState("order", ["orderInfo", "payMethod"])
   const { selectedDishes } = useState("menu", ["selectedDishes"])
+  const { setPayMethod } = useMutations("order", ["setPayMethod"])
   async function createOrder() {
     let orderArgs = {
       dishList: unref(selectedDishes),
@@ -43,8 +44,10 @@ export function useOrder() {
 
 
   return {
+    payMethod,
+    orderInfo,
     createOrder,
-    payOrder
-
+    payOrder,
+    setPayMethod
   }
 }

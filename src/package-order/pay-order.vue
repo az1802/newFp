@@ -9,10 +9,9 @@
   <div class="pay-order-page">
     <NavigationBar title="确认支付" />
     <div class="pay-price-info">
-      <div class="pay-price">91</div>
-      <div class="origin-price">104</div>
+      <div class="pay-price">{{ orderInfo.paidFee }}</div>
+      <div class="origin-price">{{ orderInfo.billFee }}</div>
     </div>
-
     <PayMthodList />
 
     <div class="pay-btn">确认支付</div>
@@ -20,15 +19,22 @@
 </template>
 <script>
 import PayMthodList from "./PayMthodList/payMethodList.vue";
+import { useOrder } from "@hooks/orderhooks";
 export default {
   components: { PayMthodList },
-  setup() {},
+  setup() {
+    const { orderInfo } = useOrder();
+
+    return {
+      orderInfo,
+    };
+  },
 };
 </script>
 <style lang="less" scoped>
 @import "@design/index.less";
 .pay-order-page {
-  .box-size(100vw,100vh,#f8f8f8);
+  .box-size(100vw,100vh,white);
   .pay-price-info {
     .flex-simple(center,flex-end);
     height: 45px;

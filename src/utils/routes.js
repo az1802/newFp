@@ -7,6 +7,7 @@
  */
 const ORDER = '/package-order';
 const MENU = '/package-menu'
+const OTHER = '/package-other'
 
 
 export default {
@@ -16,5 +17,13 @@ export default {
   "ORDER": {
     "CREATE_ORDER": `${ORDER}/create-order`,
     "PAY_ORDER": `${ORDER}/pay-order`
+  },
+  "OTHER": {
+    "COUPON_ACCORD_TEXT": `${OTHER}/coupon-accord-text/coupon-accord-text`,
+    "ADD_ADDRESS": `${OTHER}/add-address/add-address`,
+    "ADDRESS_LIST": `${OTHER}/address-list/address-list`,
+    "DEPOSIT_RULES": `${OTHER}/deposit-rules/deposit-rules`,
+    "DISCOUNT_RULES": `${OTHER}/discount-rules/discount-rules`,
+    "FANPIAO_RULES": `${OTHER}/fanpiao-rules/fanpiao-rules`,
   }
 }

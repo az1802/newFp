@@ -1,0 +1,6 @@
+export * from './globalData'
+export * from './common'
+export * from './dishUtils'
+export * from './navigate'
+export * from './alipay'
+export * from './wechat'

@@ -6,7 +6,12 @@
  * @FilePath: /new-fanpiao-uniapp/src/package-order/TableInfo/TableInfo.vue
 -->
 <template>
-  <div class="table-info-container">桌号:A1</div>
+  <div>
+    <div class="table-info-container">桌号:A1</div>
+    <!-- TODO 自提 外带 -->
+    <div class="self-pick-up"></div>
+    <div class="take-out"></div>
+  </div>
 </template>
 <script>
 export default {

@@ -10,7 +10,7 @@
     <div class="banner">
       <img
         class="banner-background"
-        src="https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/package-static/package-merchant/menu/fanpiaoBannerBackground_04.png"
+        src="https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/package-static/package-merchant/menu/fanpiaoBannerBackground_09.png"
         alt=""
       />
       <div class="fanpiao-discount">
@@ -18,16 +18,30 @@
           maxDiscountFanpiao.discount ? 100 - maxDiscountFanpiao.discount : ""
         }}
       </div>
+      <div class="time-box">
+        <div class="text">距结束</div>
+        <!-- <TimeCounter
+          mode="dragon-boat-festival"
+          customStartText=" "
+          :isMini="true"
+          :endDate="
+            merchantInfo &&
+            merchantInfo.fanpiaoSnapUpActivityTime &&
+            merchantInfo.fanpiaoSnapUpActivityTime.endTimestamp
+          "
+        /> -->
+      </div>
     </div>
   </div>
 </template>
 <script>
-import { useFanpiaoInfo } from "@hooks/merchantHooks";
+import { useFanpiaoInfo, useMerchantInfo } from "@hooks/merchantHooks";
 export default {
   setup() {
     const { maxDiscountFanpiao } = useFanpiaoInfo();
-
+    const { merchantInfo } = useMerchantInfo();
     return {
+      merchantInfo,
       maxDiscountFanpiao,
     };
   },
@@ -37,19 +51,32 @@ export default {
 @import "@design/index.less";
 
 .banner-container {
-  .box-size(100%,104px);
+  .box-size(100%,unset);
   padding: 8px 12px 8px 12px;
   .banner {
+    .box-size(100%,22.66666vw);
     position: relative;
-    .box-size();
     .banner-background {
       .fill-box();
     }
   }
   .fanpiao-discount {
-    min-width: 34px;
-    .pos-absolute(9.1%,59.6%);
-    .bold-font(28px,#E62600);
+    .pos-tr-absolute(22%,26.66%);
+    .bold-font(7.4vw,#f25643);
+    height: 100%;
+    font-style: italic;
+    text-shadow: 0px 2px 0px #ffe7b8;
+  }
+  .time-box {
+    .box-size(140px,16px);
+    .flex-simple(center,center);
+    .pos-br-absolute(12px,112px);
+    background: linear-gradient(90deg, #fdb241 0%, #ff8927 99%);
+    border-radius: 8px;
+    .text {
+      .bold-font(10px,white);
+      margin: -1px -4px 0 0;
+    }
   }
 }
 </style>

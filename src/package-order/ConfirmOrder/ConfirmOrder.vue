@@ -56,6 +56,7 @@ export default {
   .flex-between();
   align-items: center;
   .pos-bl-absolute(32px,0px);
+  position: fixed;
   padding: 0 15px 10px 15px;
   .left {
     flex: 1;

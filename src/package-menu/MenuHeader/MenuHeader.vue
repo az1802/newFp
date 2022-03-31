@@ -7,18 +7,18 @@
 -->
 <template>
   <div class="menu-container">
-    <MenuHeaderImg />
+    <!-- <MenuHeaderImg /> -->
     <MenuHeaderInfo />
     <MenuHeaderBanner />
   </div>
 </template>
 <script>
-import MenuHeaderImg from "./MenuHeaderImg.vue";
+// import MenuHeaderImg from "./MenuHeaderImg.vue";
 import MenuHeaderInfo from "./MenuHeaderInfo.vue";
 import MenuHeaderBanner from "./MenuHeaderBanner.vue";
 export default {
   components: {
-    MenuHeaderImg,
+    // MenuHeaderImg,
     MenuHeaderBanner,
     MenuHeaderInfo,
   },

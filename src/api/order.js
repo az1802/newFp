@@ -26,3 +26,11 @@ export async function createOrder(merchantId, orderInfo) {
   let res = await http.post(url, orderInfo);
   return res;
 }
+
+export async function pay(args) {
+  let url = URLS.PAYMENT_PREPAY
+  let res = await http.post(url, args);
+  console.log('%cargs: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', res);
+
+  return res;
+}

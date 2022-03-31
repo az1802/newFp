@@ -15,44 +15,28 @@
   </div>
 </template>
 <script>
-import { getDishInfoById } from "@utils/common.js";
 import { computed, watch, ref, watchEffect } from "vue";
-import { useDish, useSkuDish } from "@hooks/menuHooks";
 export default {
   props: {
-    dishId: {
-      type: String,
-      default: "",
-    },
     isSku: {
       type: Boolean,
       default: false,
     },
+    quantity: {
+      type: [Number, String],
+      default: 0,
+    },
   },
-  setup(props, context) {
-    let { dishId, isSku } = props;
-
-    let { addDish, reduceDish, dishCountMap } = useDish();
-    let { setCurSkuDish, toggleShowSkuModal } = useSkuDish();
-    let quantity = ref(0);
-
-    watchEffect(() => {
-      quantity.value = dishCountMap.value[dishId] || 0;
-    });
-
+  setup(props, { emit }) {
     return {
-      quantity,
       add() {
-        let dishInfo = getDishInfoById(dishId);
-        addDish(dishInfo);
+        emit("add");
       },
       reduce() {
-        reduceDish(dishId);
+        emit("reduce");
       },
       showSkuDish() {
-        let dishInfo = getDishInfoById(dishId);
-        setCurSkuDish(dishInfo);
-        toggleShowSkuModal(true);
+        emit("selSku");
       },
     };
   },

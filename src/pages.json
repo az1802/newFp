@@ -3,24 +3,24 @@
     "autoscan": true
   },
   "pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-    // {
-    //   "path": "pages/index/index",
-    //   "style": {
-    //     "navigationBarTitleText": "uni-app"
-    //   }
-    // },
-    // {
-    //   "path": "pages/order/order",
-    //   "style": {
-    //     "navigationBarTitleText": "uni-app"
-    //   }
-    // },
-    // {
-    //   "path": "pages/mine/mine",
-    //   "style": {
-    //     "navigationBarTitleText": "uni-app"
-    //   }
-    // },
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "uni-app"
+      }
+    },
+    {
+      "path": "pages/order/order",
+      "style": {
+        "navigationBarTitleText": "uni-app"
+      }
+    },
+    {
+      "path": "pages/mine/mine",
+      "style": {
+        "navigationBarTitleText": "uni-app"
+      }
+    },
     {
       "path": "pages/test/test",
       "style": {
@@ -28,61 +28,100 @@
       }
     }
   ],
-  "subPackages": [
-    // {
-    //   "root": "package-menu",
-    //   "pages": [{
-    //     "path": "menu",
-    //     "style": {
-    //       "disableScroll": true
-    //     }
-    //   }]
-    // },
-    // {
-    //   "root": "package-order",
-    //   "pages": [{
-    //       "path": "create-order",
-    //       "style": {
-    //         "disableScroll": true
-    //       }
-    //     },
-    //     {
-    //       "path": "pay-order",
-    //       "style": {
-    //         "disableScroll": true
-    //       }
-    //     }
-    //   ]
-    // }
+  "subPackages": [{
+      "root": "package-menu",
+      "pages": [{
+        "path": "menu",
+        "style": {
+          "disableScroll": true
+        }
+      }]
+    },
+    {
+      "root": "package-order",
+      "pages": [{
+          "path": "create-order",
+          "style": {
+            "disableScroll": false
+          }
+        },
+        {
+          "path": "pay-order",
+          "style": {
+            "disableScroll": true
+          }
+        }
+      ]
+    },
+    {
+      "root": "package-other",
+      "pages": [{
+          "path": "add-address/add-address",
+          "style": {}
+        },
+        {
+          "path": "address-list/address-list",
+          "style": {}
+        },
+        {
+          "path": "coupon-accord-text/coupon-accord-text"
+        },
+        {
+          "path": "deposit-rules/deposit-rules",
+          "style": {}
+        },
+        {
+          "path": "fanpiao-rules/fanpiao-rules",
+          "style": {
+            "enablePullDownRefresh": true
+          }
+        },
+        {
+          "path": "discount-rules/discount-rules",
+          "style": {
+            "enablePullDownRefresh": true
+          }
+        }
+      ]
+    },
+    {
+      "root": "package-marketing",
+      "pages": [{
+        "path": "buy-fanpiao/buy-fanpiao",
+        "style": {
+          "disableScroll": false
+        }
+      }, ]
+    },
   ],
   "globalStyle": {
     "navigationStyle": "custom",
   },
-  // "tabBar": {
-  //   "color": "#666666",
-  //   "selectedColor": "#F25643",
-  //   "borderStyle": "white",
-  //   "list": [{
-  //       "text": "饭票",
-  //       "pagePath": "pages/index/index",
-  //       "spacing": "2px",
-  //       // "iconPath": "static/tabs/tab-icon-fanpiao.jpg",
-  //       // "selectedIconPath": "static/tabs/tab-icon-fanpiao_active.jpg"
-  //     },
-  //     {
-  //       "text": "订单",
-  //       "pagePath": "pages/order/order",
-  //       "spacing": "2px",
-  //       // "iconPath": "static/tabs/tab-icon-order.jpg",
-  //       // "selectedIconPath": "static/tabs/tab-icon-order_active.jpg"
-  //     },
-  //     {
-  //       "text": "我的",
-  //       "pagePath": "pages/mine/mine",
-  //       "spacing": "2px",
-  //       // "iconPath": "static/tabs/tab-icon-mine.jpg",
-  //       // "selectedIconPath": "static/tabs/tab-icon-mine_active.jpg"
-  //     }
-  //   ]
-  // }
+  "tabBar": {
+    "color": "#666666",
+    "selectedColor": "#F25643",
+    "borderStyle": "white",
+    "list": [{
+        "text": "饭票",
+        "pagePath": "pages/index/index",
+        "spacing": "2px",
+        // "iconPath": "static/tabs/tab-icon-fanpiao.jpg",
+        // "selectedIconPath": "static/tabs/tab-icon-fanpiao_active.jpg"
+      },
+      {
+        "text": "订单",
+        "pagePath": "pages/order/order",
+        "spacing": "2px",
+        // "iconPath": "static/tabs/tab-icon-order.jpg",
+        // "selectedIconPath": "static/tabs/tab-icon-order_active.jpg"
+      },
+      {
+        "text": "我的",
+        "pagePath": "pages/mine/mine",
+        "spacing": "2px",
+        // "iconPath": "static/tabs/tab-icon-mine.jpg",
+        // "selectedIconPath": "static/tabs/tab-icon-mine_active.jpg"
+      }
+    ]
+  }
 }

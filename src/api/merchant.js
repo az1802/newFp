@@ -53,3 +53,8 @@ export async function getCouponList(merchantId) {
   let res = await http.get(url);
   return res;
 }
+export async function getFanpiaoPlatformRecords() {
+  let url = `${URLS.FANPIAO_PLATFORM_RECORDS}`;
+  let res = await http.get(url);
+  return res;
+}

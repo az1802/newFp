@@ -5,7 +5,7 @@
  * @LastEditTime: 2022-02-18 13:59:51
  * @FilePath: /new-fanpiao-uniapp/src/state/modules/menu.js
  */
-import { setStorage } from "@utils/common"
+import { setStorage } from "@utils"
 export default {
   state: {
     selectedDishes: [],
@@ -15,7 +15,13 @@ export default {
       childDishGroups: []
     },
     showSkuModal: false,
-    showCartModal: true,
+    showCartModal: false,
+    curChildSkuDish: {
+      attrList: [],
+      supplyCondiments: [],
+      childDishGroups: []
+    },
+    showChildSkuModal: false,
   },
   getters: {
     getDishCountById: state => dishId => {
@@ -128,12 +134,19 @@ export default {
     toggleShowSkuModal(state, val) {
       state.showSkuModal = val
     },
+    toggleShowChildSkuModal(state, val) {
+      state.showChildSkuModal = val
+    },
     toggleShowCartModal(state, val) {
       state.showCartModal = val
     },
     setCurSkuDish(state, dishInfo) {
       dishInfo = JSON.parse(JSON.stringify(dishInfo))
       state.curSkuDish = dishInfo
+    },
+    setCurChildSkuDish(state, dishInfo) {
+      dishInfo = JSON.parse(JSON.stringify(dishInfo))
+      state.curChildSkuDish = dishInfo
     },
     saveSelectedDishesStorage({ selectedDishes }) {
       setStorage("selected-dishes", selectedDishes)

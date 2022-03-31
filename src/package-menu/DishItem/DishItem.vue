@@ -23,13 +23,22 @@
       </div>
       <div class="price">{{ fenToYuan(dish.price) }}</div>
     </div>
-    <DishOperation :dishId="dish.id" :isSku="dish.isSku" />
+    <DishOperation
+      :dishId="dish.id"
+      :isSku="dish.isSku"
+      @add="add"
+      @reduce="reduce"
+      @selSku="showSkuDish"
+      :quantity="dishCountMap[dish.id]"
+    />
   </div>
 </template>
 <script>
-import DishOperation from "./DishOperation.vue";
+import DishOperation from "../Common/DishOperation.vue";
 import { ref, onMounted } from "vue";
 import { useTransformPrice } from "@hooks/commonHooks";
+import { useDish, useSkuDish } from "@hooks/menuHooks";
+import { getDishInfoById } from "@utils";
 export default {
   components: {
     DishOperation,
@@ -43,12 +52,29 @@ export default {
   setup({ dish }) {
     let showPlaceHolder = ref(true);
     let { fenToYuan } = useTransformPrice();
+
+    let { addDish, reduceDish, dishCountMap } = useDish();
+    let { setCurSkuDish, toggleShowSkuModal } = useSkuDish();
+
     return {
       showPlaceHolder,
+      dishCountMap,
       imgLoaded(e) {
         showPlaceHolder.value = false;
       },
       fenToYuan,
+      add() {
+        let dishInfo = getDishInfoById(dish.id);
+        addDish(dishInfo);
+      },
+      reduce() {
+        reduceDish(dish.id);
+      },
+      showSkuDish() {
+        let dishInfo = getDishInfoById(dish.id);
+        setCurSkuDish(dishInfo);
+        toggleShowSkuModal(true);
+      },
     };
   },
 };

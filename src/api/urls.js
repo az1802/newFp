@@ -21,4 +21,9 @@ export default {
   USER_FANPIAO_BALANCE: "/fanpiao/get_user_fanpiao_fee",
   USER_MEMBER_BALANCE: "/membership/get_user_member_card_deposit",
 
+  // 饭票所有的购买记录
+  FANPIAO_PLATFORM_RECORDS: "/fanpiao/platform/purchase/records",
+
+  // 用户支付接口
+  PAYMENT_PREPAY: '/payment/prepay',
 }

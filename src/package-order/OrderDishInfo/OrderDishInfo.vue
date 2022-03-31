@@ -54,10 +54,10 @@ export default {
 <style lang="less" scoped>
 @import "@design/index.less";
 .order-list-container {
-  .box-size(calc(100%-24px),unset,white);
-  margin: 0 12px;
+  .box-size(calc(100% - 24px),unset,white);
+  margin: 0 auto;
   padding: 0 12px;
-  border-radius: 10px 10px 0 0;
+  border-radius: 10px;
   .info {
     .flex-simple(space-between,center);
     .box-size(100%,46px);

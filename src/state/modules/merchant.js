@@ -11,6 +11,8 @@ export default {
     merchantInfo: {},
     fanpiaoList: [],
     couponList: [],
+    fanpiaoUserAvaterList: [],
+    fanpiaoUserNum: 0,
   },
   getters: {
     maxDiscountFanpiao(state) {
@@ -30,6 +32,12 @@ export default {
     },
     setCouponList(state, couponList) {
       state.couponList = couponList;
+    },
+    setFanpiaoUserList(state, fanpiaoUserAvaterList) {
+      state.fanpiaoUserAvaterList = fanpiaoUserAvaterList;
+    },
+    setFanpiaoUserNum(state, fanpiaoUserNum) {
+      state.fanpiaoUserNum = fanpiaoUserNum;
     },
 
   }

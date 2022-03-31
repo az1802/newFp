@@ -9,9 +9,12 @@
   <div class="create-order-container">
     <NavigationBar title="订单" />
     <TableInfo />
-    <div style="height: 8px"></div>
+    <!-- <div style="height: 8px"></div> -->
     <OrderDishInfo />
-    <div>备注</div>
+    <div style="height: 18px"></div>
+    <CouponInfo />
+    <OrderRemarks />
+    <div style="height: 100px"></div>
     <ConfirmOrder />
   </div>
 </template>
@@ -19,7 +22,9 @@
 import TableInfo from "./TableInfo/TableInfo.vue";
 import OrderDishInfo from "./OrderDishInfo/OrderDishInfo.vue";
 import ConfirmOrder from "./ConfirmOrder/ConfirmOrder.vue";
-import { getStorage } from "@utils/common";
+import CouponInfo from "./CouponInfo/CouponInfo.vue";
+import OrderRemarks from "./OrderRemarks/OrderRemarks.vue";
+import { getStorage } from "@utils";
 
 import { useDish } from "@hooks/menuHooks";
 import { useTransformPrice } from "@hooks/commonHooks";
@@ -30,6 +35,8 @@ export default {
     TableInfo,
     OrderDishInfo,
     ConfirmOrder,
+    CouponInfo,
+    OrderRemarks,
   },
   onLoad() {},
   setup() {

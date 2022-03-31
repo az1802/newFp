@@ -24,7 +24,7 @@ export default {
   },
   methods: {
     _initSystemInfo() {
-      // this.globalData.systemInfo = uni.getSystemInfoSync();
+      this.globalData.systemInfo = uni.getSystemInfoSync();
     },
   },
 };

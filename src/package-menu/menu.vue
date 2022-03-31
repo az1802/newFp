@@ -7,12 +7,14 @@
 -->
 <template>
   <div class="container">
+    <NavigationBar title="" />
     <MenuHeader />
     <div class="menu-wrapper" :style="menuWrapperStyle">
       <MenuList :dishList="dishList" />
     </div>
     <MenuBottom />
     <SkuModal />
+    <ChildSkuModal />
     <CartModal />
   </div>
 </template>
@@ -21,6 +23,7 @@ import { reactive, onBeforeMount, onMounted, ref } from "vue";
 import MenuHeader from "./MenuHeader/MenuHeader.vue";
 import MenuList from "./MenuList/MenuList.vue";
 import SkuModal from "./SkuModal/SkuModal.vue";
+import ChildSkuModal from "./SkuModal/ChildSkuModal.vue";
 import CartModal from "./CartModal/CartModal.vue";
 import MenuBottom from "./MenuBottom/MenuBottom.vue";
 
@@ -33,7 +36,7 @@ const {
   getCouponList,
 } = API.Merchant;
 
-import { sleep, handleDishList, getStorage } from "@utils/common";
+import { sleep, handleDishList, getStorage } from "@utils";
 import { useSystemInfo } from "@hooks/commonHooks";
 import {
   useMerchantInfo,
@@ -50,8 +53,8 @@ export default {
     MenuBottom,
   },
   setup(props, context) {
-    const scene = "5c77abcc369d408d96e61a3583022dcd";
-    const merchantId = "4146f4810c74424b819d7fcfb84826e8";
+    const scene = "37fff5ad022849ee9abdf2c1b956ceba";
+    const merchantId = "1e543376139b474e97d38d487fa9fbe8";
 
     let dishList = reactive([]);
     let userInfo = reactive({});

@@ -46,7 +46,7 @@
   </div>
 </template>
 <script>
-import { noop } from "@utils/common";
+import { noop } from "@utils";
 import { useCart, useDish, useSkuDish } from "@hooks/menuHooks";
 import { useTransformPrice } from "@hooks/commonHooks";
 export default {

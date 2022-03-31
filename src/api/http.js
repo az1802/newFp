@@ -58,7 +58,7 @@ http.interceptors.response.use(function (response) {
   // 此处可以查看url 做响应的数据埋点,日志记录
   // TODO 根据不同的status对数据做不同的处理 然后返回.
   if (response.data.errcode == 0) {
-    return response.data.data;
+    return response.data.data || response.data;
   } else {
     return false;
   }
