@@ -17,11 +17,19 @@
         @load="imgLoaded"
       />
     </div>
-    <div class="info">
+    <div class="info" @click.stop="navigateTo('MARKETING/BUY_FANPIAO')">
       <div class="name">
-        {{ dish.name }}
+        <!-- {{ dish.name }} -->
+        <div class="text">{{ dish.name }}</div>
+        <div class="sold-num">月售{{ dish.soldNumber + 20 }}份</div>
       </div>
-      <div class="price">{{ fenToYuan(dish.price) }}</div>
+      <div class="price" @click.stop="navigateTo('MARKETING/BUY_FANPIAO')">
+        <div class="origin">{{ fenToYuan(dish.price) }}</div>
+        <div class="fanpiao">
+          <span class="text">{{ fenToYuan(dish.price) }}</span>
+          <span class="icon">饭票价</span>
+        </div>
+      </div>
     </div>
     <DishOperation
       :dishId="dish.id"
@@ -39,6 +47,7 @@ import { ref, onMounted } from "vue";
 import { useTransformPrice } from "@hooks/commonHooks";
 import { useDish, useSkuDish } from "@hooks/menuHooks";
 import { getDishInfoById } from "@utils";
+import { useNavigate } from "@hooks/commonHooks";
 export default {
   components: {
     DishOperation,
@@ -55,10 +64,12 @@ export default {
 
     let { addDish, reduceDish, dishCountMap } = useDish();
     let { setCurSkuDish, toggleShowSkuModal } = useSkuDish();
+    const { navigateTo } = useNavigate();
 
     return {
       showPlaceHolder,
       dishCountMap,
+      navigateTo,
       imgLoaded(e) {
         showPlaceHolder.value = false;
       },
@@ -100,15 +111,52 @@ export default {
     }
   }
   .info {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    .bold-font(16px,#333);
+    .flex-between(column);
+    flex: 1;
     .name {
-      color: #333;
+      .text {
+        .bold-font(16px,#333);
+        .line-center(20px);
+        width: 100%;
+      }
+      .sold-num {
+        .line-center(18px);
+        .normal-font(12px,#666);
+        margin-top: 4px;
+      }
     }
     .price {
-      color: #f25643;
+      .origin {
+        .bold-font(16px,#f25643);
+        .price-symbol(12px);
+        .line-center(16px);
+      }
+      .fanpiao {
+        .line-center(15px);
+        background: rgba(255, 143, 31, 0.2);
+        border-radius: 2px;
+        margin-top: 4px;
+        display: inline-flex;
+        padding-left: 5px;
+        .text {
+          .bold-font(12px,#f25643);
+          .price-symbol(12px);
+          padding: 0 5px;
+          &::after {
+            content: "起";
+            font-size: 10px;
+            margin-left: 2px;
+          }
+        }
+        .icon {
+          .box-size(40px,100%);
+          .normal-font(11px,white);
+          display: inline-block;
+          text-align: center;
+          background: url("@assets/lowest-price.png");
+          background-size: 40px 15px;
+        }
+      }
     }
   }
 }

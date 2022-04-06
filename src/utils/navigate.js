@@ -1,17 +1,23 @@
 
 import routes from './routes';
-export async function navigateTo(path) {
+export async function navigateTo(path, pageOpts = {}) {
   let pathArr = path.split("/");
   let url = "";
 
   pathArr.forEach(item => {
     url = url ? url[item] : routes[item]
   });
+  let paramsStrs = [];
+  for (let key in pageOpts) {
+    paramsStrs.push(`${key}=${pageOpts[key]}`);
+  }
+  console.log('%cparamsStrs: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', paramsStrs);
 
   if (url) {
+
     return new Promise(resolve => {
       uni.navigateTo({
-        url,
+        url: paramsStrs.length == 0 ? url : `${url}?${paramsStrs.join("&")}`,
         success() {
           resolve(true)
         },

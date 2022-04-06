@@ -6,7 +6,14 @@
  * @FilePath: /new-fanpiao-uniapp/src/components/NavigationBar/NavigationBar.vue
 -->
 <template>
-  <div class="nav-container" :style="{ paddingTop: statusBarHeight + 'px' }">
+  <div
+    class="nav-container"
+    :style="{
+      paddingTop: statusBarHeight + 'px',
+      opacity: backgroundOpacity,
+      background: backgroundColor,
+    }"
+  >
     <div class="arrow" v-if="showArrow" @click="navigateBack">
       <span
         class="iconfont icon-dajiantouzuo"
@@ -43,6 +50,10 @@ export default {
     backgroundOpacity: {
       type: Number,
       default: 1,
+    },
+    backgroundColor: {
+      type: String,
+      default: "white",
     },
   },
   setup(props, context) {

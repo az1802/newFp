@@ -30,7 +30,27 @@ export async function createOrder(merchantId, orderInfo) {
 export async function pay(args) {
   let url = URLS.PAYMENT_PREPAY
   let res = await http.post(url, args);
-  console.log('%cargs: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', res);
+  return res;
+}
 
+export async function getOrderDetailById(orderId) {
+  let url = `${URLS.ORDER_DETAIL}/${orderId}`;
+  let res = await http.get(url);
+  return res;
+}
+
+export async function getOrderList() {
+  let url = `${URLS.USER_ORDER_LIST}`;
+  let res = await http.get(url);
+  return res;
+}
+export async function getFanpiaoList() {
+  let url = `${URLS.USER_FANPIAO_LIST}`;
+  let res = await http.get(url);
+  return res;
+}
+export async function getCouponList() {
+  let url = `${URLS.USER_COUPON_LIST}`;
+  let res = await http.get(url);
   return res;
 }

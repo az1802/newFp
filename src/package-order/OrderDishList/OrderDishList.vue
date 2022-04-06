@@ -7,11 +7,7 @@
 -->
 <template>
   <div class="dish-list">
-    <div
-      class="dish-item"
-      v-for="(dishItem, index) in selectedDishes"
-      :key="index"
-    >
+    <div class="dish-item" v-for="(dishItem, index) in dishList" :key="index">
       <div class="left">
         <img class="img" :src="dishItem.image" mode="aspectFill" alt="" />
         <div class="info">
@@ -30,13 +26,17 @@
 import { useDish, useSkuDish } from "@hooks/menuHooks";
 import { useTransformPrice } from "@hooks/commonHooks";
 export default {
+  props: {
+    dishList: {
+      type: [Array],
+      default: [],
+    },
+  },
   components: {},
   setup() {
-    let { selectedDishes } = useDish();
     const { genDishDescribeText, calcSkuDishPrice } = useSkuDish();
     let { fenToYuan } = useTransformPrice();
     return {
-      selectedDishes,
       genDishDescribeText,
       fenToYuan,
     };

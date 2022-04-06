@@ -23,11 +23,6 @@ export default {
     },
   },
   setup(props, { emit }) {
-    console.log(
-      "%cprops: ",
-      "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-      props
-    );
     return {
       // ...toRefs(props),
       change() {

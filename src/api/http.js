@@ -54,7 +54,7 @@ const baseConfig = {
 const http = axios.create(baseConfig);
 
 http.interceptors.response.use(function (response) {
-  // console.log('%cresponse2: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', response);
+  console.log('%cresponse2: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', response);
   // 此处可以查看url 做响应的数据埋点,日志记录
   // TODO 根据不同的status对数据做不同的处理 然后返回.
   if (response.data.errcode == 0) {

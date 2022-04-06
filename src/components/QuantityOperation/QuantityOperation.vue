@@ -7,9 +7,9 @@
 -->
 <template>
   <div class="quantity-operation">
-    <span v-if="num" class="iconfont icon-jian" @click="reduce"></span>
+    <span v-if="num" class="iconfont icon-jian" @click.stop="reduce"></span>
     <div v-if="num" class="num">{{ num }}</div>
-    <span class="iconfont icon-jia" @click="add"></span>
+    <span class="iconfont icon-jia" @click.stop="add"></span>
   </div>
 </template>
 <script>

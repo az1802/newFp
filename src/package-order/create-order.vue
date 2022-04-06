@@ -10,7 +10,10 @@
     <NavigationBar title="订单" />
     <TableInfo />
     <!-- <div style="height: 8px"></div> -->
-    <OrderDishInfo />
+    <OrderDishInfo
+      :dishList="selectedDishes"
+      :totalPrce="selectedDishesTotalPrice"
+    />
     <div style="height: 18px"></div>
     <CouponInfo />
     <OrderRemarks />
@@ -40,11 +43,18 @@ export default {
   },
   onLoad() {},
   setup() {
-    let { resetSelDishes } = useDish();
+    let { selectedDishes, selectedDishesTotalPrice, resetSelDishes } =
+      useDish();
     let { requestMerchantInfo } = useMerchantInfo();
+
+    //TODO  后续拿掉
     resetSelDishes(getStorage("selected-dishes"));
     requestMerchantInfo("4146f4810c74424b819d7fcfb84826e8");
-    return {};
+
+    return {
+      selectedDishes,
+      selectedDishesTotalPrice,
+    };
   },
 };
 </script>

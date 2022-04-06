@@ -31,6 +31,7 @@ export default {
       state.fanpiaoList = fanpiaoList;
     },
     setCouponList(state, couponList) {
+      console.log('%ccouponList: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', couponList);
       state.couponList = couponList;
     },
     setFanpiaoUserList(state, fanpiaoUserAvaterList) {

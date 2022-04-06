@@ -9,18 +9,18 @@
   <div class="order-list-container">
     <div class="info">
       <span class="name">{{ merchantInfo.name }}</span>
-      <span class="count" v-if="selectedDishes.length"
-        >共{{ selectedDishes.length }}件</span
+      <span class="count" v-if="dishList.length"
+        >共{{ dishList.length }}件</span
       >
     </div>
     <div class="dish-list-wrapper">
-      <OrderDishList />
+      <OrderDishList :dishList="dishList" />
     </div>
     <SplitLine paddingTop="16" />
     <div class="price-info">
       <div class="discount-price">有优惠<span class="num">0</span></div>
       <div class="total-price">
-        小计<span class="num">{{ fenToYuan(selectedDishesTotalPrice) }}</span>
+        小计<span class="num">{{ fenToYuan(totalPrce) }}</span>
       </div>
     </div>
   </div>
@@ -35,15 +35,22 @@ export default {
   components: {
     OrderDishList,
   },
+  props: {
+    dishList: {
+      type: [Array],
+      default: [],
+    },
+    totalPrce: {
+      type: [String, Number],
+      default: "",
+    },
+  },
   setup() {
-    let { selectedDishes, selectedDishesTotalPrice } = useDish();
     let { merchantInfo } = useMerchantInfo();
     let { genDishDescribeText } = useSkuDish();
     let { fenToYuan } = useTransformPrice();
 
     return {
-      selectedDishes,
-      selectedDishesTotalPrice,
       merchantInfo,
       genDishDescribeText,
       fenToYuan,

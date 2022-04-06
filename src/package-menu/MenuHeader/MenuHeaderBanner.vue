@@ -6,7 +6,7 @@
  * @FilePath: /new-fanpiao-uniapp/src/package-menu/MenuHeader/MenuHeaderBanner.vue
 -->
 <template>
-  <div class="banner-container">
+  <div class="banner-container" @click="navigateTo('MARKETING/BUY_FANPIAO')">
     <div class="banner">
       <img
         class="banner-background"
@@ -36,13 +36,16 @@
 </template>
 <script>
 import { useFanpiaoInfo, useMerchantInfo } from "@hooks/merchantHooks";
+import { useNavigate } from "@hooks/commonHooks";
 export default {
   setup() {
     const { maxDiscountFanpiao } = useFanpiaoInfo();
     const { merchantInfo } = useMerchantInfo();
+    const { navigateTo } = useNavigate();
     return {
       merchantInfo,
       maxDiscountFanpiao,
+      navigateTo,
     };
   },
 };

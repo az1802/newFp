@@ -108,6 +108,8 @@ export default {
   .foods-container {
     flex: 1;
     height: 100%;
+    padding: 0 12px;
+    box-sizing: border-box;
     .category-view-wrapper:last-child {
       padding-bottom: 60px;
     }

@@ -11,7 +11,6 @@
     <view class="text-area">
       <text class="title">{{ title }}123</text>
     </view>
-    <TestA />
   </view>
 </template>
 

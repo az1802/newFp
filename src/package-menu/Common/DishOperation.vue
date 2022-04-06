@@ -7,7 +7,7 @@
 -->
 <template>
   <div class="container">
-    <div class="sku" v-if="isSku" @click="showSkuDish">
+    <div class="sku" v-if="isSku" @click.stop="showSkuDish">
       选规格
       <div v-show="quantity" class="quantity">{{ quantity }}</div>
     </div>
@@ -48,7 +48,7 @@ export default {
 <style lang="less" scoped>
 @import "@design/index.less";
 .container {
-  .pos-br-absolute(10px,10px);
+  .pos-br-absolute(0px,0px);
   .sku {
     .normal-font(12px,white);
     .btn(28px);

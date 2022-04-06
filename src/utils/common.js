@@ -16,3 +16,68 @@ export async function sleep(time) {
 export function noop() {
 
 }
+
+export async function showToast(msg = '', icon = 'none', duration = 1500) {
+  if (!msg) return;
+
+  return new Promise((resolve, reject) => {
+    uni.showToast({
+      title: msg,
+      icon,
+      duration,
+      success() {
+        resolve(true);
+      },
+      fail() {
+        resolve(false);
+      }
+    })
+  })
+
+}
+
+export async function showConfirmModal(title = '', content = "") {
+  return new Promise(resolve => {
+    uni.showModal({
+      title,
+      content,
+      icon: 'none',
+      duration: 1500,
+      success({ confirm, cancal }) {
+        resolve(confirm);
+      },
+      fail() {
+        resolve(false);
+      }
+    })
+  })
+}
+
+
+export async function copyInfo(msg) {
+  return new Promise((resolve, reject) => {
+    uni.setClipboardData({
+      data: String(msg),
+      success() {
+        showToast("已复制内容至剪切板")
+      },
+      fail() {
+        showToast("复制内容至剪切板出错")
+      }
+    })
+  })
+}
+
+
+export function handleQrcodeStr(qrcodeStr) {
+  let res = {}
+  if (qrcodeStr.indexOf("?") != -1) {
+    let paramsStr = qrcodeStr.slice(qrcodeStr.indexOf("?") + 1);
+    let valStrs = paramsStr.split("&");
+    for (let i = 0; i < valStrs.length; i++) {
+      let temp = valStrs[i].split("=");
+      res[temp[0]] = temp[1];
+    }
+  }
+  return res;
+}

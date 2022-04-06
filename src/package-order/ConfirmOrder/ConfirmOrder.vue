@@ -31,11 +31,6 @@ export default {
     async function confirmOrder() {
       let res = await createOrder();
       let { orderId } = res;
-      console.log(
-        "%corderId: ",
-        "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-        orderId
-      );
       navigateTo("ORDER/PAY_ORDER");
     }
 

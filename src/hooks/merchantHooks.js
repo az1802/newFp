@@ -24,7 +24,7 @@ export function useMerchantInfo() {
   const { setMerchantInfo } = useMutations("merchant", ["setMerchantInfo"]);
   const { merchantInfo } = useState("merchant", ['merchantInfo']);
   if (Object.keys(unref(merchantInfo)).length == 0) {
-    requestMerchantInfo(mockMerhantId)
+    requestMerchantInfo()
   }
 
   async function requestMerchantInfo(merchantId) {
@@ -45,9 +45,9 @@ export function useFanpiaoInfo() {
   const { setFanpiaoList, setFanpiaoUserList, setFanpiaoUserNum } = useMutations("merchant", ["setFanpiaoList", "setFanpiaoUserList", "setFanpiaoUserNum"]);
   const { fanpiaoList, fanpiaoUserAvaterList, fanpiaoUserNum } = useState("merchant", ['fanpiaoList', "fanpiaoUserAvaterList", 'fanpiaoUserNum']);
 
-  if (!fanpiaoList?.value?.length) {
-    requestFanpiaoList(merchantId);
-  }
+  // if (!fanpiaoList?.value?.length) {
+  //   requestFanpiaoList(merchantId);
+  // }
   async function requestFanpiaoList(merchantId) {
     if (!merchantId) {
       return;
@@ -64,6 +64,8 @@ export function useFanpiaoInfo() {
     }
   }
 
+
+
   return {
     fanpiaoList,
     fanpiaoUserNum,
@@ -74,29 +76,43 @@ export function useFanpiaoInfo() {
     requestFanpiaoList,
     setFanpiaoList,
     requestFanpiaoList,
-    requestFanpiaoPlatformRecords
+    requestFanpiaoPlatformRecords,
   }
 }
 
 export function useCouponInfo() {
   const { setCouponList } = useMutations("merchant", ["setCouponList"]);
-  const { couponInfo } = useState("merchant", ['couponInfo'])
-  if (!couponInfo?.value?.length) {
-    requestCouponList(merchantId)
-  }
+  const { couponList } = useState("merchant", ['couponList'])
+  // if (!couponInfo?.value?.length) {
+  //   requestCouponList(merchantId)
+  // }
   async function requestCouponList(merchantId) {
     if (!merchantId) {
       return;
     }
     let res = await getCouponList(merchantId)
-    setCouponList(res.couponPackages);
+    setCouponList(Object.values(res.couponPackages));
   }
 
   function calcRightCoupon(BillFee) {
 
   }
 
-  return { couponInfo, setCouponList, requestCouponList }
+  return { couponList, setCouponList, requestCouponList }
+}
+
+
+export function useRefund() {
+  async function refundFanpiaoApply(fanpiaoInfo) {
+    let res = await API.Merchant.refundFanpiaoApply(fanpiaoInfo)
+    return res;
+  }
+
+
+  return {
+    refundFanpiaoApply
+
+  }
 }
 
 

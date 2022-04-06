@@ -70,7 +70,7 @@ export default {
 @cartHeight: 50px;
 
 .menu-bottom-container {
-  .box-size(100%,70px,#ccc);
+  .box-size(100%,0px,transparent);
   flex-shrink: 0;
   padding: 0 12px;
   position: relative;

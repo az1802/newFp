@@ -8,6 +8,10 @@
 
 import URLS from './urls'
 import http from './http';
+http.setHeaders({
+  userId: "d4848915-b103-4e1a-abfd-a04886fa61e6"
+})
+
 
 export async function getUserMerchantInfo(merchantId) {
   let url = `${URLS.USER_MERCHANT_INFO}/${merchantId}`;
@@ -23,6 +27,33 @@ export async function getUserFanpiaoBalance(merchantId) {
 
 export async function getUserMemberBalance(merchantId) {
   let url = `${URLS.USER_MEMBER_BALANCE}/${merchantId}`;
+  let res = await http.get(url);
+  return res;
+}
+
+export async function getUserInfo() {
+  let url = `${URLS.USER_INFO}`;
+  let res = await http.get(url);
+  return res;
+}
+export async function getUserSavingStats() {
+  let url = `${URLS.USER_SAVING_STATS}`;
+  let res = await http.get(url);
+  return res;
+}
+export async function getUserWallet() {
+  let url = `${URLS.USER_WALLET}`;
+  let res = await http.get(url);
+  return res;
+}
+export async function getUserFanpiaoRecords() {
+  let url = `${URLS.USER_FANPIAO_RECORDS}`;
+  let res = await http.get(url);
+  return res;
+}
+
+export async function getRedPaperList() {
+  const url = `${URLS.USER_RED_PAPER_LIST}`
   let res = await http.get(url);
   return res;
 }

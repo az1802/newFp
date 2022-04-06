@@ -6,7 +6,7 @@
  * @FilePath: /new-fanpiao-uniapp/src/utils/hooks/commonHooks.js
  */
 import { computed, ref, reactive } from 'vue'
-import { getDishInfoById, navigateTo, navigateBack } from "@utils";
+import { getDishInfoById, navigateTo, navigateBack, formatTme } from "@utils";
 import { getDishCatalogScene, getMerchantInfo, getMerchantDishCategory } from "@api/merchant"
 import { useState, useGetters, useMutations } from "@hooks/storeHooks";
 
@@ -50,5 +50,33 @@ export function useNavigate() {
   return {
     navigateTo,
     navigateBack
+  }
+}
+
+
+export function useTabs(tabsArr = []) {
+
+  let tabs = ref(tabsArr), curTabIndex = ref(0);
+
+
+  function switchTab(index) {
+    curTabIndex.value = index;
+  }
+
+
+  return {
+    tabs,
+    switchTab,
+    curTabIndex
+
+  }
+}
+
+
+export function useTimeTransform() {
+
+
+  return {
+    formatTme
   }
 }

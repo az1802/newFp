@@ -7,51 +7,163 @@
 -->
 
 <template>
-  <view class="content">
-    <image class="logo" src="/static/logo.png"></image>
-    <view class="text-area">
-      <text class="title">{{ title }}123</text>
-    </view>
-    <TestA />
-  </view>
+  <div class="page">
+    <NavigationBar title="订单" :showArrow="false" />
+    <div class="tab-wrapper">
+      <div
+        v-for="(item, index) in tabs"
+        class="tab-item"
+        :key="item.value"
+        :class="{ active: index === curTabIndex }"
+        @click="switchTab(index)"
+      >
+        {{ item.text }}
+      </div>
+      <div class="line-wrapper" :style="lineStyle">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div class="tab-container">
+      <scroll-view class="tab-container-scroll-view" scrollY>
+        <OrderSimpleInfo
+          v-for="item in showOrderList"
+          :orderType="orderType"
+          :orderInfo="item"
+          :key="item.id"
+        />
+      </scroll-view>
+    </div>
+  </div>
 </template>
 
 <script>
+import { useTabs, useSystemInfo } from "@hooks/commonHooks";
+import { useOrderRecord } from "@hooks/orderHooks";
+import { computed, unref, onBeforeMount, ref, toRefs } from "vue";
+const TAB_ARR = [
+  {
+    text: "点餐",
+    value: "ALL",
+  },
+  {
+    text: "券包",
+    value: "COUPON",
+  },
+  {
+    text: "饭票",
+    value: "FANPIAO",
+  },
+];
+const PAGE_SIZE = 20;
 export default {
-  data() {
+  onLoad() {},
+  setup() {
+    let { curTabIndex, switchTab, tabs } = useTabs(TAB_ARR);
+    let { statusBarHeight } = useSystemInfo();
+    let {
+      orderList,
+      fanpiaoList,
+      couponList,
+      getOrderList,
+      getFanpiaoRecordList,
+      getCouponRecordList,
+    } = useOrderRecord();
+
+    let lineStyle = computed(() => {
+      return {
+        transform: `translate3d(${100 * unref(curTabIndex)}%, 0, 0)`,
+      };
+    });
+
+    async function requestMoreOrder() {
+      if (unref(curTabIndex) == 0) {
+        getOrderList(true);
+      } else if (unref(curTabIndex) == 1) {
+        getCouponRecordList(true);
+      } else if (unref(curTabIndex) == 2) {
+        getFanpiaoRecordList(true);
+      }
+    }
+
+    let showOrderList = computed(() => {
+      if (unref(curTabIndex) == 0) {
+        return unref(orderList);
+      } else if (unref(curTabIndex) == 1) {
+        return unref(couponList);
+      } else if (unref(curTabIndex) == 2) {
+        return unref(fanpiaoList);
+      }
+
+      return [];
+    });
+
+    const orderType = computed(() => {
+      if (unref(curTabIndex) == 0) {
+        return "DISH";
+      } else if (unref(curTabIndex) == 1) {
+        return "COUPON";
+      } else if (unref(curTabIndex) == 2) {
+        return "FANPIAO";
+      }
+      return "";
+    });
+
+    onBeforeMount(() => {
+      getOrderList();
+      getFanpiaoRecordList();
+      getCouponRecordList();
+    });
+
     return {
-      title: "order",
+      tabs,
+      curTabIndex,
+      switchTab,
+      orderType,
+      lineStyle,
+      showOrderList,
     };
   },
-  onLoad() {},
-  methods: {},
 };
 </script>
 
-<style>
-.content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.logo {
-  height: 200rpx;
-  width: 200rpx;
-  margin-top: 200rpx;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 50rpx;
-}
-
-.text-area {
-  display: flex;
-  justify-content: center;
-}
-
-.title {
-  font-size: 36rpx;
-  color: #8f8f94;
+<style lang="less" scoped>
+@import "@design/index.less";
+.page {
+  .box-size(100vw,100vh,#F8F8F8);
+  .tab-wrapper {
+    .box-size(100vw,52px,white);
+    .flex-simple(center,flex-start);
+    position: relative;
+    padding-top: 12px;
+    .tab-item {
+      .flex-simple(center,center);
+      .line-center(17px);
+      .normal-font(17px,#333);
+      position: relative;
+      transition: all 0.3s;
+      flex: 1;
+      &.active {
+        font-weight: bold;
+      }
+    }
+    .line-wrapper {
+      .box-size(33.33%,3px,transparent);
+      .pos-bl-absolute(12px,0);
+      transition: all 0.3s;
+      transform: translate3d(0, 0, 0);
+      .line {
+        .box-size(34px,3px,#f25643);
+        border-radius: 3px;
+        margin: 0 auto;
+      }
+    }
+  }
+  .tab-container {
+    .box-size(calc(100vw - 24px),calc(100vh - 150px),transparent);
+    margin: 0 auto;
+    .tab-container-scroll-view {
+      .box-size(100%,100%,transparent);
+    }
+  }
 }
 </style>

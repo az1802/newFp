@@ -58,3 +58,14 @@ export async function getFanpiaoPlatformRecords() {
   let res = await http.get(url);
   return res;
 }
+export async function refundFanpiaoApply(args) {
+  let url = `${URLS.USER_REFUND_FANPIAO_APPLY}`;
+  let res = await http.post(url, args);
+  return res;
+}
+
+export async function getFanpiaoTransactionDetail(merchantId, fanpiaoInfo) {
+  let url = `${URLS.GET_FANPIAO_TRANSACTION_DETAIL}/merchantId`;
+  let res = await http.get(url, { params: fanpiaoInfo });
+  return res;
+}

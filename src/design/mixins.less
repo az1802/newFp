@@ -1,5 +1,6 @@
 .box-size(@width : 100%, @height:100%,@backgroundColor:white){
   width:@width;
+  flex-basis:@width;
   height:@height;
   box-sizing: border-box;
   background-color: @backgroundColor;
@@ -85,8 +86,9 @@
   justify-content: @content;
   align-items: @items;
 }
-.flex-center(){
-  .flex-simple(center,center)
+.flex-center(@direction:row){
+  .flex-simple(center,center);
+  flex-direction:@direction;
 }
 
 .flex-between(@direction:row){
@@ -127,3 +129,26 @@
     color:@color;
   }
 }
+
+.border-top-1px, .border-right-1px, .border-bottom-1px, .border-left-1px{
+  position: relative;
+  &:before, &:after{
+    content: "";
+    display: block;
+    position: absolute;
+    transform-origin: 0 0;
+  } 
+   
+}
+  
+
+.border-bottom-1px(@lineColor:#e0e0e0){
+  &:after{
+    border-bottom: 1px solid @lineColor;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    transform-origin: 0 bottom;
+  }
+} 
+ 

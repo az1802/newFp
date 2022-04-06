@@ -38,6 +38,15 @@
       }]
     },
     {
+      "root": "package-merchant",
+      "pages": [{
+        "path": "home",
+        "style": {
+          "disableScroll": false
+        }
+      }]
+    },
+    {
       "root": "package-order",
       "pages": [{
           "path": "create-order",
@@ -47,6 +56,12 @@
         },
         {
           "path": "pay-order",
+          "style": {
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "pay-success",
           "style": {
             "disableScroll": true
           }
@@ -93,6 +108,46 @@
         }
       }, ]
     },
+    {
+      "root": "package-mine",
+      "pages": [{
+        "path": "wallet/wallet",
+        "style": {
+          "disableScroll": false
+        }
+      }, {
+        "path": "coupon/coupon",
+        "style": {
+          "disableScroll": false
+        }
+      }, {
+        "path": "feedback/feedback",
+        "style": {
+          "disableScroll": false
+        }
+      }, {
+        "path": "fanpiao/fanpiao",
+        "style": {
+          "disableScroll": false
+        }
+      }, {
+        "path": "fanpiao/fanpiao-transaction-detail",
+        "style": {
+          "disableScroll": false
+        }
+      }, {
+        "path": "red-packet/red-packet",
+        "style": {
+          "disableScroll": false
+        }
+      }, {
+        "path": "red-paper-overview/red-paper-overview",
+        "style": {
+          "disableScroll": false
+        }
+      }, ]
+    },
+
   ],
   "globalStyle": {
     "navigationStyle": "custom",
@@ -105,22 +160,22 @@
         "text": "饭票",
         "pagePath": "pages/index/index",
         "spacing": "2px",
-        // "iconPath": "static/tabs/tab-icon-fanpiao.jpg",
-        // "selectedIconPath": "static/tabs/tab-icon-fanpiao_active.jpg"
+        "iconPath": "static/tabs/tab-icon-fanpiao.jpg",
+        "selectedIconPath": "static/tabs/tab-icon-fanpiao_active.jpg"
       },
       {
         "text": "订单",
         "pagePath": "pages/order/order",
         "spacing": "2px",
-        // "iconPath": "static/tabs/tab-icon-order.jpg",
-        // "selectedIconPath": "static/tabs/tab-icon-order_active.jpg"
+        "iconPath": "static/tabs/tab-icon-order.jpg",
+        "selectedIconPath": "static/tabs/tab-icon-order_active.jpg"
       },
       {
         "text": "我的",
         "pagePath": "pages/mine/mine",
         "spacing": "2px",
-        // "iconPath": "static/tabs/tab-icon-mine.jpg",
-        // "selectedIconPath": "static/tabs/tab-icon-mine_active.jpg"
+        "iconPath": "static/tabs/tab-icon-mine.jpg",
+        "selectedIconPath": "static/tabs/tab-icon-mine_active.jpg"
       }
     ]
   }
