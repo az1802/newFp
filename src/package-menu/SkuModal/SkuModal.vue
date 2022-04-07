@@ -78,6 +78,7 @@ export default {
     let selAttrIds = reactive([]);
     let selCondiments = reactive({});
     let childDishList = reactive([]);
+    let selChildDish = reactive({});
 
     const { curSkuDish, showSkuModal, toggleShowSkuModal } = useSkuDish();
     const { addDish } = useDish();
@@ -92,7 +93,7 @@ export default {
         delete selCondiments[key];
       }
 
-      nval.attrList.forEach((attrGroupItem) => {
+      nval?.attrList.forEach((attrGroupItem) => {
         if (
           attrGroupItem.selType == "SINGLE" &&
           attrGroupItem?.attrs?.length > 0
@@ -104,9 +105,13 @@ export default {
         });
       });
 
-      nval.supplyCondiments.forEach((condimentItem) => {
+      nval?.supplyCondiments.forEach((condimentItem) => {
         condimentMap[condimentItem.id] = condimentItem;
       });
+
+      // nval?.childDishGroups.forEach((childDishGroup) => {
+      //   selChildDish[childDishGroup.id] = [];
+      // });
     });
 
     let totalPrice = computed(() => {
@@ -132,14 +137,6 @@ export default {
       //检查加料数量
       let countNum = unref(selCondimentsCount);
       let { type, lowerLimit, upperLimit } = unref(curSkuDish).selectionType;
-      console.log(
-        "%ctype, lowerLimit, upperLimit : ",
-        "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-        type,
-        lowerLimit,
-        upperLimit,
-        countNum
-      );
 
       if (type == "NUMBER_REQUIRED" || type == "NUMBER_RANGE") {
         if (countNum < lowerLimit) {
@@ -188,6 +185,7 @@ export default {
     return {
       selAttrIds,
       selCondiments,
+      selChildDish,
       curSkuDish,
       showSkuModal,
       totalPrice,
