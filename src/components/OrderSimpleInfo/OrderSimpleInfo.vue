@@ -113,7 +113,7 @@
   </div>
 </template>
 <script>
-import { computed, ref, unref } from "vue";
+import { computed, ref, unref, toRaw } from "vue";
 import { useNavigate, useTimeTransform } from "@hooks/commonHooks";
 import { copyInfo } from "@utils";
 import { DEFAULT_DISH_IMG } from "@utils/constants";
@@ -220,7 +220,9 @@ export default {
         copyInfo(unref(orderId));
       },
       openRefundModal() {
-        emit("openRefundModal", props.orderInfo);
+        let orderInfo = toRaw(props.orderInfo);
+        orderInfo.type = toRaw(props.orderType);
+        emit("openRefundModal", orderInfo);
       },
       DEFAULT_DISH_IMG,
     };

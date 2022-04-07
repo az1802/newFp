@@ -7,7 +7,11 @@
 -->
 <template>
   <div class="condiment-list-container">
-    <div class="title">配料</div>
+    <div class="title">
+      配料
+      <span v-if="tooltipText" class="sel-count">{{ selCondimentsCount }}</span>
+      <span class="tooltip-text">{{ tooltipText }}</span>
+    </div>
     <div
       class="condiment-item"
       v-for="condimentItem in condimentList"
@@ -26,6 +30,7 @@
 </template>
 <script>
 import { useTransformPrice } from "@hooks/commonHooks";
+import { computed } from "vue";
 export default {
   props: {
     condimentList: {
@@ -36,20 +41,51 @@ export default {
       type: Object,
       default: {},
     },
+    selectionType: {
+      type: Object,
+      default: {},
+    },
+    selCondimentsCount: {
+      type: [String, Number],
+      default: 0,
+    },
   },
   setup(props) {
     let { selCondiments } = props;
 
     let { fenToYuan } = useTransformPrice();
+
+    let tooltipText = computed(() => {
+      let selectionType = props.selectionType;
+      if (selectionType.type == "NUMBER_REQUIRED") {
+        return `/${selectionType.upperLimit}`;
+      } else if (selectionType.type == "NUMBER_RANGE") {
+        return `/${selectionType.lowerLimit}-${selectionType.upperLimit}`;
+      } else {
+        return "";
+      }
+    });
+
+
+
+    
+
+    function addCondiment({ id }) {
+      let countNum = props.selCondimentsCount;
+      let { type, lowerLimit, upperLimit } = props.selectionType;
+      if(countNum >=upperLimit){return};
+      selCondiments[id] == undefined
+        ? (selCondiments[id] = 1)
+        : (selCondiments[id] += 1);
+    }
+    function reduceCondiment({ id }) {
+      selCondiments[id] -= 1;
+    }
+
     return {
-      addCondiment({ id }) {
-        selCondiments[id] == undefined
-          ? (selCondiments[id] = 1)
-          : (selCondiments[id] += 1);
-      },
-      reduceCondiment({ id }) {
-        selCondiments[id] -= 1;
-      },
+      addCondiment,
+      reduceCondiment,
+      tooltipText,
       fenToYuan,
     };
   },
@@ -61,6 +97,15 @@ export default {
   .title {
     .normal-font(12px,#999);
     .line-center(18px);
+    .sel-count {
+      color: #f25643;
+      margin-left: 10px;
+    }
+    .tooltip-text {
+      .line-center(18px);
+      .normal-font(12px,#999);
+      margin-left: 12px;
+    }
   }
   .condiment-item {
     .flex-simple(space-between,center);

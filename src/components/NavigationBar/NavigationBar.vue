@@ -63,11 +63,6 @@ export default {
   },
   setup(props, context) {
     let { statusBarHeight } = useSystemInfo();
-    console.log(
-      "%cstatusBarHeight: ",
-      "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-      statusBarHeight
-    );
     let { navigateBack } = useNavigate();
     return {
       statusBarHeight,

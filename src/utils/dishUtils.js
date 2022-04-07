@@ -10,6 +10,24 @@ function handleSkuDish(dishes) {
 
 }
 
+
+
+// 处理菜品的单选多选问题
+function _processDishAttr(dish) {
+  if (dish.attrList.length > 0) {
+    dish.attrList.forEach((attrGroupItem) => {
+      if (attrGroupItem?.attrSelectionType?.type == "NONE") {
+        attrGroupItem.selType = attrGroupItem.isMultiSelect ? "MULTI_NOT_MUST" : "SINGLE";
+      } else {
+        attrGroupItem.selType = attrGroupItem?.attrSelectionType?.type
+      }
+
+
+
+    })
+  }
+}
+
 export function handleDishList(dishes) {
 
   let dishesMap = {}, dishNameMap = {}, attrDishMap = {}, hotDishes = [];
@@ -53,6 +71,7 @@ export function handleDishList(dishes) {
 
     categoryItem.dishList.forEach(dishItem => {
       dishItem.isSku = isSkuDish(dishItem)
+      _processDishAttr(dishItem)
 
       scrollTop += DISH_ITEM_HEIGHT;
       dishSrollTops.push(scrollTop);
@@ -69,12 +88,16 @@ export function handleDishList(dishes) {
               childDishItem.attrList = attrList || []
               childDishItem.supplyCondiments = supplyCondiments || []
               childDishItem.isSku = isSkuDish(childDishItem)
+              _processDishAttr(childDishItem)
             }
           })
         })
       }
     })
   })
+
+
+
 
 
   categoryScrollTops.push(Number.MAX_SAFE_INTEGER)

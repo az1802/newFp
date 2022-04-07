@@ -6,7 +6,7 @@
  * @FilePath: /new-fanpiao-uniapp/src/utils/hooks/orderHooks.js
  */
 import { computed, ref, reactive, unref } from 'vue'
-import { getDishInfoById } from "@utils";
+import { getDishInfoById, showToast } from "@utils";
 import { useState, useGetters, useMutations } from "@hooks/storeHooks";
 import API from "@api";
 
@@ -102,6 +102,35 @@ export function useOrderRecord() {
 
 
 
+  async function refundFanpiao(transactionId, args) {
+    let res = await API.User.refundFanpiao(transactionId, args)
+    showToast('饭票退款成功')
+    if (res.errcode == 0) {
+      fanpiaoList.value.forEach(item => {
+        if (item.transactionId == transactionId) {
+          item.status = "REFUND"
+          item.canRefund = false;
+        }
+      })
+    }
+
+  }
+
+  async function refundCoupon(transactionId, args) {
+    let res = await API.User.refundCoupon(transactionId, args)
+    showToast('券包退款成功')
+    if (res.errcode == 0) {
+      couponList.value.forEach(item => {
+        if (item.transactionId == transactionId) {
+          item.status = "REFUND";
+          item.canRefund = false;
+        }
+      })
+    }
+  }
+
+
+
   return {
     orderInfo,
     orderList,
@@ -110,8 +139,8 @@ export function useOrderRecord() {
     getOrderDetailById,
     getOrderList,
     getFanpiaoRecordList,
-    getCouponRecordList
-
-
+    getCouponRecordList,
+    refundFanpiao,
+    refundCoupon
   }
 }

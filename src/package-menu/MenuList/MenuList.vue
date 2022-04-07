@@ -72,22 +72,26 @@ export default {
     let categoryActiveIndex = ref(0),
       scrollIntoView = ref("category-view-0"),
       scrollIntoCategoryView = ref("category-index-0");
+
+    let dishScroll = useThrottleFn((e) => {
+      let { categoryScrollTops } = getApp().globalData;
+      let { scrollTop } = e.detail;
+      let categoryIndex =
+        categoryScrollTops.findIndex((item) => item > scrollTop) - 1;
+      categoryActiveIndex.value = categoryIndex;
+      scrollIntoCategoryView.value = `category-index-${categoryIndex - 3}`;
+    }, 100);
+    function changeCategory(index) {
+      categoryActiveIndex.value = index;
+      scrollIntoView.value = "category-view-" + index;
+    }
+
     return {
       categoryActiveIndex,
       scrollIntoView,
       scrollIntoCategoryView,
-      dishScroll: useThrottleFn((e) => {
-        let { categoryScrollTops } = getApp().globalData;
-        let { scrollTop } = e.detail;
-        let categoryIndex =
-          categoryScrollTops.findIndex((item) => item > scrollTop) - 1;
-        categoryActiveIndex.value = categoryIndex;
-        scrollIntoCategoryView.value = `category-index-${categoryIndex - 3}`;
-      }, 100),
-      changeCategory(index) {
-        categoryActiveIndex.value = index;
-        scrollIntoView.value = "category-view-" + index;
-      },
+      dishScroll,
+      changeCategory,
     };
   },
 };

@@ -68,11 +68,6 @@ export default {
         payMethod: payMethod,
       };
       let res = await API.User.withdraw(data);
-      console.log(
-        "%cres: ",
-        "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-        res
-      );
       if (res) {
         //#ifdef MP-WEIXIN
         showToast("已发起提现请求，请前往微信钱包留意到账情况");

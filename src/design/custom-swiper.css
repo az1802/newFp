@@ -1,0 +1,13 @@
+.swiper-wrapper .wx-swiper-dot.wx-swiper-dot-active{
+  background:#F25643;
+  border-radius: 50%;
+}
+.swiper-wrapper .wx-swiper-dot{
+  width:4px;
+  height:4px;
+  background-color: #D8D8D8;
+  border-radius:50%;
+  position: relative;
+  top:4px;
+  z-index:100;
+}

@@ -62,7 +62,6 @@ export async function withdraw(args) {
   return res;
 }
 export async function getUserOwnCouponList(args) {
-  console.log('%cargs: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', args);
   let url = `${URLS.USER_OWN_COUPON_LIST}`;
   let res = await http.get(url, {
     data: {
@@ -76,5 +75,17 @@ export async function getUserOwnCouponList(args) {
 export async function getUserMerchantCoupon(merchantId) {
   let url = `${URLS.USER_MERCHANT_COUPON}/${merchantId}`;
   let res = await http.get(url);
+  return res;
+}
+
+export async function refundFanpiao(transactionId, args) {
+  const url = URLS.USER_REFUND_FANPIAO + `${transactionId}`
+  let res = await http.post(url, args);
+  return res;
+}
+
+export async function refundCoupon(transactionId, args) {
+  const url = URLS.USER_REFUND_COUPON + `${transactionId}`
+  let res = await http.post(url, args);
   return res;
 }

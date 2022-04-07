@@ -15,7 +15,9 @@
       />
       <div class="fanpiao-discount">
         {{
-          maxDiscountFanpiao.discount ? 100 - maxDiscountFanpiao.discount : ""
+          maxDiscountFanpiao.discount
+            ? (100 - maxDiscountFanpiao.discount) / 10
+            : ""
         }}
       </div>
       <div class="time-box">
@@ -64,7 +66,7 @@ export default {
     }
   }
   .fanpiao-discount {
-    .pos-tr-absolute(22%,26.66%);
+    .pos-tr-absolute(22%,26%);
     .bold-font(7.4vw,#f25643);
     height: 100%;
     font-style: italic;

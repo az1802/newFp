@@ -33,6 +33,8 @@
           v-show="curSkuDish.supplyCondiments.length > 0"
           :condimentList="curSkuDish.supplyCondiments"
           :selCondiments="selCondiments"
+          :selectionType="curSkuDish.selectionType"
+          :selCondimentsCount="selCondimentsCount"
         />
         <ChildDishList
           v-show="curSkuDish.childDishGroups.length > 0"
@@ -54,6 +56,7 @@ import ChildDishList from "./ChildDishList.vue";
 import { useSkuDish, useDish } from "@hooks/menuHooks";
 import { useTransformPrice } from "@hooks/commonHooks";
 import { reactive, watch, watchEffect, ref, computed, toRaw, unref } from "vue";
+import { showToast } from "@utils";
 
 export default {
   components: {
@@ -90,6 +93,12 @@ export default {
       }
 
       nval.attrList.forEach((attrGroupItem) => {
+        if (
+          attrGroupItem.selType == "SINGLE" &&
+          attrGroupItem?.attrs?.length > 0
+        ) {
+          selAttrIds.push(attrGroupItem.attrs[0].id); //单选默认选择第一个
+        }
         attrGroupItem.attrs.forEach((attrItem) => {
           attrMap[attrItem.id] = attrItem;
         });
@@ -101,7 +110,7 @@ export default {
     });
 
     let totalPrice = computed(() => {
-      let res = curSkuDish.value.price || 0;
+      let res = unref(curSkuDish).price || 0;
 
       selAttrIds.forEach((id) => {
         res += attrMap[id].reprice;
@@ -113,6 +122,69 @@ export default {
       return res;
     });
 
+    let selCondimentsCount = computed(() => {
+      return Object.values(selCondiments).reduce((total, item) => {
+        return (total += item || 0);
+      }, 0);
+    });
+
+    function checkSupplyCondimentsCount() {
+      //检查加料数量
+      let countNum = unref(selCondimentsCount);
+      let { type, lowerLimit, upperLimit } = unref(curSkuDish).selectionType;
+      console.log(
+        "%ctype, lowerLimit, upperLimit : ",
+        "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
+        type,
+        lowerLimit,
+        upperLimit,
+        countNum
+      );
+
+      if (type == "NUMBER_REQUIRED" || type == "NUMBER_RANGE") {
+        if (countNum < lowerLimit) {
+          showToast(
+            `${
+              type == "NUMBER_REQUIRED" ? "必须" : "至少"
+            }选择${lowerLimit}加料`
+          );
+          return false;
+        } else if (countNum > upperLimit) {
+          return false;
+        }
+      }
+      return true;
+    }
+    function selOK() {
+      let dishInfo = unref(curSkuDish),
+        attrs = [],
+        supplyCondiments = [];
+
+      // TODO 根据属性组别调整属性的顺序
+      selAttrIds.forEach((id) => {
+        attrs.push(attrMap[id]);
+      });
+
+      for (let key in selCondiments) {
+        supplyCondiments.push(
+          Object.assign(condimentMap[key], {
+            quantity: selCondiments[key],
+          })
+        );
+      }
+
+      if (!checkSupplyCondimentsCount()) {
+        return;
+      }
+
+      Object.assign(dishInfo, {
+        attrs,
+        supplyCondiments,
+      });
+      addDish(dishInfo);
+      toggleShowSkuModal(false);
+    }
+
     return {
       selAttrIds,
       selCondiments,
@@ -121,31 +193,8 @@ export default {
       totalPrice,
       fenToYuan,
       toggleShowSkuModal,
-      selOK() {
-        let dishInfo = unref(curSkuDish),
-          attrs = [],
-          supplyCondiments = [];
-        selAttrIds.forEach((id) => {
-          attrs.push(attrMap[id]);
-        });
-
-        for (let key in selCondiments) {
-          supplyCondiments.push(
-            Object.assign(condimentMap[key], {
-              quantity: selCondiments[key],
-            })
-          );
-        }
-
-        Object.assign(dishInfo, {
-          attrs,
-          supplyCondiments,
-        });
-
-        addDish(dishInfo);
-
-        toggleShowSkuModal(false);
-      },
+      selCondimentsCount,
+      selOK,
     };
   },
 };

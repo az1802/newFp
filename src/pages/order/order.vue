@@ -34,7 +34,7 @@
         />
       </scroll-view>
     </div>
-    <RefundModal  @apply="applyRefund" />
+    <RefundModal v-model:show="showRefundModal" @apply="applyRefund" />
   </div>
 </template>
 
@@ -42,6 +42,7 @@
 import { useTabs, useSystemInfo } from "@hooks/commonHooks";
 import { useOrderRecord } from "@hooks/orderHooks";
 import { computed, unref, onBeforeMount, ref, toRefs } from "vue";
+
 const TAB_ARR = [
   {
     text: "点餐",
@@ -59,10 +60,14 @@ const TAB_ARR = [
 const PAGE_SIZE = 20;
 export default {
   onLoad() {},
+  onShow() {
+    this.requestAllOrderList();
+  },
   setup() {
     let { curTabIndex, switchTab, tabs } = useTabs(TAB_ARR);
     let { statusBarHeight } = useSystemInfo();
-    let showRefundModal = ref(false);
+    let showRefundModal = ref(false),
+      refundInfo;
     let {
       orderList,
       fanpiaoList,
@@ -70,6 +75,8 @@ export default {
       getOrderList,
       getFanpiaoRecordList,
       getCouponRecordList,
+      refundFanpiao,
+      refundCoupon,
     } = useOrderRecord();
 
     let lineStyle = computed(() => {
@@ -112,26 +119,27 @@ export default {
     });
 
     function openRefundModal(orderInfo) {
-      console.log(
-        "%corderInfo: ",
-        "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-        orderInfo
-      );
       showRefundModal.value = true;
+      refundInfo = orderInfo;
     }
-    async function applyRefund(orderInfo) {
-      console.log(
-        "%corderInfo: ",
-        "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-        orderInfo
-      );
-      // showRefundModal.value = true;
+    async function applyRefund(reasonInfo) {
+      let { type, transactionId } = refundInfo;
+      uni.showLoading();
+      if (type == "FANPIAO") {
+        await refundFanpiao(transactionId, { data: reasonInfo });
+      } else if (type == "COUPON") {
+        await refundCoupon(transactionId, { data: reasonInfo });
+      }
+      uni.hideLoading();
+      showRefundModal.value = false;
     }
-
-    onBeforeMount(() => {
+    function requestAllOrderList() {
       getOrderList();
       getFanpiaoRecordList();
       getCouponRecordList();
+    }
+    onBeforeMount(() => {
+      requestAllOrderList();
     });
 
     return {
@@ -144,6 +152,7 @@ export default {
       showRefundModal,
       openRefundModal,
       applyRefund,
+      requestAllOrderList,
     };
   },
 };

@@ -34,7 +34,7 @@ export default {
     });
   },
   onError(msg) {
-    log.error("error--", msg);
+    // log.error("error--", msg);
   },
   onLaunch: function (options) {
     // 处理二维码参数
@@ -103,4 +103,6 @@ export default {
 
 <style>
 /*每个页面公共css */
+@import "./design/custom-colorui.css";
+@import "./design/custom-swiper.css";
 </style>

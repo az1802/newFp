@@ -72,6 +72,7 @@ export function useFanpiaoInfo() {
     fanpiaoUserAvaterList,
     ...useGetters("merchant", [
       "maxDiscountFanpiao",
+      "minDiscountFanpiao",
     ]),
     requestFanpiaoList,
     setFanpiaoList,

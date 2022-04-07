@@ -26,7 +26,7 @@
       <div class="price" @click.stop="navigateTo('MARKETING/BUY_FANPIAO')">
         <div class="origin">{{ fenToYuan(dish.price) }}</div>
         <div class="fanpiao">
-          <span class="text">{{ fenToYuan(dish.price) }}</span>
+          <span class="text">{{ fenToYuan(minFanpiaoPrice) }}</span>
           <span class="icon">饭票价</span>
         </div>
       </div>
@@ -43,11 +43,12 @@
 </template>
 <script>
 import DishOperation from "../Common/DishOperation.vue";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch, unref, computed } from "vue";
 import { useTransformPrice } from "@hooks/commonHooks";
 import { useDish, useSkuDish } from "@hooks/menuHooks";
 import { getDishInfoById } from "@utils";
 import { useNavigate } from "@hooks/commonHooks";
+import { useFanpiaoInfo } from "@hooks/merchantHooks";
 export default {
   components: {
     DishOperation,
@@ -64,16 +65,31 @@ export default {
 
     let { addDish, reduceDish, dishCountMap } = useDish();
     let { setCurSkuDish, toggleShowSkuModal } = useSkuDish();
+    let { maxDiscountFanpiao, minDiscountFanpiao } = useFanpiaoInfo();
     const { navigateTo } = useNavigate();
+
+    // watch(minDiscountFanpiao, (nval) => {
+    //   console.log(nval);
+    // });
+
+    let minFanpiaoPrice = computed(() => {
+      let maxDiscount = unref(maxDiscountFanpiao).discount;
+      if (maxDiscount !== undefined) {
+        return (dish.price * (100 - maxDiscount)) / 100;
+      }
+      return dish.price;
+    });
 
     return {
       showPlaceHolder,
       dishCountMap,
       navigateTo,
+      minDiscountFanpiao,
       imgLoaded(e) {
         showPlaceHolder.value = false;
       },
       fenToYuan,
+      minFanpiaoPrice,
       add() {
         let dishInfo = getDishInfoById(dish.id);
         addDish(dishInfo);
@@ -141,11 +157,12 @@ export default {
         .text {
           .bold-font(12px,#f25643);
           .price-symbol(12px);
-          padding: 0 5px;
+          padding: 0 0 0 5px;
           &::after {
             content: "起";
             font-size: 10px;
             margin-left: 2px;
+            margin-right: 2px;
           }
         }
         .icon {

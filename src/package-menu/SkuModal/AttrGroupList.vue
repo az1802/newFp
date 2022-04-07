@@ -18,7 +18,7 @@
         :class="selAttrIds.indexOf(attr.id) != -1 ? 'active' : ''"
         v-for="attr in attrGroupItem.attrs"
         :key="attr.id"
-        @click="toggleAttr(attr)"
+        @click="toggleAttr(attrGroupItem, attr)"
       >
         {{ attr.name }}
       </div>
@@ -41,18 +41,56 @@ export default {
   setup(props, { emit }) {
     let { selAttrIds } = props;
 
-    return {
-      toggleAttr({ id }) {
-        let selIndex = selAttrIds.indexOf(id);
-        // 根据不同属性组的规则进行不同的切换
-        if (0) {
-          //多选非必选
-          selIndex == -1 ? selAttrIds.push(id) : selAttrIds.splice(selIndex, 1);
-        } else if (1) {
-          //单选逻辑
-          selAttrIds.splice(0, selAttrIds.length, id);
+    function removeAttrSelId(toggleAttr) {
+      toggleAttr.attrs.forEach((attrItem) => {
+        let tempIndex = selAttrIds.indexOf(attrItem.id);
+        if (tempIndex != -1) {
+          selAttrIds.splice(tempIndex, 1);
         }
-      },
+      });
+    }
+
+    function toggleAttr(toggleAttr, { id }) {
+      console.log(
+        "%ctoggleAttr: ",
+        "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
+        toggleAttr,
+        id
+      );
+      let selIndex = selAttrIds.indexOf(id);
+
+      if (toggleAttr.selType == "SINGLE" && selIndex == -1) {
+        removeAttrSelId(toggleAttr);
+        selAttrIds.push(id);
+      } else if (toggleAttr.selType == "SINGLE_NOT_MUST") {
+        removeAttrSelId(toggleAttr);
+        if (selIndex == -1) {
+          selAttrIds.push(id);
+        }
+      } else if (toggleAttr.selType == "MULTI_NOT_MUST") {
+        //多选非必选
+        selIndex == -1 ? selAttrIds.push(id) : selAttrIds.splice(selIndex, 1);
+      } else if (toggleAttr.selType == "MULTI_MUST") {
+        //多选且必选
+        if (selIndex == -1) {
+          selAttrIds.push(id);
+        } else {
+          let selCount = 0;
+          toggleAttr.attrs.forEach((attrItem) => {
+            let tempIndex = selAttrIds.indexOf(attrItem.id);
+            if (tempIndex != -1) {
+              selCount++;
+            }
+          });
+          if (selCount > 1) {
+            selAttrIds.splice(selIndex, 1);
+          }
+        }
+      }
+    }
+
+    return {
+      toggleAttr,
     };
   },
 };

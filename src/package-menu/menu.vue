@@ -44,6 +44,10 @@ import {
   useCouponInfo,
 } from "@hooks/merchantHooks";
 import { useDish } from "@hooks/menuHooks";
+
+const sceneMock = "e162ac24e1a64dd783f8408741c910b1";
+const merchantIdMock = "8ec573585d9645229fb01713e30a2a6d";
+let scene, merchantId;
 export default {
   components: {
     MenuList,
@@ -52,10 +56,11 @@ export default {
     MenuHeader,
     MenuBottom,
   },
+  onLoad(opts) {
+    scene = opts.scene || sceneMock;
+    merchantId = opts.merchantId || merchantIdMock;
+  },
   setup(props, context) {
-    const scene = "37fff5ad022849ee9abdf2c1b956ceba";
-    const merchantId = "1e543376139b474e97d38d487fa9fbe8";
-
     let dishList = reactive([]);
     let userInfo = reactive({});
     const { requestMerchantInfo } = useMerchantInfo();
