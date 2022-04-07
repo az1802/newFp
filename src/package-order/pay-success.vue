@@ -1,14 +1,18 @@
 <template>
   <div class="page">
-    <NavigationBar title="" :showArrow="false" :backgroundOpacity="0" />
+    <NavigationBar title="订单详情" />
     <OrderStatusInfo :orderInfo="orderInfo" />
-    <OrderDishInfo :dishList="orderInfo.dishList" />
+    <OrderDishInfo
+      :dishList="orderInfo.dishList"
+      :discountPrice="orderDiscountPrice"
+      :totalPrce="orderTotalPrice"
+    />
     <OrderInfoList :orderInfo="orderInfo" />
   </div>
 </template>
 <script>
 import { useOrderRecord } from "@hooks/orderHooks";
-import { computed, onBeforeMount } from "vue";
+import { computed, onBeforeMount, unref } from "vue";
 import OrderStatusInfo from "./OrderStatusInfo/OrderStatusInfo.vue";
 import OrderDishInfo from "./OrderDishInfo/OrderDishInfo.vue";
 import OrderInfoList from "./OrderInfoList/OrderInfoList.vue";
@@ -28,9 +32,17 @@ export default {
     onBeforeMount(() => {
       getOrderDetailById(orderId);
     });
+    let orderDiscountPrice = computed(() => {
+      return unref(orderInfo).billFee - unref(orderInfo).totalFee;
+    });
+    let orderTotalPrice = computed(() => {
+      return unref(orderInfo).totalFee;
+    });
 
     return {
       orderInfo,
+      orderDiscountPrice,
+      orderTotalPrice,
     };
   },
 };

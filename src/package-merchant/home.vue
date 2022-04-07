@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <!-- <NavigationBar :title="merchantInfo.merchantName" /> -->
+    <NavigationBar title="" position="fixed" />
     <img
       :src="merchantInfo.storeCoverPhotoUrls"
       class="cover-photo"
@@ -59,6 +59,11 @@ export default {
     HomeFanpiaoList,
   },
   onLoad(opts) {
+    console.log(
+      "%copts: ",
+      "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
+      opts
+    );
     merchantId = opts.merchantId || "1e543376139b474e97d38d487fa9fbe8";
     // // 二合一码参数解析
     // if (option.q) {

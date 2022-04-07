@@ -51,9 +51,30 @@ export async function getUserFanpiaoRecords() {
   let res = await http.get(url);
   return res;
 }
-
 export async function getRedPaperList() {
-  const url = `${URLS.USER_RED_PAPER_LIST}`
+  let url = `${URLS.USER_RED_PAPER_LIST}`;
+  let res = await http.get(url);
+  return res;
+}
+export async function withdraw(args) {
+  let url = `${URLS.USER_WITHDRAW}`;
+  let res = await http.post(url, args);
+  return res;
+}
+export async function getUserOwnCouponList(args) {
+  console.log('%cargs: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', args);
+  let url = `${URLS.USER_OWN_COUPON_LIST}`;
+  let res = await http.get(url, {
+    data: {
+      page: 1,
+      size: 50,
+      state: "ACCEPTED"
+    }
+  });
+  return res;
+}
+export async function getUserMerchantCoupon(merchantId) {
+  let url = `${URLS.USER_MERCHANT_COUPON}/${merchantId}`;
   let res = await http.get(url);
   return res;
 }

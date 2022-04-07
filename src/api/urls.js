@@ -40,6 +40,10 @@ export default {
   USER_WALLET: '/wallet',
   USER_FANPIAO_RECORDS: '/fanpiao/get_user_fanpiao_list',
   USER_RED_PAPER_LIST: '/red_packet/list',
+  USER_WITHDRAW: '/wallet/withdraw',
+  USER_OWN_COUPON_LIST: '/coupon/list',
+  USER_MERCHANT_COUPON: '/coupon/package',
+
 
   // 饭票所有的购买记录
   FANPIAO_PLATFORM_RECORDS: "/fanpiao/platform/purchase/records",

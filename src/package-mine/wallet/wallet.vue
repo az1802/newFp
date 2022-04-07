@@ -37,7 +37,7 @@
             红包明细 >
           </div>
         </div>
-        <div class="btn redpacket-btn" @click="navigateTo('MINE/RED_PAPER')">
+        <div class="btn redpacket-btn" @click="navigateTo('MINE/RED_PACKET')">
           提现
         </div>
       </div>

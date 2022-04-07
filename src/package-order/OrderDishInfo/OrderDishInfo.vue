@@ -18,7 +18,9 @@
     </div>
     <SplitLine paddingTop="16" />
     <div class="price-info">
-      <div class="discount-price">有优惠<span class="num">0</span></div>
+      <div class="discount-price">
+        已优惠<span class="num">{{ fenToYuan(discountPrice) }}</span>
+      </div>
       <div class="total-price">
         小计<span class="num">{{ fenToYuan(totalPrce) }}</span>
       </div>
@@ -39,6 +41,10 @@ export default {
     dishList: {
       type: [Array],
       default: [],
+    },
+    discountPrice: {
+      type: [String, Number],
+      default: "",
     },
     totalPrce: {
       type: [String, Number],

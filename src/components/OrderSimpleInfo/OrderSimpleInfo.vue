@@ -9,6 +9,7 @@
           @click="navigateToMerchantHome"
         >
           {{ orderInfo.merchantName }}
+          <img src="@assets/icon-arrow_right.svg" alt="" class="arrow-right" />
         </div>
       </div>
       <div class="right">{{ statusText }}</div>
@@ -74,6 +75,36 @@
             )
           }}
         </div>
+        <div class="fanpiao-btn-wrapper" v-if="orderType == 'FANPIAO'">
+          <div
+            v-if="orderInfo.canRefund"
+            class="btn btn-main refund-btn"
+            @click="openRefundModal"
+          >
+            申请退款
+          </div>
+          <div
+            v-if="!orderInfo.canRefund && orderInfo.status !== 'REFUND'"
+            class="tooltip"
+          >
+            已使用,不可退款
+          </div>
+        </div>
+        <div class="coupon-btn-wrapper" v-if="orderType == 'COUPON'">
+          <div
+            v-if="orderInfo.canRefund"
+            class="btn btn-main refund-btn"
+            @click="openRefundModal"
+          >
+            申请退款
+          </div>
+          <div
+            v-if="!orderInfo.canRefund && orderInfo.status !== 'REFUND'"
+            class="tooltip"
+          >
+            已使用,不可退款
+          </div>
+        </div>
         <div class="detail" v-if="orderType == 'DISH'" @click="showDetail">
           查看详情
         </div>
@@ -108,7 +139,7 @@ export default {
     },
   },
   components: {},
-  setup(props) {
+  setup(props, { emit }) {
     const { navigateTo } = useNavigate();
     const { formatTme } = useTimeTransform();
     const statusText = computed(() => {
@@ -175,10 +206,21 @@ export default {
       orderId,
       statusText,
       mealType,
-      navigateToMerchantHome() {},
-      showDetail() {},
+      navigateToMerchantHome() {
+        navigateTo("MERCHANT/HOME", {
+          merchantId: props.orderInfo.merchantId,
+        });
+      },
+      showDetail() {
+        navigateTo("ORDER/PAY_SUCCESS", {
+          orderId: props.orderInfo.id,
+        });
+      },
       copyOrderId() {
         copyInfo(unref(orderId));
+      },
+      openRefundModal() {
+        emit("openRefundModal", props.orderInfo);
       },
       DEFAULT_DISH_IMG,
     };
@@ -191,6 +233,10 @@ export default {
   .box-size(100%,unset,white);
   padding: 0 12px 12px 12px;
   margin-top: 12px;
+  .arrow-right {
+    .box-size(21px,12px);
+    padding-left: 8px;
+  }
   .title {
     .flex-simple(space-between,center);
     .line-center(40px);
@@ -278,6 +324,23 @@ export default {
         .flex-simple(space-between,center);
         .line-center(32px);
         .normal-font(12px,#666);
+      }
+      .fanpiao-btn-wrapper,
+      .coupon-btn-wrapper {
+        .refund-btn {
+          width: 80px;
+          height: 28px;
+          border: 1px solid #666;
+          color: #333;
+          border-radius: 18px;
+          text-align: center;
+          font-size: 14px;
+          display: inline-block;
+          line-height: 28px;
+        }
+        .tooltip {
+          .normal-font(14px,#f25643);
+        }
       }
       .detail {
         .box-size(80px,28px);

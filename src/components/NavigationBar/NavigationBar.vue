@@ -12,6 +12,7 @@
       paddingTop: statusBarHeight + 'px',
       opacity: backgroundOpacity,
       background: backgroundColor,
+      position: position,
     }"
   >
     <div class="arrow" v-if="showArrow" @click="navigateBack">
@@ -55,9 +56,18 @@ export default {
       type: String,
       default: "white",
     },
+    position: {
+      type: String,
+      default: "relative",
+    },
   },
   setup(props, context) {
     let { statusBarHeight } = useSystemInfo();
+    console.log(
+      "%cstatusBarHeight: ",
+      "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
+      statusBarHeight
+    );
     let { navigateBack } = useNavigate();
     return {
       statusBarHeight,

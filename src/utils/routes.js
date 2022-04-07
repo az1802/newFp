@@ -10,15 +10,20 @@ const MENU = '/package-menu'
 const OTHER = '/package-other'
 const MARKETING = '/package-marketing'
 const MINE = '/package-mine'
+const MERCHANT = '/package-merchant'
 
 
 export default {
   "MENU": {
     "MENU": `${MENU}/menu`
   },
+  "MERCHANT": {
+    "HOME": `${MERCHANT}/home`
+  },
   "ORDER": {
     "CREATE_ORDER": `${ORDER}/create-order`,
-    "PAY_ORDER": `${ORDER}/pay-order`
+    "PAY_ORDER": `${ORDER}/pay-order`,
+    "PAY_SUCCESS": `${ORDER}/pay-success`
   },
   "MARKETING": {
     "BUY_FANPIAO": `${MARKETING}/buy-fanpiao/buy-fanpiao`,
@@ -31,13 +36,17 @@ export default {
     "DISCOUNT_RULES": `${OTHER}/discount-rules/discount-rules`,
     "FANPIAO_RULES": `${OTHER}/fanpiao-rules/fanpiao-rules`,
   },
+
   "MINE": {
     "COUPON": `${MINE}/coupon/coupon`,
     "WALLET": `${MINE}/wallet/wallet`,
     "FEEDBACK": `${MINE}/feedback/feedback`,
     "REDPAPER": `${MINE}/red-paper/red-paper`,
     "FANPIAO": `${MINE}/fanpiao/fanpiao`,
+    "RED_PACKET": `${MINE}/red-packet/red-packet`,
     "FANPIAO_TRANSACTION_DETAIL": `${MINE}/fanpiao/fanpiao-transaction-detail`,
     "RED_PAPER_OVERVIEW": `${MINE}/red-paper-overview/red-paper-overview`,
+    "WITHDRAW": `${MINE}/withdraw/withdraw`,
+    "EXPIRED_COUPON": `${MINE}/expired-coupon/expired-coupon`,
   }
 }

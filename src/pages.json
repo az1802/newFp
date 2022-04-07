@@ -141,6 +141,16 @@
           "disableScroll": false
         }
       }, {
+        "path": "withdraw/withdraw",
+        "style": {
+          "disableScroll": false
+        }
+      }, {
+        "path": "expired-coupon/expired-coupon",
+        "style": {
+          "disableScroll": false
+        }
+      }, {
         "path": "red-paper-overview/red-paper-overview",
         "style": {
           "disableScroll": false

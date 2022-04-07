@@ -30,9 +30,11 @@
           :orderType="orderType"
           :orderInfo="item"
           :key="item.id"
+          @openRefundModal="openRefundModal"
         />
       </scroll-view>
     </div>
+    <RefundModal  @apply="applyRefund" />
   </div>
 </template>
 
@@ -60,6 +62,7 @@ export default {
   setup() {
     let { curTabIndex, switchTab, tabs } = useTabs(TAB_ARR);
     let { statusBarHeight } = useSystemInfo();
+    let showRefundModal = ref(false);
     let {
       orderList,
       fanpiaoList,
@@ -108,6 +111,23 @@ export default {
       return "";
     });
 
+    function openRefundModal(orderInfo) {
+      console.log(
+        "%corderInfo: ",
+        "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
+        orderInfo
+      );
+      showRefundModal.value = true;
+    }
+    async function applyRefund(orderInfo) {
+      console.log(
+        "%corderInfo: ",
+        "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
+        orderInfo
+      );
+      // showRefundModal.value = true;
+    }
+
     onBeforeMount(() => {
       getOrderList();
       getFanpiaoRecordList();
@@ -121,6 +141,9 @@ export default {
       orderType,
       lineStyle,
       showOrderList,
+      showRefundModal,
+      openRefundModal,
+      applyRefund,
     };
   },
 };

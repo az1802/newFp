@@ -4,59 +4,64 @@
     <div v-if="list.length == 0" class="no-red-paper-tooltip">
       暂时还未获得红包
     </div>
-    <div
-      v-for="(item, index) in list"
-      :key="index"
-      class="paper-wrapper common-card"
-    >
-      <div class="icon-wrapper">
-        <img
-          class="img"
-          src="https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/common/red-packet-background_01.png"
-          alt=""
-          mode="scaleToFill"
-        />
-        <p v-if="item.alreadyOpen" class="money">
-          {{ item.redPacketValue | normalizePrice }}
-        </p>
-      </div>
-      <div class="detail-wrapper">
-        <div class="merchant-wrapper">
-          <p class="name">{{ item.storeName }}</p>
+    <scroll-view scroll-y class="scroll-view" :style="scrollViewStyle">
+      <div
+        v-for="(item, index) in list"
+        :key="index"
+        class="paper-wrapper common-card"
+      >
+        <div class="icon-wrapper">
+          <img
+            class="img"
+            src="https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/common/red-packet-background_01.png"
+            alt=""
+            mode="scaleToFill"
+          />
+          <p v-if="item.alreadyOpen" class="money">
+            {{ item.redPacketValue }}
+          </p>
         </div>
-        <p class="type">{{ item.issueSceneText }}</p>
-        <p class="time">{{ item.createTimeText }}</p>
+        <div class="detail-wrapper">
+          <div class="merchant-wrapper">
+            <p class="name">{{ item.storeName }}</p>
+          </div>
+          <p class="type">{{ item.issueSceneText }}</p>
+          <p class="time">{{ item.createTimeText }}</p>
+        </div>
+        <div v-if="item.alreadyOpen && !item.isSendBack" class="status">
+          已领取
+        </div>
+        <div v-if="item.alreadyOpen && item.isSendBack" class="status invalid">
+          已退回
+        </div>
       </div>
-      <div v-if="item.alreadyOpen && !item.isSendBack" class="status">
-        已领取
-      </div>
-      <div v-if="item.alreadyOpen && item.isSendBack" class="status invalid">
-        已退回
-      </div>
-    </div>
+    </scroll-view>
   </div>
 </template>
 <script>
+import API from "@api";
 import { onBeforeMount, ref } from "vue";
+import { useSystemInfo } from "@hooks/commonHooks";
 export default {
   setup() {
     let list = ref([]);
-
+    let { statusBarHeight } = useSystemInfo();
+    let scrollViewStyle = {
+      height: `calc(100vh - ${44 + statusBarHeight}px)`,
+    };
     async function _getRedPaperList() {
       let res = await API.User.getRedPaperList();
-      console.log(
-        "%cres: ",
-        "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-        res
-      );
+      list.value = res || [];
     }
     onBeforeMount(async () => {
       uni.showLoading();
       await _getRedPaperList();
       uni.hideLoading();
     });
+
     return {
       list,
+      scrollViewStyle,
     };
   },
 };
@@ -67,6 +72,12 @@ export default {
   width: 100%;
   box-sizing: border-box;
   padding: 5px 10px;
+
+  .common-card {
+    background: #fff !important;
+    box-shadow: 0px 1px 5px 0px rgba(223, 210, 210, 0.5);
+    border-radius: 10px !important;
+  }
 
   .no-red-paper-tooltip {
     font-size: 20px;
@@ -83,7 +94,7 @@ export default {
     margin-top: 10px;
     padding: 10px 5px 0;
     overflow: hidden;
-    background: $color-white;
+    background: white;
 
     .icon-wrapper {
       position: relative;
@@ -108,14 +119,14 @@ export default {
         top: 24.5px;
         left: 50%;
         transform: translate(-50%, 0);
-        font-size: $font-size-18;
+        font-size: 18px;
         color: #F25643;
         height: 35px;
         line-height: 35px;
 
         &::before {
           content: '¥';
-          font-size: $font-size-15;
+          font-size: 15px;
         }
       }
     }
@@ -139,7 +150,7 @@ export default {
         .name {
           // margin-left: 5px
           no-wrap();
-          font-size: $font-size-16;
+          font-size: 16px;
           color: #333333;
           font-weight: bold;
         }
@@ -148,13 +159,13 @@ export default {
       .type {
         margin-top: 8px;
         height: 14px;
-        font-size: $font-size-14;
+        font-size: 14px;
         color: #666666;
       }
 
       .time {
         margin-top: 15px;
-        font-size: $font-size-12;
+        font-size: 12px;
         color: #999999;
       }
     }
@@ -168,8 +179,8 @@ export default {
       line-height: 34px;
       border-radius: 25px;
       text-align: center;
-      font-size: $font-size-13;
-      color: $color-white;
+      font-size: 13px;
+      color: white;
       background: #E3513F;
     }
 
@@ -180,9 +191,9 @@ export default {
       width: 88px;
       line-height: 19px;
       text-align: center;
-      font-size: $font-size-13;
-      color: $color-white;
-      background: $color-main;
+      font-size: 13px;
+      color: white;
+      background: #e3513f;
       transform: rotate(45deg);
 
       &.invalid {
