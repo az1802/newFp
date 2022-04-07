@@ -14,6 +14,8 @@
     </div>
     <MenuBottom />
     <SkuModal />
+    <ChildSkuDishModal />
+
     <ChildSkuModal />
     <CartModal />
   </div>
@@ -26,6 +28,7 @@ import SkuModal from "./SkuModal/SkuModal.vue";
 import ChildSkuModal from "./SkuModal/ChildSkuModal.vue";
 import CartModal from "./CartModal/CartModal.vue";
 import MenuBottom from "./MenuBottom/MenuBottom.vue";
+import ChildSkuDishModal from "./SkuModal/ChildSkuDishModal.vue";
 
 import API from "@api";
 const {
@@ -45,8 +48,10 @@ import {
 } from "@hooks/merchantHooks";
 import { useDish } from "@hooks/menuHooks";
 
-const sceneMock = "e162ac24e1a64dd783f8408741c910b1";
-const merchantIdMock = "8ec573585d9645229fb01713e30a2a6d";
+const sceneMock = "5c0daef6ea47421c908047702b0a35a9";
+const merchantIdMock = "1e543376139b474e97d38d487fa9fbe8";
+// const sceneMock = "e162ac24e1a64dd783f8408741c910b1";
+// const merchantIdMock = "8ec573585d9645229fb01713e30a2a6d";
 let scene, merchantId;
 export default {
   components: {
@@ -55,6 +60,7 @@ export default {
     CartModal,
     MenuHeader,
     MenuBottom,
+    ChildSkuDishModal,
   },
   onLoad(opts) {
     scene = opts.scene || sceneMock;

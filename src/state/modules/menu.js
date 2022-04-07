@@ -22,6 +22,7 @@ export default {
       childDishGroups: []
     },
     showChildSkuModal: false,
+
   },
   getters: {
     getDishCountById: state => dishId => {

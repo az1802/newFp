@@ -73,12 +73,13 @@ export function useSkuDish() {
     calcSkuDishPrice
   }
 }
+
 export function useChildSkuDish() {
 
   return {
     ...useState("menu", [
       "curChildSkuDish",
-      "showChildSkuModal",
+      "showChildSkuDishModal",
     ]),
     ...useMutations("menu", [
       "setCurChildSkuDish",
@@ -88,6 +89,7 @@ export function useChildSkuDish() {
     calcSkuDishPrice
   }
 }
+
 
 export function useComboSkuDish() {
 
