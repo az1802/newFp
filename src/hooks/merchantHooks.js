@@ -20,6 +20,9 @@ const {
 
 let mockMerhantId = '1e543376139b474e97d38d487fa9fbe8';
 
+
+
+
 export function useMerchantInfo() {
   const { setMerchantInfo } = useMutations("merchant", ["setMerchantInfo"]);
   const { merchantInfo } = useState("merchant", ['merchantInfo']);
@@ -33,7 +36,9 @@ export function useMerchantInfo() {
     }
     let res = await getMerchantInfo(merchantId);
     setMerchantInfo(res);
+    return res;
   }
+
   return {
     merchantInfo, setMerchantInfo, requestMerchantInfo
   }
@@ -119,5 +124,45 @@ export function useRefund() {
 
 
 export function useDishList() {
+
+}
+
+
+export function useFanpiaoOpenScreen() {
+
+  let { showFanpiaoOpenScreenModal } = useState('menu', ["showFanpiaoOpenScreenModal"]);
+  let { toggleShowFanpiaoOpenScreenModal } = useMutations('menu', ["toggleShowFanpiaoOpenScreenModal"])
+  let { fanpiaoList } = useState('merchant', ["fanpiaoList"]);
+  let { setFanpiaoList } = useMutations('merchant', ["setFanpiaoList"]);
+
+  (async function () {
+    if (unref(fanpiaoList).length == 0) {
+      let merchantId = uni.getStorageSync("merchantId");
+      if (merchantId) {
+        let res = await getFanpiaoList(merchantId)
+        setFanpiaoList(res);
+      }
+    }
+  })()
+
+  async function requestBuyFanpiaoRecord() {
+    let res = await API.Merchant.getFanpiaoBuyRecord();
+    if (Array.isArray(res)) {
+      return res
+    } else {
+      return []
+    }
+  }
+
+
+
+  return {
+    showFanpiaoOpenScreenModal,
+    toggleShowFanpiaoOpenScreenModal,
+    requestBuyFanpiaoRecord,
+    fanpiaoList
+  }
+
+
 
 }

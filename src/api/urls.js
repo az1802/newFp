@@ -12,6 +12,8 @@ export default {
   GET_MERCHANT_DISH_CATEGORY: "/merchant/dish_catalog/",
   GET_FANPIAO_CATEGORIES: "/fanpiao/fanpiao_categories",
   GET_COUPON_PACKAGE: "/merchant/coupon_package_v2",
+  //饭票购买记录
+  MERCHANT_FANPIAO_BUY_RECORD: "/fanpiao/recently/buy/",
 
   // 订单相关
   CREATE_ORDER: "/order/create",

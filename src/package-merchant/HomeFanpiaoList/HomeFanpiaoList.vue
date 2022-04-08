@@ -42,7 +42,7 @@
           class="operation"
           :class="disableShowFanpiaoPurchaseNumber ? 'only-buy' : ''"
         >
-          <div class="buy" @click="buyFanpiao(merchantId, fanpiaoItem)">
+          <div class="buy" @click="buyFanpiao(fanpiaoItem,merchantId)">
             抢购
           </div>
           <div class="sell-count" v-if="!disableShowFanpiaoPurchaseNumber">

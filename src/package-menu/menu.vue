@@ -16,6 +16,11 @@
     <SkuModal />
     <ChildSkuDishModal />
     <CartModal />
+
+    <OpenScreenFanpiaoModal />
+    <ScanModal ref="scanModal" @scan="scanOk" />
+
+    <OptionModal ref="optionModal" @selPeopleOk="selPeopleOk" />
   </div>
 </template>
 <script >
@@ -26,6 +31,9 @@ import SkuModal from "./SkuModal/SkuModal.vue";
 import CartModal from "./CartModal/CartModal.vue";
 import MenuBottom from "./MenuBottom/MenuBottom.vue";
 import ChildSkuDishModal from "./SkuModal/ChildSkuDishModal.vue";
+import OpenScreenFanpiaoModal from "./OpenScreenFanpiaoModal/OpenScreenFanpiaoModal.vue";
+import ScanModal from "./ScanModal/ScanModal.vue";
+import OptionModal from "./OptionModal/OptionModal.vue";
 
 import API from "@api";
 const {
@@ -42,6 +50,7 @@ import {
   useMerchantInfo,
   useFanpiaoInfo,
   useCouponInfo,
+  useFanpiaoOpenScreen,
 } from "@hooks/merchantHooks";
 import { useDish } from "@hooks/menuHooks";
 
@@ -62,6 +71,9 @@ export default {
     MenuHeader,
     MenuBottom,
     ChildSkuDishModal,
+    OpenScreenFanpiaoModal,
+    ScanModal,
+    OptionModal,
   },
   onLoad(opts) {
     scene = opts.scene || sceneMock;
@@ -70,17 +82,50 @@ export default {
   setup(props, context) {
     let dishList = reactive([]);
     let userInfo = reactive({});
+    let scanModal = ref(""),
+      optionModal = ref("");
     const { requestMerchantInfo } = useMerchantInfo();
     const { statusBarHeight, screenWidth } = useSystemInfo();
     const { requestFanpiaoList } = useFanpiaoInfo();
     const { requestCouponList } = useCouponInfo();
     const { resetSelDishes } = useDish();
+    const { toggleShowFanpiaoOpenScreenModal } = useFanpiaoOpenScreen();
+
     resetSelDishes(getStorage("selected-dishes") || []);
+
+    async function _handleMerchantConfig() {
+      let merchantInfo = await requestMerchantInfo(merchantId);
+      let { splashMode, disableBuyFanpiao } = merchantInfo;
+      if (
+        (splashMode == "FANPIAO" || splashMode == "FANPIAO_SNAP_UP") &&
+        !disableBuyFanpiao
+      ) {
+        // toggleShowFanpiaoOpenScreenModal(true);
+      }
+
+      if (0) {
+        // console.log(scanModal);
+        scanModal.value.show();
+      }
+
+      if (0) {
+        //选择人数
+        optionModal.value.show();
+      }
+    }
+
+    function scanOk(...args) {
+      //  TODO  选桌台之后的操作
+    }
+    function selPeopleOk(...args) {
+      //  TODO  选择人数
+    }
 
     onBeforeMount(async () => {
       let tableInfo = await getDishCatalogScene(scene);
       let { merchantId } = tableInfo;
-      requestMerchantInfo(merchantId);
+      uni.setStorageSync("merchantId", merchantId);
+      _handleMerchantConfig(merchantId);
       getMerchantDishCategory(merchantId).then((res) => {
         let dishListRes = handleDishList(res.dishes);
         dishList.push(...dishListRes);
@@ -97,6 +142,10 @@ export default {
       dishList,
       userInfo,
       menuWrapperStyle,
+      scanModal,
+      optionModal,
+      scanOk,
+      selPeopleOk,
     };
   },
 };

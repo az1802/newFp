@@ -22,7 +22,16 @@ export default {
       childDishGroups: []
     },
     showChildSkuDishModal: false,
-    selChildDishes: {}
+    selChildDishes: {},
+
+    showFanpiaoOpenScreenModal: false,
+    showPhoneAuthorize: false,
+    showScanModal: false,
+    showOptionModal: false,
+    showDishDetail: false,
+    showCodeExpiredModal: false,
+    showOrderStatusModal: false
+
 
   },
   getters: {
@@ -155,6 +164,9 @@ export default {
     },
     reduceDishQuantity() {
 
+    },
+    toggleShowFanpiaoOpenScreenModal(state, val) {
+      state.showFanpiaoOpenScreenModal = val
     }
   },
   actions: {

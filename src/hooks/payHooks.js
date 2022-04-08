@@ -16,7 +16,8 @@ async function commonPay(args) {
 
 export function usePay() {
 
-  async function buyFanpiao(merchantId, fanpiaoInfo) {
+  async function buyFanpiao(fanpiaoInfo, merchantId = uni.getStorageSync("merchantId")) {
+
     let data = {
       fanpiaoCategoryId: fanpiaoInfo.id,
       billFee: fanpiaoInfo.totalValue,

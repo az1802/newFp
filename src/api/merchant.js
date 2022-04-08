@@ -31,7 +31,7 @@ export async function getMerchantInfo(merchantId) {
 }
 
 export async function getDishCatalogScene(scene) {
-  let url = URLS.DISH_CATALOG_SCENE + scene;
+  let url = `${URLS.DISH_CATALOG_SCENE}/${scene}`;
   let res = await http.get(url);
   return res;
 }
@@ -65,7 +65,13 @@ export async function refundFanpiaoApply(args) {
 }
 
 export async function getFanpiaoTransactionDetail(merchantId, fanpiaoInfo) {
-  let url = `${URLS.GET_FANPIAO_TRANSACTION_DETAIL}/merchantId`;
+  let url = `${URLS.GET_FANPIAO_TRANSACTION_DETAIL}/${merchantId}`;
   let res = await http.get(url, { params: fanpiaoInfo });
+  return res;
+}
+
+export async function getFanpiaoBuyRecord(merchantId, args) {
+  let url = `${URLS.MERCHANT_FANPIAO_BUY_RECORD}/${merchantId}`;
+  let res = await http.get(url, args)
   return res;
 }

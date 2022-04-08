@@ -32,7 +32,7 @@
             class="buy-fanpiao-page-item"
             v-for="(fanpiaoItem, index) in fanpiaoList"
             :key="index"
-            @click="buyFanpiao(merchantInfo.merchantId, fanpiaoItem)"
+            @click="buyFanpiao(fanpiaoItem, merchantInfo.merchantId)"
           >
             <div class="left">
               <div class="left-box">
