@@ -34,7 +34,7 @@ export default {
     });
   },
   onError(msg) {
-    // log.error("error--", msg);
+    console.error("error--", msg);
   },
   onLaunch: function (options) {
     // 处理二维码参数

@@ -60,35 +60,47 @@ export function useDish() {
 
 export function useSkuDish() {
 
+  // let { curChildSkuDish} = useState('menu',['curChildSkuDish'])
+
+  function addSkuChuildDish(dishInfo){
+
+  }
+
+
   return {
     ...useState("menu", [
       "curSkuDish",
       "showSkuModal",
+      "curChildSkuDish",
+      "showChildSkuDishModal",
+      "selChildDishes"
     ]),
     ...useMutations("menu", [
       "setCurSkuDish",
       "toggleShowSkuModal",
-    ]),
-    genDishDescribeText,
-    calcSkuDishPrice
-  }
-}
-
-export function useChildSkuDish() {
-
-  return {
-    ...useState("menu", [
-      "curChildSkuDish",
-      "showChildSkuDishModal",
-    ]),
-    ...useMutations("menu", [
       "setCurChildSkuDish",
       "toggleShowChildSkuModal",
     ]),
     genDishDescribeText,
-    calcSkuDishPrice
+    calcSkuDishPrice,
+    addSkuChuildDish
   }
 }
+
+// export function useChildSkuDish() {
+//   return {
+//     ...useState("menu", [
+//       "curChildSkuDish",
+//       "showChildSkuDishModal",
+//     ]),
+//     ...useMutations("menu", [
+//       "setCurChildSkuDish",
+//       "toggleShowChildSkuModal",
+//     ]),
+//     genDishDescribeText,
+//     calcSkuDishPrice
+//   }
+// }
 
 
 export function useComboSkuDish() {

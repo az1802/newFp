@@ -13,13 +13,19 @@
       <span class="tooltip-text">{{ tooltipText }}</span>
     </div>
     <div
-      class="condiment-item"
       v-for="condimentItem in condimentList"
+      class="condiment-item"
+      :class="[condimentItem.status === 'SOLD_OUT' ? 'sell-out' : '']"
       :key="condimentItem.id"
     >
       <div class="name">{{ condimentItem.name }}</div>
       <div class="price">¥{{ fenToYuan(condimentItem.marketPrice) }}</div>
+
+      <div class="status" v-if="condimentItem.status === 'SOLD_OUT'">
+        已售罄
+      </div>
       <QuantityOperation
+        v-else
         :num="selCondiments[condimentItem.id]"
         @add="addCondiment(condimentItem)"
         @reduce="reduceCondiment(condimentItem)"
@@ -66,19 +72,20 @@ export default {
       }
     });
 
-
-
-    
-
     function addCondiment({ id }) {
       let countNum = props.selCondimentsCount;
       let { type, lowerLimit, upperLimit } = props.selectionType;
-      if(countNum >=upperLimit){return};
+      if (countNum >= upperLimit && type != "UNLIMITED") {
+        return;
+      }
       selCondiments[id] == undefined
         ? (selCondiments[id] = 1)
         : (selCondiments[id] += 1);
     }
     function reduceCondiment({ id }) {
+      if (selCondiments[id] < 1) {
+        return;
+      }
       selCondiments[id] -= 1;
     }
 
@@ -110,6 +117,13 @@ export default {
   .condiment-item {
     .flex-simple(space-between,center);
     height: 32px;
+    &.sell-out {
+      background-color: #f0f0f0;
+      .name,
+      .price {
+        color: #666;
+      }
+    }
     .name {
       flex-basis: 120px;
       .bold-font(14px,#333);
@@ -117,6 +131,11 @@ export default {
     .price {
       .normal-font(14px,#333);
       flex-basis: 100px;
+    }
+    .status {
+      .normal-font(14px,#666);
+      width: 100px;
+      text-align: right;
     }
   }
 }

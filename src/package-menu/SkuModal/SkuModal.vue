@@ -39,6 +39,7 @@
         <ChildDishList
           v-show="curSkuDish.childDishGroups.length > 0"
           :childDishGroups="curSkuDish.childDishGroups"
+          :selChildDishes="selChildDishes"
         />
       </scroll-view>
       <div class="sel-ok-btn" @click="selOK">选好了</div>
@@ -57,6 +58,7 @@ import { useSkuDish, useDish } from "@hooks/menuHooks";
 import { useTransformPrice } from "@hooks/commonHooks";
 import { reactive, watch, watchEffect, ref, computed, toRaw, unref } from "vue";
 import { showToast } from "@utils";
+import { cloneDeep } from "lodash";
 
 export default {
   components: {
@@ -78,9 +80,9 @@ export default {
     let selAttrIds = reactive([]);
     let selCondiments = reactive({});
     let childDishList = reactive([]);
-    let selChildDish = reactive({});
 
-    const { curSkuDish, showSkuModal, toggleShowSkuModal } = useSkuDish();
+    const { curSkuDish, showSkuModal, toggleShowSkuModal, selChildDishes } =
+      useSkuDish();
     const { addDish } = useDish();
     let { fenToYuan } = useTransformPrice();
 
@@ -92,7 +94,6 @@ export default {
       for (let key in selCondiments) {
         delete selCondiments[key];
       }
-
       nval?.attrList.forEach((attrGroupItem) => {
         if (
           attrGroupItem.selType == "SINGLE" &&
@@ -109,9 +110,22 @@ export default {
         condimentMap[condimentItem.id] = condimentItem;
       });
 
-      // nval?.childDishGroups.forEach((childDishGroup) => {
-      //   selChildDish[childDishGroup.id] = [];
-      // });
+      nval?.childDishGroups.forEach((childDishGroup) => {
+        unref(selChildDishes)[childDishGroup.id] = [];
+        if (childDishGroup.isFixed) {
+          //处理固定分组的菜品
+          childDishGroup?.childDishes.forEach((dishItem) => {
+            let tempDish = cloneDeep(dishItem);
+            if (tempDish.isSku) {
+              //暂时未处理默认规格
+              unref(selChildDishes)[childDishGroup.id].push(tempDish);
+            } else {
+              tempDish.quantity = 1;
+              unref(selChildDishes)[childDishGroup.id].push(tempDish);
+            }
+          });
+        }
+      });
     });
 
     let totalPrice = computed(() => {
@@ -124,6 +138,14 @@ export default {
       for (let key in selCondiments) {
         res += parseFloat(condimentMap[key].marketPrice * selCondiments[key]);
       }
+
+      for (let key in unref(selChildDishes)) {
+        let groupChildDishes = unref(selChildDishes)[key];
+        groupChildDishes.forEach((dishItem) => {
+          res += dishItem.price + (dishItem.addPrice || 0);
+        });
+      }
+
       return res;
     });
 
@@ -155,7 +177,8 @@ export default {
     function selOK() {
       let dishInfo = unref(curSkuDish),
         attrs = [],
-        supplyCondiments = [];
+        supplyCondiments = [],
+        childDishes = [];
 
       // TODO 根据属性组别调整属性的顺序
       selAttrIds.forEach((id) => {
@@ -174,9 +197,15 @@ export default {
         return;
       }
 
+      for (let groupId in unref(selChildDishes)) {
+        let groupDishes = unref(selChildDishes)[groupId];
+        childDishes.push(...groupDishes);
+      }
+
       Object.assign(dishInfo, {
         attrs,
         supplyCondiments,
+        childDishes,
       });
       addDish(dishInfo);
       toggleShowSkuModal(false);
@@ -185,7 +214,7 @@ export default {
     return {
       selAttrIds,
       selCondiments,
-      selChildDish,
+      selChildDishes,
       curSkuDish,
       showSkuModal,
       totalPrice,

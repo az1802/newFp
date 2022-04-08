@@ -9,7 +9,11 @@
   <div class="quantity-operation">
     <span v-if="num" class="iconfont icon-jian" @click.stop="reduce"></span>
     <div v-if="num" class="num">{{ num }}</div>
-    <span class="iconfont icon-jia" @click.stop="add"></span>
+    <span
+      class="iconfont icon-jia"
+      :class="[disableAdd ? 'disabled' : '']"
+      @click.stop="add"
+    ></span>
   </div>
 </template>
 <script>
@@ -19,6 +23,10 @@ export default {
     num: {
       type: Number,
       default: 0,
+    },
+    disableAdd: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props, { emit }) {
@@ -46,6 +54,9 @@ export default {
   .icon-jia {
     .normal-font(24px,#f25643);
     padding: 0 2px;
+    &.disabled {
+      opacity: 0.5;
+    }
   }
   .num {
     min-width: 20px;

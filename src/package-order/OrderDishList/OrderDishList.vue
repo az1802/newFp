@@ -34,7 +34,7 @@ export default {
   },
   components: {},
   setup() {
-    const { genDishDescribeText, calcSkuDishPrice } = useSkuDish();
+    const { genDishDescribeText } = useSkuDish();
     let { fenToYuan } = useTransformPrice();
     return {
       genDishDescribeText,

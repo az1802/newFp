@@ -15,8 +15,6 @@
     <MenuBottom />
     <SkuModal />
     <ChildSkuDishModal />
-
-    <ChildSkuModal />
     <CartModal />
   </div>
 </template>
@@ -25,7 +23,6 @@ import { reactive, onBeforeMount, onMounted, ref } from "vue";
 import MenuHeader from "./MenuHeader/MenuHeader.vue";
 import MenuList from "./MenuList/MenuList.vue";
 import SkuModal from "./SkuModal/SkuModal.vue";
-import ChildSkuModal from "./SkuModal/ChildSkuModal.vue";
 import CartModal from "./CartModal/CartModal.vue";
 import MenuBottom from "./MenuBottom/MenuBottom.vue";
 import ChildSkuDishModal from "./SkuModal/ChildSkuDishModal.vue";
@@ -48,8 +45,12 @@ import {
 } from "@hooks/merchantHooks";
 import { useDish } from "@hooks/menuHooks";
 
-const sceneMock = "5c0daef6ea47421c908047702b0a35a9";
-const merchantIdMock = "1e543376139b474e97d38d487fa9fbe8";
+// const sceneMock = "5c0daef6ea47421c908047702b0a35a9";
+// const merchantIdMock = "1e543376139b474e97d38d487fa9fbe8";
+// 开发用正式环境
+const sceneMock = "09e36b4cd1ea400ba772443f0d2a8747";
+const merchantIdMock = "611e8d6b48e844a186d5ead5a8340ff0";
+
 // const sceneMock = "e162ac24e1a64dd783f8408741c910b1";
 // const merchantIdMock = "8ec573585d9645229fb01713e30a2a6d";
 let scene, merchantId;

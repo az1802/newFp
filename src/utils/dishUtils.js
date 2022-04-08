@@ -116,14 +116,16 @@ export function getDishInfoById(dishId) {
 }
 
 export function genDishDescribeText(dish) {
+  let childDishesText = dish?.childDishes?.map(item => item.name) || [];
   let attrTexts = dish?.attrs?.map((item) => item.name) || [];
   let condimentTexts = dish?.supplyCondiments?.map(item => `${item.name}*${item.quantity}`) || [];
-  return attrTexts.concat(condimentTexts).join(",")
+  return [...childDishesText, ...attrTexts, ...condimentTexts].join(",")
 }
 
 export function calcSkuDishPrice(dish) {
-  let { supplyCondiments = [], attrs = [], childDishGroups = [], price, quantity = 0 } = dish;
+  let { supplyCondiments = [], attrs = [], childDishes = [], price, quantity = 0 } = dish;
   let attrPrice = attrs.reduce((sum, { reprice }) => sum += reprice, 0);
   let condimentPrice = supplyCondiments.reduce((sum, { marketPrice, quantity = 0 }) => sum += marketPrice * quantity, 0);
-  return (price + attrPrice + condimentPrice) * quantity;
+  let childDishesPrice = childDishes.reduce((sum, { price = 0, addPrice = 0, quantity = 0 }) => sum += quantity * (addPrice + price), 0)
+  return (price + attrPrice + condimentPrice + childDishesPrice) * quantity;
 }

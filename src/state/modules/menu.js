@@ -5,7 +5,7 @@
  * @LastEditTime: 2022-02-18 13:59:51
  * @FilePath: /new-fanpiao-uniapp/src/state/modules/menu.js
  */
-import { setStorage } from "@utils"
+import { setStorage, calcSkuDishPrice } from "@utils"
 export default {
   state: {
     selectedDishes: [],
@@ -21,7 +21,8 @@ export default {
       supplyCondiments: [],
       childDishGroups: []
     },
-    showChildSkuModal: false,
+    showChildSkuDishModal: false,
+    selChildDishes: {}
 
   },
   getters: {
@@ -58,10 +59,7 @@ export default {
     selectedDishesTotalPrice(state) {
 
       return state.selectedDishes.reduce((sum, dishItem) => {
-        let { supplyCondiments = [], attrs = [], childDishGroups = [], price, quantity = 0 } = dishItem;
-        let attrPrice = attrs.reduce((sum, { reprice }) => sum += reprice, 0);
-        let condimentPrice = supplyCondiments.reduce((sum, { marketPrice, quantity = 0 }) => sum += marketPrice * quantity, 0);
-        return sum + (price + attrPrice + condimentPrice) * quantity;
+        return sum += calcSkuDishPrice(dishItem)
       }, 0)
     }
 
@@ -136,7 +134,7 @@ export default {
       state.showSkuModal = val
     },
     toggleShowChildSkuModal(state, val) {
-      state.showChildSkuModal = val
+      state.showChildSkuDishModal = val
     },
     toggleShowCartModal(state, val) {
       state.showCartModal = val

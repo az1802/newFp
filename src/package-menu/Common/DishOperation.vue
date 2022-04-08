@@ -11,7 +11,13 @@
       选规格
       <div v-show="quantity" class="quantity">{{ quantity }}</div>
     </div>
-    <QuantityOperation v-else :num="quantity" @add="add" @reduce="reduce" />
+    <QuantityOperation
+      v-else
+      :num="quantity"
+      @add="add"
+      @reduce="reduce"
+      :disableAdd="disableAdd"
+    />
   </div>
 </template>
 <script>
@@ -25,6 +31,10 @@ export default {
     quantity: {
       type: [Number, String],
       default: 0,
+    },
+    disableAdd: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props, { emit }) {

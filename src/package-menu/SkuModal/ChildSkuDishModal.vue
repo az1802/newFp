@@ -6,11 +6,8 @@
  * @FilePath: /new-fanpiao-uniapp/src/package-menu/SkuModal/SkuModal.vue
 -->
 <template>
-  <div class="modal-wrapper" v-show="showChildSkuModal">
-    <div
-      class="container"
-      :class="[curChildSkuDish.childDishGroups.length > 0 ? 'higher' : '']"
-    >
+  <div class="modal-wrapper" v-show="showChildSkuDishModal">
+    <div class="container higher">
       <div class="dish-info">
         <img
           :src="curChildSkuDish.thumbImage"
@@ -58,19 +55,17 @@ export default {
     AttrGroupList,
     SupplyCondimentList,
   },
-  props: {
-    skuDish: {
-      type: Object,
-      default: {},
-    },
-  },
   setup(props) {
     let selAttrIds = reactive([]);
     let selCondiments = reactive({});
     let childDishList = reactive([]);
 
-    const { curChildSkuDish, showChildSkuModal, toggleShowChildSkuModal } =
-      useChildSkuDish();
+    const {
+      curChildSkuDish,
+      showChildSkuDishModal,
+      toggleShowChildSkuModal,
+      selChildDishes,
+    } = useSkuDish();
     const { addDish } = useDish();
     let { fenToYuan } = useTransformPrice();
 
@@ -161,11 +156,14 @@ export default {
         return;
       }
 
-      Object.assign(dishInfo, {
+      Object.assign({}, dishInfo, {
         attrs,
         supplyCondiments,
       });
-      addDish(dishInfo);
+      dishInfo.quantity = dishInfo.quantityIncrement || 1;
+      dishInfo.addPrice = unref(totalPrice);
+      unref(selChildDishes)[dishInfo.groupId].push(dishInfo);
+      console.log(unref(selChildDishes));
       toggleShowChildSkuModal(false);
     }
 
@@ -173,7 +171,7 @@ export default {
       selAttrIds,
       selCondiments,
       curChildSkuDish,
-      showChildSkuModal,
+      showChildSkuDishModal,
       totalPrice,
       fenToYuan,
       toggleShowChildSkuModal,
@@ -185,6 +183,9 @@ export default {
 </script>
 <style lang="less" scoped>
 @import "@design/index.less";
+.modal-wrapper {
+  z-index: 1000;
+}
 .container {
   .box-size(100%,500px);
   .pos-bl-absolute();
