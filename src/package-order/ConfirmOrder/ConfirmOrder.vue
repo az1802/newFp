@@ -96,8 +96,6 @@ export default {
       return payRes;
     }
 
-    function useCouponPay() {}
-
     async function confirmOrder() {
       let { isBuyCouponPackage, isAgreeCouponAccord } = unref(orderInfo);
 

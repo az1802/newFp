@@ -81,3 +81,12 @@ export function handleQrcodeStr(qrcodeStr) {
   }
   return res;
 }
+
+
+export function fenToYuan(price) {
+  return Math.abs(Number(price / 100).toFixed(2));
+}
+
+export function yuanToFen(price) {
+  return Number(price * 100);
+}

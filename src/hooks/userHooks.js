@@ -10,12 +10,9 @@ import { useState, useGetters, useMutations } from "@hooks/storeHooks";
 import { reLaunch } from "@utils"
 import API from "@api";
 
-
 export function useUserInfo() {
-
-  const { userInfo, stats, userId, userWallet, userFanpiaoRecords } = useState("user", ['userInfo', "stats", "userId", "userWallet", "userFanpiaoRecords"])
-  const { setUserInfo, setStats, setUserWallet, setUserFanpiaoRecords } = useMutations("user", ["setUserInfo", "setStats", "setUserWallet", "setUserFanpiaoRecords"]);
-
+  const { userInfo, userId, userWallet } = useState("user", ['userInfo', "userId", "userWallet"])
+  const { setUserInfo, setStats, setUserWallet } = useMutations("user", ["setUserInfo", "setUserWallet"]);
   async function requestUserInfo() {
     // let userId = uni.getStorageSync("userId");
     // if (!userId) {
@@ -33,22 +30,31 @@ export function useUserInfo() {
     }
 
   }
-  async function requestUserStats() {
-    // let userId = uni.getStorageSync("userId");
-    // if (!userId) {
-    //   return;
-    // }
-    let res = await API.User.getUserSavingStats();
-    setStats(res.stats);
-  }
+
   async function requestUserWallet() {
-    // let userId = uni.getStorageSync("userId");
-    // if (!userId) {
-    //   return;
-    // }
     let res = await API.User.getUserWallet();
     setUserWallet(res)
   }
+
+  async function getUserMerchantInfo(merchantId) {
+    let res = await API.User.getUserMerchantInfo(merchantId)
+  }
+
+
+  return {
+    userInfo,
+    userId,
+    userWallet,
+    requestUserInfo,
+    requestUserStats,
+    requestUserWallet,
+    getUserMerchantInfo
+  }
+}
+
+export function useUserFanpiaoRecords() {
+  const { userFanpiaoRecords } = useState("user", ["userFanpiaoRecords"]);
+  const { setUserFanpiaoRecords } = useMutations("user", ["setUserFanpiaoRecords"]);
 
   async function requestUserFanpiaoRecords() {
     // let userId = uni.getStorageSync("userId");
@@ -58,42 +64,33 @@ export function useUserInfo() {
     let res = await API.User.getUserFanpiaoRecords();
     setUserFanpiaoRecords(res.fanpiaos || [])
   }
+  return {
+    userFanpiaoRecords,
+    requestUserFanpiaoRecords,
+  }
+}
 
+export function useUserStats() {
+  const { stats } = useState("user", ["stats"]);
+  const { setStats } = useMutations("user", ["setStats"]);
 
-  async function getUserMerchantInfo(merchantId) {
-    let res = await API.User.getUserMerchantInfo(merchantId)
+  async function requestUserStats() {
+    let res = await API.User.getUserSavingStats();
+    setStats(res.stats);
   }
 
-
-
-
-
-
-
   return {
-    userInfo,
-    userId,
     stats,
-    userWallet,
-    userFanpiaoRecords,
-    requestUserInfo,
-    requestUserStats,
-    requestUserWallet,
-    requestUserFanpiaoRecords,
-    getUserMerchantInfo
+    requestUserStats
   }
 }
 
 export function userMerchantInfo() {
 
-
-
-
   return {
 
   }
 }
-
 
 const PAGE = 1;
 const SIZE = 100
@@ -238,8 +235,7 @@ export function useUserAddress() {
 
 }
 
-
-export function useUserWallet() {
+export function useUserMerchantWallet() {
   let { userWallet } = useState('user', ["userWallet"]);
   let { setUserWallet } = useMutations('user', ["setUserWallet"]);
 
@@ -280,8 +276,6 @@ export function useUserWallet() {
 
     return res;
   }
-
-
 
   return {
     userWallet,

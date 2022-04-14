@@ -1,13 +1,13 @@
 <template>
   <div class="page">
     <NavigationBar title="订单详情" />
-    <OrderStatusInfo :orderInfo="orderInfo" />
+    <OrderStatusInfo :orderInfo="orderDetail" />
     <OrderDishInfo
-      :dishList="orderInfo.dishList"
+      :dishList="orderDetail.dishList"
       :discountPrice="orderDiscountPrice"
       :totalPrce="orderTotalPrice"
     />
-    <OrderInfoList :orderInfo="orderInfo" />
+    <OrderInfoList :orderInfo="orderDetail" />
   </div>
 </template>
 <script>
@@ -27,20 +27,20 @@ export default {
     orderId = opts.orderId || "dcb51bc95528408c8f6f338cb895d85d";
   },
   setup() {
-    let { orderInfo, getOrderDetailById } = useOrderRecord();
+    let { orderDetail, getOrderDetailById } = useOrderDetail();
 
     onBeforeMount(() => {
       getOrderDetailById(orderId);
     });
     let orderDiscountPrice = computed(() => {
-      return unref(orderInfo).billFee - unref(orderInfo).totalFee;
+      return unref(orderDetail).billFee - unref(orderDetail).totalFee;
     });
     let orderTotalPrice = computed(() => {
-      return unref(orderInfo).totalFee;
+      return unref(orderDetail).totalFee;
     });
 
     return {
-      orderInfo,
+      orderDetail,
       orderDiscountPrice,
       orderTotalPrice,
     };

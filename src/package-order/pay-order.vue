@@ -29,7 +29,7 @@
 import PayMthodList from "./PayMthodList/payMethodList.vue";
 import { useOrder, usePayMethod, useFanpiaoPayInfo } from "@hooks/orderhooks";
 import { useTransformPrice } from "@hooks/commonHooks";
-import { useUserWallet } from "@hooks/userHooks";
+import { useUserMerchantWallet } from "@hooks/userHooks";
 import { useFanpiaoInfo } from "@hooks/merchantHooks";
 import { calcRecommendFanpiao } from "@utils";
 
@@ -43,7 +43,7 @@ export default {
     let { fenToYuan } = useTransformPrice();
 
     const { userWallet, requestUserWallet, requestFanpiaoPaidFee } =
-      useUserWallet();
+      useUserMerchantWallet();
     const { payMethod } = usePayMethod();
 
     // 请求钱包信息,计算所有饭票支付相关额

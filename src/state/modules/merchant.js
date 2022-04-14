@@ -8,11 +8,11 @@
 import { maxBy, minBy } from "lodash";
 export default {
   state: {
-    merchantInfo: {},
-    fanpiaoList: [],
-    couponList: [],
-    fanpiaoUserAvaterList: [],
-    fanpiaoUserNum: 0,
+    merchantInfo: {}, //商户信息
+    fanpiaoList: [], //饭票目录
+    couponList: [], //券包目录
+    fanpiaoUserAvaterList: [], //券包购买头像
+    fanpiaoUserNum: 0,//饭票抢购人数
   },
   getters: {
     maxDiscountFanpiao(state) {

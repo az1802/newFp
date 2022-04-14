@@ -43,9 +43,9 @@
 </template>
 <script>
 import { useCart, useDish } from "@hooks/menuHooks";
-import { useTransformPrice, useNavigate } from "@hooks/commonHooks";
+import { useNavigate } from "@hooks/commonHooks";
 import { unref } from "vue";
-
+import { fenToYuan } from "@utils";
 export default {
   setup() {
     const { showCartModal, toggleShowCartModal } = useCart();
@@ -54,7 +54,6 @@ export default {
       selectedDishesTotalQuantity,
       selectedDishesTotalPrice,
     } = useDish();
-    let { fenToYuan } = useTransformPrice();
     let { navigateTo } = useNavigate();
     function createOrder() {
       if (unref(selectedDishes).length > 0) {

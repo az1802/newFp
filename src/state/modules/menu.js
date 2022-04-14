@@ -85,7 +85,11 @@ export default {
       return state.selectedDishes.reduce((sum, dishItem) => {
         return sum += (calcSkuDishPrice(dishItem) - (dishItem.discountPrice * dishItem.quantity))
       }, 0)
-    }
+    },
+    maxFanpiaoDiscount(){
+
+    },
+    
 
 
   },

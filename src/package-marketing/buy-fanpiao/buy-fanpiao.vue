@@ -84,7 +84,7 @@
 <script>
 import { useMerchantInfo, useFanpiaoInfo } from "@hooks/merchantHooks";
 import { useNavigate } from "@hooks/commonHooks";
-import { usePay } from "@hooks/payHooks";
+import { useFanpiaoPay } from "@hooks/payHooks";
 import {
   onBeforeMount,
   onBeforeUnmount,
@@ -110,7 +110,7 @@ export default {
       fanpiaoUserNum,
       fanpiaoUserAvaterList,
     } = useFanpiaoInfo();
-    const { buyFanpiao } = usePay();
+    const { buyFanpiao } = useFanpiaoPay();
     const animating = ref(true),
       curImgIndex = ref(null),
       showAvaterList = ref([]);

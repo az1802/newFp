@@ -46,7 +46,7 @@ const TAB_ARR = [
   },
 ];
 import { useTabs, useSystemInfo } from "@hooks/commonHooks";
-import { useUserInfo } from "@hooks/userHooks";
+import { useUserFanpiaoRecords } from "@hooks/userHooks";
 import { onBeforeMount, computed, unref } from "vue";
 import FanpiaoItem from "./FanpiaoItem.vue";
 export default {
@@ -55,7 +55,8 @@ export default {
   },
   setup() {
     let { curTabIndex, switchTab, tabs } = useTabs(TAB_ARR);
-    const { userFanpiaoRecords, requestUserFanpiaoRecords } = useUserInfo();
+    const { userFanpiaoRecords, requestUserFanpiaoRecords } =
+      useUserFanpiaoRecords();
     onBeforeMount(async () => {
       uni.showLoading();
       await requestUserFanpiaoRecords();

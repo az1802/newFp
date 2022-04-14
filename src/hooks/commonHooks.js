@@ -12,12 +12,10 @@ import { useState, useGetters, useMutations } from "@hooks/storeHooks";
 
 export function useSystemInfo() {
   let systemInfo = getApp().globalData.systemInfo;
-  // TODO 根据系统信息做二次处理
   return systemInfo;
 }
 
-
-
+// TODO 菜单滚动的逻辑抽象为hooks
 export function useScrollViewScroll() {
 
   return {
@@ -26,7 +24,6 @@ export function useScrollViewScroll() {
     }
   }
 }
-
 
 export function useTransformPrice() {
 
@@ -44,7 +41,6 @@ export function useTransformPrice() {
   }
 }
 
-
 export function useNavigate() {
 
   return {
@@ -52,7 +48,6 @@ export function useNavigate() {
     navigateBack
   }
 }
-
 
 export function useTabs(tabsArr = []) {
 
@@ -71,16 +66,6 @@ export function useTabs(tabsArr = []) {
 
   }
 }
-
-
-export function useTimeTransform() {
-
-
-  return {
-    formatTme
-  }
-}
-
 
 export function useModal() {
   let isShow = ref(false);

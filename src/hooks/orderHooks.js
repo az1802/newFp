@@ -10,9 +10,6 @@ import { getDishInfoById, showToast } from "@utils";
 import { useState, useGetters, useMutations } from "@hooks/storeHooks";
 import API from "@api";
 
-
-
-
 export function useOrder() {
 
   const { merchantInfo } = useState('merchant', ["merchantInfo"])
@@ -38,12 +35,9 @@ export function useOrder() {
     return res?.orderId;
   }
 
-
   async function payOrder() {
 
   }
-
-
 
   return {
     payMethod,
@@ -57,12 +51,7 @@ export function useOrder() {
 
 export function useOrderRecord() {
 
-  const orderInfo = ref({}), orderList = ref([]), fanpiaoList = ref([]), couponList = ref([]), moreOrder = {}, moreFanpiao = {}, moreCoupon = {};
-  async function getOrderDetailById(orderId) {
-    if (!orderId) { return };
-    let orderInfoRes = await API.Order.getOrderDetailById(orderId) || {};
-    orderInfo.value = orderInfoRes;
-  }
+  const orderList = ref([]), fanpiaoList = ref([]), couponList = ref([]), moreOrder = {}, moreFanpiao = {}, moreCoupon = {};
 
   async function getOrderList(first = false) {
     let res = await API.Order.getOrderList() || { orders: [] };
@@ -89,6 +78,7 @@ export function useOrderRecord() {
     }
 
   }
+
   async function getCouponRecordList(first = false) {
     let res = await API.Order.getCouponList() || { couponPackages: [] };
     let { hasMore, latestTime, couponPackages } = res;
@@ -102,10 +92,8 @@ export function useOrderRecord() {
 
   }
 
-
-
   async function refundFanpiao(transactionId, args) {
-    let res = await API.User.refundFanpiao(transactionId, args)
+    let res = await API.Order.refundFanpiao(transactionId, args)
     showToast('饭票退款成功')
     if (res.errcode == 0) {
       fanpiaoList.value.forEach(item => {
@@ -119,7 +107,7 @@ export function useOrderRecord() {
   }
 
   async function refundCoupon(transactionId, args) {
-    let res = await API.User.refundCoupon(transactionId, args)
+    let res = await API.Order.refundCoupon(transactionId, args)
     showToast('券包退款成功')
     if (res.errcode == 0) {
       couponList.value.forEach(item => {
@@ -131,14 +119,10 @@ export function useOrderRecord() {
     }
   }
 
-
-
   return {
-    orderInfo,
     orderList,
     fanpiaoList,
     couponList,
-    getOrderDetailById,
     getOrderList,
     getFanpiaoRecordList,
     getCouponRecordList,
@@ -147,24 +131,34 @@ export function useOrderRecord() {
   }
 }
 
+export function useOrderDetail() {
+  const orderDetail = ref({});
 
+  async function getOrderDetailById(orderId) {
+    if (!orderId) { return };
+    let orderInfoRes = await API.Order.getOrderDetailById(orderId) || {};
+    orderDetail.value = orderInfoRes;
+  }
+
+  return {
+    orderDetail,
+    getOrderDetailById,
+  }
+}
 
 export function usePayMethod() {
   const { payMethod } = useState('order', ["payMethod"]);
   const { setPayMethod } = useMutations("order", ["setPayMethod"])
-
   return {
     payMethod,
     setPayMethod
   }
 }
 
-
 export function useFanpiaoPayInfo() {
   const { orderFanpiaoPayInfo } = useState('order', ["orderFanpiaoPayInfo"]);
   const { finalFanpiaoPaidFee } = useGetters('order', ["finalFanpiaoPaidFee"]);
   const { setOrderFanpiaoPayInfo } = useMutations("order", ["setOrderFanpiaoPayInfo"])
-
   return {
     orderFanpiaoPayInfo,
     finalFanpiaoPaidFee,

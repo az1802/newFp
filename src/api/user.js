@@ -33,13 +33,11 @@ export async function getUserMerchantInfo(merchantId) {
   let res = await http.get(url);
   return res;
 }
-
 export async function getUserFanpiaoBalance(merchantId) {
   let url = `${URLS.USER_FANPIAO_BALANCE}?merchantId=${merchantId}`; //TODO
   let res = await http.get(url);
   return res;
 }
-
 export async function getUserMemberBalance(merchantId) {
   let url = `${URLS.USER_MEMBER_BALANCE}/${merchantId}`;
   let res = await http.get(url);
@@ -50,7 +48,6 @@ export async function getUserFanpiaoPaidFee(data) {
   let res = await http.post(url, data);
   return res;
 }
-
 export async function getUserInfo() {
   let url = `${URLS.USER_INFO}`;
   let res = await http.get(url);
@@ -97,20 +94,6 @@ export async function getUserMerchantCoupon(merchantId) {
   let res = await http.get(url);
   return res;
 }
-
-export async function refundFanpiao(transactionId, args) {
-  const url = URLS.USER_REFUND_FANPIAO + `${transactionId}`
-  let res = await http.post(url, args);
-  return res;
-}
-
-export async function refundCoupon(transactionId, args) {
-  const url = URLS.USER_REFUND_COUPON + `${transactionId}`
-  let res = await http.post(url, args);
-  return res;
-}
-
-
 export async function getAliUserPhone(data) {
   const url = URLS.GET_ALI_USER_PHONE;
   let res = await http.post(url, data);
@@ -136,7 +119,6 @@ export async function addShippingAddress(addressInfo) {
     return false;
   }
 }
-
 export async function updateAddressDetail(addressInfo) {
   const url = `${URLS.UPDATE_SHIPPING_ADDRESS}/${addressInfo.id}`
   let res = await http.post(url, addressInfo);

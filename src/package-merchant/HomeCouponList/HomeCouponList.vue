@@ -72,7 +72,7 @@
 </template>
 <script>
 import { useTransformPrice } from "@hooks/commonHooks";
-import { usePay } from "@hooks/payHooks";
+import { useCouponPay } from "@hooks/payHooks";
 export default {
   props: {
     merchantId: {
@@ -91,7 +91,7 @@ export default {
   components: {},
   setup() {
     const { fenToYuan } = useTransformPrice();
-    const { buyCoupon } = usePay();
+    const { buyCoupon } = useCouponPay();
     return {
       fenToYuan,
       buyCoupon,

@@ -42,7 +42,7 @@
           class="operation"
           :class="disableShowFanpiaoPurchaseNumber ? 'only-buy' : ''"
         >
-          <div class="buy" @click="buyFanpiao(fanpiaoItem,merchantId)">
+          <div class="buy" @click="buyFanpiao(fanpiaoItem, merchantId)">
             抢购
           </div>
           <div class="sell-count" v-if="!disableShowFanpiaoPurchaseNumber">
@@ -58,7 +58,7 @@
 </template>
 <script>
 import { useTransformPrice, useNavigate } from "@hooks/commonHooks";
-import { usePay } from "@hooks/payHooks";
+import { useFanpiaoPay } from "@hooks/payHooks";
 const fanpiaoCountArr = [20, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; //饭票数量初始化
 export default {
   props: {
@@ -83,7 +83,8 @@ export default {
   setup() {
     const { fenToYuan } = useTransformPrice();
     const { navigateTo } = useNavigate();
-    const { buyFanpiao } = usePay();
+    const { buyFanpiao } = useFanpiaoPay();
+
     return {
       navigateTo,
       fanpiaoCountArr,

@@ -50,7 +50,7 @@ import FanpiaoItem from "./FanpiaoItem.vue";
 import { useOrder, usePayMethod, useFanpiaoPayInfo } from "@hooks/orderHooks";
 import { useNavigate } from "@hooks/commonHooks";
 import { useFanpiaoInfo } from "@hooks/merchantHooks";
-import { useUserWallet } from "@hooks/userHooks";
+import { useUserMerchantWallet } from "@hooks/userHooks";
 import { onBeforeMount, ref, unref, computed } from "vue";
 import { calcRecommendFanpiao } from "@utils";
 
@@ -61,7 +61,7 @@ export default {
   setup(props) {
     let { setPayMethod, payMethod } = usePayMethod();
     let { navigateTo } = useNavigate();
-    const { userWallet } = useUserWallet();
+    const { userWallet } = useUserMerchantWallet();
     const { orderFanpiaoPayInfo, setOrderFanpiaoPayInfo } = useFanpiaoPayInfo();
 
     function changeSelFanpiao(fanpiao) {

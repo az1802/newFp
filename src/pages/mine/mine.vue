@@ -76,14 +76,14 @@
 
 <script type="text/ecmascript-6">
 import { useNavigate } from "@hooks/commonHooks";
-import { useUserInfo } from "@hooks/userHooks";
+import { useUserInfo, useUserStats } from "@hooks/userHooks";
 import { computed, onBeforeMount } from "vue";
 
 export default {
   setup() {
     const { navigateTo } = useNavigate();
-    const { userInfo, stats, requestUserInfo, requestUserStats, userId } =
-      useUserInfo();
+    const { userInfo, requestUserInfo, userId } = useUserInfo();
+    const { stats, requestUserStats } = useUserStats();
     onBeforeMount(() => {
       requestUserInfo();
       requestUserStats();

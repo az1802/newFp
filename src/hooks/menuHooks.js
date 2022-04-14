@@ -9,15 +9,12 @@ import { computed, ref, reactive, toRaw, unref } from 'vue'
 import { useState, useGetters, useMutations } from "@hooks/storeHooks.js";
 import { setStorage, genDishDescribeText, calcSkuDishPrice } from "@utils"
 
-
-
 export function useCategory() {
 
   return {
     ...useGetters("menu", ["categoryCountMap"]),
   }
 }
-
 
 export function useDish() {
 
@@ -59,13 +56,7 @@ export function useDish() {
 }
 
 export function useSkuDish() {
-
   // let { curChildSkuDish} = useState('menu',['curChildSkuDish'])
-
-  function addSkuChuildDish(dishInfo) {
-
-  }
-
 
   return {
     ...useState("menu", [
@@ -83,28 +74,7 @@ export function useSkuDish() {
     ]),
     genDishDescribeText,
     calcSkuDishPrice,
-    addSkuChuildDish
   }
-}
-
-// export function useChildSkuDish() {
-//   return {
-//     ...useState("menu", [
-//       "curChildSkuDish",
-//       "showChildSkuDishModal",
-//     ]),
-//     ...useMutations("menu", [
-//       "setCurChildSkuDish",
-//       "toggleShowChildSkuModal",
-//     ]),
-//     genDishDescribeText,
-//     calcSkuDishPrice
-//   }
-// }
-
-
-export function useComboSkuDish() {
-
 }
 
 export function useCart() {
@@ -117,7 +87,6 @@ export function useCart() {
     "reduceCartDish",
     "saveSelectedDishesStorage"
   ])
-
 
 
   return {
@@ -144,10 +113,6 @@ export function useDishDetail() {
   const { toggleShowDishDetailModal, setCurDishDetail } = useMutations("menu", [
     "toggleShowDishDetailModal", "setCurDishDetail"
   ]);
-
-
-
-
   return {
     showDishDetailModal, curDishDetail, toggleShowDishDetailModal, setCurDishDetail
   }

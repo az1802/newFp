@@ -19,8 +19,9 @@ export default {
     userInfo: { //用户信息
       nickname: "sunjie",
     },
-    stats: { //用户最近营销使用
-
+    stats: { //用户最近营销使用用券次数和已省金额
+      sumUsedCoupons: 0,
+      sumSavingAmountText: 0,
     },
     userFanpiaoRecords: [],//用户的饭票使用记录
     userAddressList: [], //用户的地址列表
@@ -53,7 +54,6 @@ export default {
         state.userWallet[key] = walletObj[key];
       }
     }
-
   },
   actions: {
 

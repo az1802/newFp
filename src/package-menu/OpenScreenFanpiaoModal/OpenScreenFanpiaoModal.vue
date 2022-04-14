@@ -109,7 +109,7 @@
 <script type="text/ecmascript-6">
 import API from "@api";
 import { useFanpiaoOpenScreen } from "@hooks/merchantHooks";
-import { usePay } from "@hooks/payhooks";
+import { useFanpiaoPay } from "@hooks/payhooks";
 import { useNavigate } from "@hooks/commonHooks";
 import { computed, watch, ref, onBeforeMount, unref, watchEffect } from "vue";
 
@@ -121,12 +121,11 @@ export default {
       fanpiaoList,
       requestBuyFanpiaoRecord,
     } = useFanpiaoOpenScreen();
-    let { buyFanpiao } = usePay();
+    let { buyFanpiao } = useFanpiaoPay();
     let { navigateTo } = useNavigate();
     let buyRecordList = ref([]);
 
     watch(showFanpiaoOpenScreenModal, async (nval) => {
-   
       if (nval && unref(buyRecordList).length == 0) {
         let res = await requestBuyFanpiaoRecord();
         buyRecordList.value = res;

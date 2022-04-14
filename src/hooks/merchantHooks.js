@@ -23,10 +23,6 @@ let mockMerhantId = '1e543376139b474e97d38d487fa9fbe8';
 export function useMerchantInfo() {
   const { setMerchantInfo } = useMutations("merchant", ["setMerchantInfo"]);
   const { merchantInfo } = useState("merchant", ['merchantInfo']);
-  // if (Object.keys(unref(merchantInfo)).length == 0) {
-  //   requestMerchantInfo()
-  // }
-
   async function requestMerchantInfo(merchantId) {
     if (!merchantId) {
       return;
@@ -37,7 +33,6 @@ export function useMerchantInfo() {
     uni.setStorageSync("merchantId", res.merchantId);
     return res;
   }
-
   async function requestMerchantDishes(merchantId) {
     if (!merchantId) { return };
     let dishesRes = await API.Merchant.getMerchantDishCategory(merchantId);
@@ -45,21 +40,15 @@ export function useMerchantInfo() {
     let dishListRes = handleDishList(dishesRes.dishes, dishBaseSellCountMap);
     return dishListRes;
   }
-
   return {
     merchantInfo, setMerchantInfo, requestMerchantInfo, requestMerchantDishes
   }
 }
 
-
 let merchantId = '1e543376139b474e97d38d487fa9fbe8';
 export function useFanpiaoInfo() {
   const { setFanpiaoList, setFanpiaoUserList, setFanpiaoUserNum } = useMutations("merchant", ["setFanpiaoList", "setFanpiaoUserList", "setFanpiaoUserNum"]);
   const { fanpiaoList, fanpiaoUserAvaterList, fanpiaoUserNum } = useState("merchant", ['fanpiaoList', "fanpiaoUserAvaterList", 'fanpiaoUserNum']);
-
-  // if (!fanpiaoList?.value?.length) {
-  //   requestFanpiaoList(merchantId);
-  // }
   async function requestFanpiaoList(merchantId) {
     if (!merchantId) {
       return;
@@ -67,7 +56,6 @@ export function useFanpiaoInfo() {
     let res = await getFanpiaoList(merchantId)
     setFanpiaoList(res);
   }
-
   async function requestFanpiaoPlatformRecords() {
     let res = await getFanpiaoPlatformRecords()
     if (res) {
@@ -75,9 +63,6 @@ export function useFanpiaoInfo() {
       setFanpiaoUserNum(res.purchaseCount)
     }
   }
-
-
-
   return {
     fanpiaoList,
     fanpiaoUserNum,
@@ -92,15 +77,10 @@ export function useFanpiaoInfo() {
     requestFanpiaoPlatformRecords,
   }
 }
-
 export function useCouponInfo() {
   const { setCouponList } = useMutations("merchant", ["setCouponList"]);
   const { couponList } = useState("merchant", ['couponList']);
 
-
-  // if (!couponInfo?.value?.length) {
-  //   requestCouponList(merchantId)
-  // }
   async function requestCouponList(merchantId) {
     if (!merchantId) {
       return;
@@ -113,36 +93,22 @@ export function useCouponInfo() {
     setCouponList(Object.values(res.couponPackages));
   }
 
-  function calcRightCoupon(BillFee) {
-
-  }
-
   return { couponList, setCouponList, requestCouponList }
 }
-
-
-
-
 
 export function useRefund() {
   async function refundFanpiaoApply(fanpiaoInfo) {
     let res = await API.Merchant.refundFanpiaoApply(fanpiaoInfo)
     return res;
   }
-
-
   return {
     refundFanpiaoApply
-
   }
 }
-
-
 
 export function useDishList() {
 
 }
-
 
 export function useFanpiaoOpenScreen() {
 
@@ -171,31 +137,22 @@ export function useFanpiaoOpenScreen() {
     }
   }
 
-
-
   return {
     showFanpiaoOpenScreenModal,
     toggleShowFanpiaoOpenScreenModal,
     requestBuyFanpiaoRecord,
     fanpiaoList
   }
-
-
-
 }
-
 
 export function useRecommendationDish() {
   let { recommendedDishes } = useState('menu', ["recommendedDishes"]);
   let { setRecommendedDishes } = useMutations('menu', ["setRecommendedDishes"])
 
-
   async function requestRecommendDishes(merchantId) {
     let res = await API.Merchant.getRecommendedDishes(merchantId)
     setRecommendedDishes(res?.dishes || []);
   }
-
-
 
   return {
     recommendedDishes,

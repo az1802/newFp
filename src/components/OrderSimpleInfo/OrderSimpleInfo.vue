@@ -114,8 +114,8 @@
 </template>
 <script>
 import { computed, ref, unref, toRaw } from "vue";
-import { useNavigate, useTimeTransform } from "@hooks/commonHooks";
-import { copyInfo } from "@utils";
+import { useNavigate } from "@hooks/commonHooks";
+import { copyInfo, formatTme } from "@utils";
 import { DEFAULT_DISH_IMG } from "@utils/constants";
 
 export default {
@@ -136,7 +136,6 @@ export default {
   components: {},
   setup(props, { emit }) {
     const { navigateTo } = useNavigate();
-    const { formatTme } = useTimeTransform();
     const statusText = computed(() => {
       let { status } = props.orderInfo;
       let { orderType } = props;

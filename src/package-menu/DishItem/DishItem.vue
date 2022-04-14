@@ -44,9 +44,8 @@
 <script>
 import DishOperation from "../Common/DishOperation.vue";
 import { ref, onMounted, watch, unref, computed } from "vue";
-import { useTransformPrice } from "@hooks/commonHooks";
 import { useDish, useSkuDish, useDishDetail } from "@hooks/menuHooks";
-import { getDishInfoById } from "@utils";
+import { getDishInfoById, fenToYuan } from "@utils";
 import { useNavigate } from "@hooks/commonHooks";
 import { useFanpiaoInfo } from "@hooks/merchantHooks";
 export default {
@@ -61,7 +60,6 @@ export default {
   },
   setup({ dish }) {
     let showPlaceHolder = ref(true);
-    let { fenToYuan } = useTransformPrice();
 
     let { addDish, reduceDish, dishCountMap } = useDish();
     let { setCurSkuDish, toggleShowSkuModal } = useSkuDish();

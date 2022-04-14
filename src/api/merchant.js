@@ -23,7 +23,6 @@ http.setHeaders({
   userId: "d4848915-b103-4e1a-abfd-a04886fa61e6"
 })
 
-
 export async function getMerchantInfo(merchantId) {
   let url = `${URLS.GET_MERCHANT_INFO}/${merchantId}`;
   let res = await http.get(url)
@@ -51,7 +50,6 @@ export async function getRecommendedDishes(merchantId) {
   let res = await http.get(url);
   return res;
 }
-
 
 export async function getFanpiaoList(merchantId) {
   let url = `${URLS.GET_FANPIAO_CATEGORIES}/${merchantId}`;

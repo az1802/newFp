@@ -72,14 +72,14 @@
 import { ref, onBeforeMount, computed } from "vue";
 import FanpiaoPay from "./FanpiaoPay";
 import { useOrder } from "@hooks/orderHooks";
-import { useUserWallet } from "@hooks/userHooks";
+import { useUserMerchantWallet } from "@hooks/userHooks";
 export default {
   components: {
     FanpiaoPay,
   },
   setup() {
     let { setPayMethod, payMethod } = useOrder();
-    const { userWallet } = useUserWallet();
+    const { userWallet } = useUserMerchantWallet();
 
     return {
       payMethod,

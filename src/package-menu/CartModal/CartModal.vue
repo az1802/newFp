@@ -46,16 +46,14 @@
   </div>
 </template>
 <script>
-import { noop } from "@utils";
+import { noop, fenToYuan } from "@utils";
 import { useCart, useDish, useSkuDish } from "@hooks/menuHooks";
-import { useTransformPrice } from "@hooks/commonHooks";
 export default {
   setup() {
     const { showCartModal, toggleShowCartModal, addCartDish, reduceCartDish } =
       useCart();
     const { selectedDishes, addDish, reduceDish, resetSelDishes } = useDish();
     const { genDishDescribeText, calcSkuDishPrice } = useSkuDish();
-    let { fenToYuan } = useTransformPrice();
 
     return {
       toggleShowCartModal,

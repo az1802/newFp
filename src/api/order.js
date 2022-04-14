@@ -54,3 +54,15 @@ export async function getCouponList() {
   let res = await http.get(url);
   return res;
 }
+
+export async function refundFanpiao(transactionId, args) {
+  const url = URLS.USER_REFUND_FANPIAO + `${transactionId}`
+  let res = await http.post(url, args);
+  return res;
+}
+
+export async function refundCoupon(transactionId, args) {
+  const url = URLS.USER_REFUND_COUPON + `${transactionId}`
+  let res = await http.post(url, args);
+  return res;
+}
