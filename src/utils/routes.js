@@ -29,12 +29,13 @@ export default {
   "ORDER": {
     "CREATE_ORDER": `${ORDER}/create-order`,
     "PAY_ORDER": `${ORDER}/pay-order`,
-    "PAY_SUCCESS": `${ORDER}/pay-success`
+    "PAY_SUCCESS": `${ORDER}/pay-success`,
+    "SELECT_COUPON": `${ORDER}/select-coupon`,
   },
   "MARKETING": {
     "BUY_FANPIAO": `${MARKETING}/buy-fanpiao/buy-fanpiao`,
     "MAKE_DEPOSIT": `${MARKETING}/make-deposit/make-deposit`,
-    "DIRECT_PAYMENT": `${MARKETING}/direct-payment/direct-payment`
+    "DIRECT_PAYMENT": `${MARKETING}/direct-payment/direct-payment`,
   },
   "OTHER": {
     "COUPON_ACCORD_TEXT": `${OTHER}/coupon-accord-text/coupon-accord-text`,
@@ -43,6 +44,7 @@ export default {
     "DEPOSIT_RULES": `${OTHER}/deposit-rules/deposit-rules`,
     "DISCOUNT_RULES": `${OTHER}/discount-rules/discount-rules`,
     "FANPIAO_RULES": `${OTHER}/fanpiao-rules/fanpiao-rules`,
+
   },
 
   "MINE": {

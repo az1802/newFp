@@ -60,6 +60,10 @@ export function useUserInfo() {
   }
 
 
+  async function getUserMerchantInfo(merchantId) {
+    let res = await API.User.getUserMerchantInfo(merchantId)
+  }
+
 
 
 
@@ -76,6 +80,17 @@ export function useUserInfo() {
     requestUserStats,
     requestUserWallet,
     requestUserFanpiaoRecords,
+    getUserMerchantInfo
+  }
+}
+
+export function userMerchantInfo() {
+
+
+
+
+  return {
+
   }
 }
 
@@ -130,11 +145,6 @@ export function useUserCoupon() {
   }
 }
 
-
-
-
-
-
 // 处理用户包含的商户券包
 export function useUserMerchantCoupon() {
   let { userMerchantCoupons } = useState('user', ["userMerchantCoupons"]);
@@ -157,9 +167,6 @@ export function useUserMerchantCoupon() {
   }
 }
 
-
-
-
 export function useUserLogin() {
   async function checkLogin() {
     let userId = uni.getStorageSync('userId') || "";
@@ -177,7 +184,6 @@ export function useUserLogin() {
     login
   }
 }
-
 
 // 获取和设置用户手机号
 export function useUserPhone() {
@@ -230,4 +236,56 @@ export function useUserAddress() {
     getAddressDetail
   }
 
+}
+
+
+export function useUserWallet() {
+  let { userWallet } = useState('user', ["userWallet"]);
+  let { setUserWallet } = useMutations('user', ["setUserWallet"]);
+
+  async function requestUserWallet(merchantId) {
+    API.User.getUserMemberBalance(merchantId).then(({ balance }) => {
+      setUserWallet({
+        "memberCardBalance": balance || 0,
+      })
+    });
+
+    API.User.getUserFanpiaoBalance(merchantId).then(({ balance }) => {
+      setUserWallet({
+        fanpiaoBalance: balance || 0
+      })
+    });
+    API.User.getUserWallet().then(({ balance }) => {
+      setUserWallet({
+        redPacketBalance: balance || 0
+      })
+    });
+
+    let res = await API.User.getUserFanpiaoPaidFee({
+      merchantId,
+      billFee: 10000 * 100,
+      noDiscountFee: 0
+    })
+    setUserWallet({
+      fanpiaoPaidFee: res?.paidFee || 0
+    })
+
+  }
+  async function requestFanpiaoPaidFee(merchantId, billFee = 10000 * 100) {
+    let res = await API.User.getUserFanpiaoPaidFee({
+      merchantId,
+      billFee,
+      noDiscountFee: 0
+    });
+
+    return res;
+  }
+
+
+
+  return {
+    userWallet,
+    requestUserWallet,
+    requestFanpiaoPaidFee
+  }
 }

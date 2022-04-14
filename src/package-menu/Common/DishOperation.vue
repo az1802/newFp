@@ -51,7 +51,6 @@ export default {
     };
   },
   updated() {
-    // console.log("菜品组件发生更新");
   },
 };
 </script>

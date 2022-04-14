@@ -78,11 +78,6 @@ export default {
       }
       let data = { authCode: authCode, platform: "MINIPROGRAM" };
       let res = await API.User.signUpAlipay(data);
-      console.log(
-        "%cres: ",
-        "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-        res
-      );
       const { alipayProfile = {}, memberProfile, id } = res.data;
 
       uni.setStorageSync("userId", id);

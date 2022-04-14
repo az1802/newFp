@@ -83,11 +83,6 @@ export default {
       hideModal,
       stop,
       reduceCart(dish) {
-        console.log(
-          "%cdish: ",
-          "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-          dish
-        );
         if (dish.quantity > 0) {
           dish.quantity -= 1;
         }

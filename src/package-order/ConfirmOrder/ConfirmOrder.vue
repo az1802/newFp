@@ -26,7 +26,11 @@
           (本单已省¥{{ recommendedCoupon.couponCost / 100 }}元)
         </div>
       </div>
-      <div v-else class="price">{{ fenToYuan(selectedDishesTotalPrice) }}</div>
+      <div v-else class="price">
+        {{
+          fenToYuan(selectedDishesTotalPrice - orderInfo.selCouponReduceCost)
+        }}
+      </div>
     </div>
     <div class="right">
       <div class="continue-order" @click="navigateBack">继续点菜</div>
@@ -38,7 +42,7 @@
 import { useNavigate, useTransformPrice } from "@hooks/commonHooks";
 import { useOrder } from "@hooks/orderHooks";
 import { useDish } from "@hooks/menuHooks";
-import { useRecommendedCoupon } from "@hooks/payHooks";
+import { useRecommendedCoupon, usePay } from "@hooks/payHooks";
 
 import { ref, unref } from "vue";
 export default {
@@ -49,34 +53,63 @@ export default {
       selectedDishesDiscountPrice,
       selectedDishesFinalTotalPrice,
     } = useDish();
+    const { recommendedCoupon } = useRecommendedCoupon();
+    const { commonPay } = usePay();
+
     const { navigateBack, navigateTo } = useNavigate();
     const { createOrder, setOrderInfo, orderInfo } = useOrder();
-    let { recommendedCoupon } = useRecommendedCoupon();
-    let { fenToYuan } = useTransformPrice();
+    const { fenToYuan } = useTransformPrice();
 
-    function buyCouponAndPay() {
-      let { isAgreeCouponAccord } = unref(orderInfo);
+    async function buyCouponAndPay() {
+      let { isAgreeCouponAccord, selCouponId } = unref(orderInfo);
       if (!isAgreeCouponAccord) {
         showToast("请阅读并同意《付费券包协议》");
         return;
       }
 
-      // TODO 直接支付
+      let orderId = await createOrder();
+      if (!orderId) {
+        return;
+      }
+      let data = {
+        billFee:
+          unref(selectedDishesFinalTotalPrice) +
+          (unref(recommendedCoupon)?.price || 0),
+        couponPackageId: unref(recommendedCoupon).id,
+        isInvoice: false,
+        merchantId: uni.getStorageSync("merchantId"),
+        noDiscountBillFee: unref(selectedDishesDiscountPrice),
+        orderId,
+        paidFee:
+          unref(selectedDishesFinalTotalPrice) +
+          (unref(recommendedCoupon)?.price || 0) -
+          (unref(recommendedCoupon).couponCost || 0),
+        payMethod: "WECHAT_PAY",
+        transactionType: "SELF_DISH_ORDER_PAYMENT",
+      };
+      // #ifdef MP-ALIPAY
+      data.payMethod = "ALIPAY";
+      // #endif
+
+      let payRes = await commonPay(data);
+
+      return payRes;
     }
+
+    function useCouponPay() {}
 
     async function confirmOrder() {
       let { isBuyCouponPackage, isAgreeCouponAccord } = unref(orderInfo);
 
       if (isBuyCouponPackage) {
         //券包合并支付
-        buyCouponAndPay();
+        buyCouponAndPay(unref(orderInfo));
         return;
       }
 
-      let res = await createOrder();
-      let { orderId } = res;
-      let discountAmount = unref(selectedDishesDiscountPrice),
-        billFee = unref(selectedDishesTotalPrice);
+      let orderId = await createOrder();
+      let discountAmount = unref(selectedDishesDiscountPrice), //菜品折扣的优化
+        billFee = unref(selectedDishesTotalPrice); //菜品原价总额
 
       setOrderInfo({
         orderId,
@@ -85,9 +118,8 @@ export default {
         paidFee: billFee - discountAmount,
         couponPrice: "",
         couponId: "",
-        couponPackageId: "",
-        isBuyCouponPackage: "",
       });
+
       navigateTo("ORDER/PAY_ORDER");
     }
 

@@ -1,5 +1,9 @@
 <template>
-  <div class="fanpiao-item" :class="[active ? 'active' : '']">
+  <div
+    class="fanpiao-item"
+    :class="[active ? 'active' : '']"
+    @click="emit('select', fanpiaoInfo)"
+  >
     <div class="discount-info">
       买单享<span class="discount-number">{{
         (100 - fanpiaoInfo.discount) / 10
@@ -33,8 +37,11 @@ export default {
       default: {},
     },
   },
-  components: {},
-  setup() {},
+  setup(props, { emit }) {
+    return {
+      emit,
+    };
+  },
 };
 </script>
 <style lang="less" scoped>

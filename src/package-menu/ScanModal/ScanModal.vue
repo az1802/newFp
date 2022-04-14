@@ -88,11 +88,6 @@ export default {
         await showToast("请扫描正确的二维码");
         return;
       }
-      console.log(
-        "%cscene: ",
-        "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-        scene
-      );
 
       let res = await API.Merchant.getDishCatalogScene(scene);
       tableId.value = res.tableId;

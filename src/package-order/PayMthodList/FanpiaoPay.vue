@@ -13,48 +13,85 @@
         购买须知 >
       </div>
     </div>
-    <div class="fanpiao-content" @click="setPayMethod('FANPIAO_PAY')">
+    <div class="fanpiao-content" @click="setFanpiaoPayMethod">
       <div class="balance-wrapper">
         <div class="left">
-          <div class="balance">饭票(余额:0)</div>
+          <div class="balance">
+            饭票(余额:{{ userWallet.fanpiaoBalance / 100 }})
+          </div>
           <div class="tooltip">饭票支付，本单立省0.35-0.75元</div>
         </div>
         <CustomImgRadio :checked="payMethod == 'FANPIAO_PAY'" />
       </div>
-      <scroll-view class="fanpiao-list-scrollview" scroll-y>
+      <scroll-view
+        class="fanpiao-list-scrollview"
+        scroll-y
+        v-if="orderFanpiaoPayInfo.recommendFanpiaoList.length > 0"
+      >
         <div class="fanpiao-list">
           <FanpiaoItem
-            v-for="fanpiaoItem in fanpiaoList"
+            v-for="fanpiaoItem in orderFanpiaoPayInfo.recommendFanpiaoList"
             :key="fanpiaoItem.id"
             :fanpiaoInfo="fanpiaoItem"
+            :active="orderFanpiaoPayInfo.selFanpiaoId == fanpiaoItem.id"
+            @select="changeSelFanpiao"
           />
         </div>
       </scroll-view>
     </div>
     <div class="red-packet" @click="setPayMethod('WALLET')">
-      <div class="text">红包(余额:73.79)</div>
+      <div class="text">红包(余额:{{ userWallet.redPacketBalance / 100 }})</div>
       <CustomImgRadio :checked="payMethod == 'WALLET'" />
     </div>
   </div>
 </template>
 <script>
 import FanpiaoItem from "./FanpiaoItem.vue";
-import { useOrder } from "@hooks/orderHooks";
+import { useOrder, usePayMethod, useFanpiaoPayInfo } from "@hooks/orderHooks";
 import { useNavigate } from "@hooks/commonHooks";
 import { useFanpiaoInfo } from "@hooks/merchantHooks";
+import { useUserWallet } from "@hooks/userHooks";
+import { onBeforeMount, ref, unref, computed } from "vue";
+import { calcRecommendFanpiao } from "@utils";
+
 export default {
   components: {
     FanpiaoItem,
   },
-  setup() {
-    let { setPayMethod, payMethod } = useOrder();
+  setup(props) {
+    let { setPayMethod, payMethod } = usePayMethod();
     let { navigateTo } = useNavigate();
-    let { fanpiaoList } = useFanpiaoInfo();
+    const { userWallet } = useUserWallet();
+    const { orderFanpiaoPayInfo, setOrderFanpiaoPayInfo } = useFanpiaoPayInfo();
+
+    function changeSelFanpiao(fanpiao) {
+      setOrderFanpiaoPayInfo({
+        selFanpiaoId: fanpiao.id,
+        selFanpiaoInfo: fanpiao,
+      });
+    }
+
+    function setFanpiaoPayMethod() {
+      setPayMethod("FANPIAO_PAY");
+      let { selFanpiaoId, recommendFanpiaoList } = unref(orderFanpiaoPayInfo);
+      if (!selFanpiaoId) {
+        let fanpiaoInfo = recommendFanpiaoList[0];
+        fanpiaoInfo &&
+          setOrderFanpiaoPayInfo({
+            selFanpiaoId: fanpiaoInfo.id,
+            selFanpiaoInfo: fanpiaoInfo,
+          });
+      }
+    }
+
     return {
       setPayMethod,
       payMethod,
       navigateTo,
-      fanpiaoList,
+      userWallet,
+      changeSelFanpiao,
+      orderFanpiaoPayInfo,
+      setFanpiaoPayMethod,
     };
   },
 };
@@ -68,8 +105,8 @@ export default {
   box-shadow: 1px 2px 8px 0px rgba(254, 172, 92, 0.5);
   border-radius: 8px;
   overflow: hidden;
-  height: 357px;
-  padding: 0 12px;
+  // height: 357px;
+  padding: 0 12px 12px 12px;
   box-sizing: border-box;
   .header {
     .flex-simple(space-between,center);
@@ -90,7 +127,7 @@ export default {
     }
   }
   .fanpiao-content {
-    .box-size(100%,228px);
+    .box-size(100%,unset);
     background: #fffdfa;
     border-radius: 8px;
     border: 1px solid #febe33;

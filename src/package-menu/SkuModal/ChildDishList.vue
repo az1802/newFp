@@ -140,7 +140,6 @@ export default {
           res[key].childTotalCount += item.quantity || 0;
         });
       }
-      console.log(res);
       return res;
     });
 
@@ -194,7 +193,6 @@ export default {
       childDishInfo.groupId = id;
       setCurChildSkuDish(childDishInfo);
       toggleShowChildSkuModal(true);
-      console.log("修改规格");
     }
 
     return {

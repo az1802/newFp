@@ -41,7 +41,7 @@ export function formatTme(timeInSecond, fmt) {
 }
 
 export function formatDate(date, fmt) {
-  return format(
+  return formatTme(
     parseInt(String(date.getTime() / 1000)),
     fmt
   )

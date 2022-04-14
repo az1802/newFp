@@ -35,7 +35,7 @@ export async function getUserMerchantInfo(merchantId) {
 }
 
 export async function getUserFanpiaoBalance(merchantId) {
-  let url = `${URLS.USER_FANPIAO_BALANCE}/${merchantId}`;
+  let url = `${URLS.USER_FANPIAO_BALANCE}?merchantId=${merchantId}`; //TODO
   let res = await http.get(url);
   return res;
 }
@@ -43,6 +43,11 @@ export async function getUserFanpiaoBalance(merchantId) {
 export async function getUserMemberBalance(merchantId) {
   let url = `${URLS.USER_MEMBER_BALANCE}/${merchantId}`;
   let res = await http.get(url);
+  return res;
+}
+export async function getUserFanpiaoPaidFee(data) {
+  let url = `${URLS.GET_USE_SHOW_PAID_FEE}`;
+  let res = await http.post(url, data);
   return res;
 }
 
@@ -144,6 +149,5 @@ export async function updateAddressDetail(addressInfo) {
 export async function getAddressDetail(id) {
   const url = `${URLS.SHIPPING_ADDRESS_DETAIL}/${id}`
   let res = await http.get(url);
-  console.log('%cres: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', res);
   return res;
 }

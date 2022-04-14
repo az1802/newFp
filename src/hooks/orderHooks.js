@@ -23,15 +23,6 @@ export function useOrder() {
     let orderInfoTemp = unref(orderInfo);
     let orderArgs = {
       dishList: unref(selectedDishes),
-      // groupDiningEventId: "",
-      // mealType: "TAKE_AWAY",
-      // peopleCount: 1,
-      // phone: "17688479248",
-      // remark: "",
-      // shippingAddressId: "",
-      // shippingFee: 0,
-      // tableId: "5c77abcc369d408d96e61a3583022dcd",
-      // appointmentTime: "",
       mealType: orderInfoTemp.mealType,
       shippingAddressId: orderInfoTemp.id || '',
       shippingFee: orderInfoTemp.shippingFee || 0,
@@ -44,7 +35,7 @@ export function useOrder() {
       discountAmount: 0,
     }
     let res = await API.Order.createOrder(unref(merchantInfo).merchantId, orderArgs);;
-    return res;
+    return res?.orderId;
   }
 
 
@@ -153,5 +144,30 @@ export function useOrderRecord() {
     getCouponRecordList,
     refundFanpiao,
     refundCoupon
+  }
+}
+
+
+
+export function usePayMethod() {
+  const { payMethod } = useState('order', ["payMethod"]);
+  const { setPayMethod } = useMutations("order", ["setPayMethod"])
+
+  return {
+    payMethod,
+    setPayMethod
+  }
+}
+
+
+export function useFanpiaoPayInfo() {
+  const { orderFanpiaoPayInfo } = useState('order', ["orderFanpiaoPayInfo"]);
+  const { finalFanpiaoPaidFee } = useGetters('order', ["finalFanpiaoPaidFee"]);
+  const { setOrderFanpiaoPayInfo } = useMutations("order", ["setOrderFanpiaoPayInfo"])
+
+  return {
+    orderFanpiaoPayInfo,
+    finalFanpiaoPaidFee,
+    setOrderFanpiaoPayInfo
   }
 }

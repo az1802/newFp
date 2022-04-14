@@ -70,6 +70,12 @@
           "style": {
             "disableScroll": true
           }
+        },
+        {
+          "path": "select-coupon",
+          "style": {
+            "disableScroll": true
+          }
         }
       ]
     },

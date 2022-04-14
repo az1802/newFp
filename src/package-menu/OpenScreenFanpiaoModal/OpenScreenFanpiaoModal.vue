@@ -126,18 +126,9 @@ export default {
     let buyRecordList = ref([]);
 
     watch(showFanpiaoOpenScreenModal, async (nval) => {
-      console.log(
-        "%cnval: ",
-        "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-        nval
-      );
+   
       if (nval && unref(buyRecordList).length == 0) {
         let res = await requestBuyFanpiaoRecord();
-        console.log(
-          "%cres: ",
-          "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-          res
-        );
         buyRecordList.value = res;
       }
     });

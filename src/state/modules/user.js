@@ -12,6 +12,7 @@ export default {
       fanpiaoBalance: "",//饭票余额
       redPacketBalance: "", //红包余额
       memberCardBalance: "", //储值余额
+      fanpiaoPaidFee: "",//饭票可以抵扣的现金金额
     },
     phone: "",//手机号码
     userCoupons: [],//用户券包
@@ -21,9 +22,9 @@ export default {
     stats: { //用户最近营销使用
 
     },
-    userFanpiaoRecords: [],
-    userAddressList: [],
-    userMerchantCoupons: []
+    userFanpiaoRecords: [],//用户的饭票使用记录
+    userAddressList: [], //用户的地址列表
+    userMerchantCoupons: [],//用户在所含的商户券
   },
   getters: {
 
@@ -34,9 +35,6 @@ export default {
     },
     setStats(state, stats) {
       state.stats = stats
-    },
-    setUserWallet(state, userWallet) {
-      state.userWallet = userWallet
     },
     setUserFanpiaoRecords(state, userFanpiaoRecords) {
       state.userFanpiaoRecords = userFanpiaoRecords
@@ -50,7 +48,11 @@ export default {
     setUserMerchantCoupons(state, userMerchantCoupons) {
       state.userMerchantCoupons = userMerchantCoupons;
     },
-
+    setUserWallet(state, walletObj) {
+      for (let key in walletObj) {
+        state.userWallet[key] = walletObj[key];
+      }
+    }
 
   },
   actions: {

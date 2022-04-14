@@ -95,6 +95,7 @@ import { useNavigate } from "@hooks/commonHooks";
 import { useMerchantInfo } from "@hooks/merchantHooks";
 import { useOrder } from "@hooks/orderHooks";
 import { useRecommendedCoupon } from "@hooks/payHooks";
+import { unref } from "vue";
 
 export default {
   components: {},
@@ -107,7 +108,6 @@ export default {
 
     // TODO 计算合适的券然后使用
     return {
-      isAgreeAccord: false,
       goToAccordPage() {
         navigateTo("OTHER/COUPON_ACCORD_TEXT");
       },
@@ -119,8 +119,9 @@ export default {
         });
       },
       toggleIsAgreeCouponAccord() {
+        console.log(unref(orderInfo).isAgreeCouponAccord);
         setOrderInfo({
-          issAgreeCouponAccord: !unref(orderInfo).issAgreeCouponAccord,
+          isAgreeCouponAccord: !unref(orderInfo).isAgreeCouponAccord,
         });
       },
       recommendedCoupon,

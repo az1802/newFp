@@ -1,11 +1,12 @@
 import { computed, ref, reactive, unref, toRaw, watch } from 'vue'
 import { getDishInfoById, calcRecommendCoupon, calcRecommendFanpiao, calcUserAvailableMerchantCoupon } from "@utils";
 import { useState, useGetters, useMutations } from "@hooks/storeHooks";
+
 import API from "@api";
 import { wechatPay, aliPay, showToast } from '@utils';
 
 
-async function commonPay(args) {
+async function getTransactionId(args) {
   let res = await API.Order.pay(args);
   if (!res?.transactionId) {
     return false;
@@ -16,6 +17,19 @@ async function commonPay(args) {
 
 export function usePay() {
 
+
+  async function commonPay(data) {
+    let res = await getTransactionId(data);
+    if (res) {
+      let payRes = false;
+      if (data.payMethod == "WECHAT_PAY") {
+        payRes = await wechatPay(res.signData);
+      } else if (data.payMethod == "ALIPAY") {
+        payRes = await aliPay(res);
+      }
+      return payRes;
+    }
+  }
   async function buyFanpiao(fanpiaoInfo, merchantId = uni.getStorageSync("merchantId")) {
 
     let data = {
@@ -29,15 +43,8 @@ export function usePay() {
     // #ifdef MP-ALIPAY
     data.payMethod = "ALIPAY";
     // #endif
-    let res = await commonPay(data);
-    let payRes = false;;
-    if (data.payMethod == "WECHAT_PAY") {
-      payRes = await wechatPay(res.signData);
-    } else if (data.payMethod == "ALIPAY") {
-      payRes = await aliPay(res);
-    }
+    let payRes = await commonPay(data);
     return payRes
-
 
   }
   async function buyFanpiaoAndPay() {
@@ -56,6 +63,44 @@ export function usePay() {
     // #ifdef MP-ALIPAY
     data.payMethod = "ALIPAY";
     // #endif
+    let payRes = await commonPay(data);
+    return payRes
+  }
+
+  async function buyCouponAndPay(orderInfo) {
+    let { isAgreeCouponAccord, selCouponId } = orderInfo;
+    if (!isAgreeCouponAccord) {
+      showToast("请阅读并同意《付费券包协议》");
+      return;
+    }
+
+    const {
+      selectedDishesTotalPrice,
+      selectedDishesDiscountPrice,
+      selectedDishesFinalTotalPrice,
+    } = useState("menu", ["selectedDishesTotalPrice", "selectedDishesDiscountPrice", "selectedDishesFinalTotalPrice"]);
+    const { recommendedCoupon } = useRecommendedCoupon();
+    const { createOrder } = useOrder();
+
+    let orderId = await createOrder();
+    if (!orderId) {
+      return;
+    }
+    let data = {
+      billFee: unref(selectedDishesFinalTotalPrice) + (unref(recommendedCoupon)?.price || 0),
+      couponPackageId: selCouponId,
+      isInvoice: false,
+      merchantId: uni.getStorageSync("merchantId"),
+      noDiscountBillFee: unref(selectedDishesDiscountPrice),
+      orderId,
+      paidFee: unref(selectedDishesFinalTotalPrice) + (unref(recommendedCoupon)?.price || 0) - (unref(recommendedCoupon).couponCost || 0),
+      payMethod: "WECHAT_PAY",
+      transactionType: "SELF_DISH_ORDER_PAYMENT",
+    }
+    // #ifdef MP-ALIPAY
+    data.payMethod = "ALIPAY";
+    // #endif
+
     let res = await commonPay(data);
     let payRes = false;;
     if (data.payMethod == "WECHAT_PAY") {
@@ -64,10 +109,14 @@ export function usePay() {
       payRes = await aliPay(res);
     }
     return payRes
+
+  }
+
+  async function useCouponPay() {
+
   }
 
   async function buyStoredVal(merchantId, storedInfo) {
-    console.log('%cstoredInfo: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', storedInfo);
     let data = {
       rechargeCategoryId: storedInfo.id,
       billFee: storedInfo.amount,
@@ -76,13 +125,10 @@ export function usePay() {
       transactionType: 'SHILAI_MEMBER_CARD_RECHARGE',
       payMethod: 'WECHAT_PAY' // 'WALLET' //
     }
-    let res = await commonPay(data);
-    let transactionId = res.transactionId || ''
-    if (!transactionId) {
+    let payRes = await commonPay(data);
+    if (!payRes) {
       await showToast('充值失败，请稍后再试')
-      return
     }
-    let payRes = await wechatPay(res.signData);
     return payRes
   }
 
@@ -96,7 +142,10 @@ export function usePay() {
     buyFanpiaoAndPay,
     buyCoupon,
     payOrder,
-    buyStoredVal
+    buyStoredVal,
+    buyCouponAndPay,
+    useCouponPay,
+    commonPay,
 
   }
 
@@ -106,7 +155,7 @@ export function usePay() {
 export function useRecommendedCoupon() {
   const { couponList } = useState("merchant", ['couponList']);
   const { selectedDishesFinalTotalPrice } = useGetters('menu', ["selectedDishesFinalTotalPrice"]);
-  const { userMerchantCoupons } = useState('user', ["userMerchantCoupons"])
+  const { userMerchantCoupons } = useState('user', ["userMerchantCoupons"]);
 
 
   const recommendedCoupon = computed(() => {
@@ -121,7 +170,6 @@ export function useRecommendedCoupon() {
   return {
     recommendedCoupon,
     userAvailableMerchantCoupon,
-    setDefaultSelCoupon
   }
 
 }

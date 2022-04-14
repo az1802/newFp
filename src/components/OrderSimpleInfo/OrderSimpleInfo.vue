@@ -117,12 +117,7 @@ import { computed, ref, unref, toRaw } from "vue";
 import { useNavigate, useTimeTransform } from "@hooks/commonHooks";
 import { copyInfo } from "@utils";
 import { DEFAULT_DISH_IMG } from "@utils/constants";
-// console.log(
-//   "%cconstants: ",
-//   "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-//   constants
-// );
-// const { DEFAULT_DISH_IMG } = constants;
+
 export default {
   props: {
     orderType: {

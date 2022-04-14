@@ -28,11 +28,9 @@ export async function navigateTo(path, pageOpts = {}) {
       uni.navigateTo({
         url: paramsStrs.length == 0 ? url : `${url}?${paramsStrs.join("&")}`,
         success() {
-          console.log("页面转成功")
           resolve(true)
         },
         fail(err) {
-          console.log("页面转失败", err)
           resolve(false)
         }
       })

@@ -105,7 +105,6 @@ export default {
       // TODO 点击下单的时候扫码
       if (0) {
         //扫码桌台码
-        // console.log(scanModal);
         scanModal.value.show();
       }
 

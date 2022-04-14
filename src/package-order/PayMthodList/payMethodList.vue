@@ -20,7 +20,9 @@
             class="icon"
           />
           <div class="pay-text">
-            <div class="main-">会员储值</div>
+            <div class="main-">
+              会员储值(余额:{{ userWallet.memberCardBalance / 100 }})
+            </div>
             <div class="tooltip">17688479248 切换</div>
           </div>
         </div>
@@ -67,18 +69,22 @@
   </div>
 </template>
 <script>
-import { ref } from "vue";
+import { ref, onBeforeMount, computed } from "vue";
 import FanpiaoPay from "./FanpiaoPay";
 import { useOrder } from "@hooks/orderHooks";
+import { useUserWallet } from "@hooks/userHooks";
 export default {
   components: {
     FanpiaoPay,
   },
   setup() {
     let { setPayMethod, payMethod } = useOrder();
+    const { userWallet } = useUserWallet();
+
     return {
       payMethod,
       setPayMethod,
+      userWallet,
     };
   },
 };

@@ -55,6 +55,7 @@ export default {
   ADD_SHIPPING_ADDRESS: '/user/add_shipping_address',// 添加收货人地址
   UPDATE_SHIPPING_ADDRESS: '/user/update_shipping_address/', // 更新收货人地址
   SHIPPING_ADDRESS_DETAIL: '/user/shipping_address/',// 获取接口详情
+  GET_USE_SHOW_PAID_FEE: '/fanpiao/get_use_show_paid_fee',// 获取用户指定金额用饭票支付时的实付金额
 
 
   // 饭票所有的购买记录

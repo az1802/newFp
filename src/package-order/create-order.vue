@@ -72,12 +72,12 @@ export default {
     onBeforeMount(async () => {
       let merchanrtId = unref(merchantInfo).merchantId;
       requestRecommendDishes(merchanrtId); //请求推荐菜品
-      let userCoupons = await requestUserMerchantCoupons(merchanrtId); //请求用户已有的商户券包
+      let userCoupons = (await requestUserMerchantCoupons(merchanrtId)) || []; //请求用户已有的商户券包
       // 默认设置用户可使用的券包
       let maxReduceCostCoupon = "";
-      userCopons.forEach((item) => {
+      userCoupons.forEach((item) => {
         if (
-          item.leastCost <= billFee &&
+          item.leastCost <= unref(selectedDishesTotalPrice) &&
           (!maxReduceCostCoupon ||
             maxReduceCostCoupon.reduceCost < item.reduceCost)
         ) {
@@ -128,7 +128,7 @@ export default {
       let res = unref(selectedDishesDiscountPrice) || 0;
       if (unref(orderInfo).isBuyCouponPackage) {
         res += unref(recommendedCoupon).couponCost;
-      } else if (unref(orderInfo).selCouponId > 0) {
+      } else if (unref(orderInfo).selCouponId) {
         res += unref(orderInfo).selCouponReduceCost;
       }
       return res;
