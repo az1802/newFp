@@ -28,10 +28,9 @@
 <script>
 import PayMthodList from "./PayMthodList/payMethodList.vue";
 import { useOrder, usePayMethod, useFanpiaoPayInfo } from "@hooks/orderhooks";
-import { useTransformPrice } from "@hooks/commonHooks";
 import { useUserMerchantWallet } from "@hooks/userHooks";
 import { useFanpiaoInfo } from "@hooks/merchantHooks";
-import { calcRecommendFanpiao } from "@utils";
+import { calcRecommendFanpiao, fenToYuan } from "@utils";
 
 import { onBeforeMount, computed, unref } from "vue";
 export default {
@@ -40,7 +39,6 @@ export default {
     const { orderInfo } = useOrder();
     const { setOrderFanpiaoPayInfo, finalFanpiaoPaidFee } = useFanpiaoPayInfo();
     const { requestFanpiaoList, fanpiaoList } = useFanpiaoInfo();
-    let { fenToYuan } = useTransformPrice();
 
     const { userWallet, requestUserWallet, requestFanpiaoPaidFee } =
       useUserMerchantWallet();

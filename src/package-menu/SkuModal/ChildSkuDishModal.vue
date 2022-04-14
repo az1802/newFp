@@ -46,9 +46,8 @@
 import AttrGroupList from "./AttrGroupList.vue";
 import SupplyCondimentList from "./SupplyCondimentList.vue";
 import { useSkuDish, useDish } from "@hooks/menuHooks";
-import { useTransformPrice } from "@hooks/commonHooks";
 import { reactive, watch, watchEffect, ref, computed, toRaw, unref } from "vue";
-import { showToast } from "@utils";
+import { showToast, fenToYuan } from "@utils";
 
 export default {
   components: {
@@ -67,7 +66,6 @@ export default {
       selChildDishes,
     } = useSkuDish();
     const { addDish } = useDish();
-    let { fenToYuan } = useTransformPrice();
 
     const attrMap = {},
       condimentMap = {};

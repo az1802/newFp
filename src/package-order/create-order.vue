@@ -38,7 +38,6 @@ import RecommendationModal from "./RecommendationModal/RecommendationModal.vue";
 import { getStorage } from "@utils";
 
 import { useDish } from "@hooks/menuHooks";
-import { useTransformPrice } from "@hooks/commonHooks";
 import { useMerchantInfo, useRecommendationDish } from "@hooks/merchantHooks";
 import { useOrder } from "@hooks/orderHooks";
 import { useRecommendedCoupon } from "@hooks/payHooks";

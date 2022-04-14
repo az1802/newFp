@@ -27,15 +27,14 @@
 import API from "@api";
 import { onBeforeMount, ref, computed, unref } from "vue";
 import { useUserInfo } from "@hooks/userHooks";
-import { useTransformPrice, useNavigate } from "@hooks/commonHooks";
-import { showToast } from "@utils";
+import { useNavigate } from "@hooks/commonHooks";
+import { showToast, fenToYuan } from "@utils";
 const LOWER_LIMIT = 20;
 const HIGHER_LIMIT = 2000;
 
 export default {
   setup() {
     let inputAmount = ref("");
-    const { fenToYuan } = useTransformPrice();
     const { userWallet, requestUserWallet } = useUserInfo();
     const { navigateBack } = useNavigate();
     onBeforeMount(() => {

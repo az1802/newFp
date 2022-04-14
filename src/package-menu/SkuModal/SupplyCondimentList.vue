@@ -35,7 +35,7 @@
   </div>
 </template>
 <script>
-import { useTransformPrice } from "@hooks/commonHooks";
+import { fenToYuan } from "@utils";
 import { computed } from "vue";
 export default {
   props: {
@@ -58,8 +58,6 @@ export default {
   },
   setup(props) {
     let { selCondiments } = props;
-
-    let { fenToYuan } = useTransformPrice();
 
     let tooltipText = computed(() => {
       let selectionType = props.selectionType;

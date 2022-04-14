@@ -39,10 +39,11 @@
   </div>
 </template>
 <script>
-import { useNavigate, useTransformPrice } from "@hooks/commonHooks";
+import { useNavigate } from "@hooks/commonHooks";
 import { useOrder } from "@hooks/orderHooks";
 import { useDish } from "@hooks/menuHooks";
 import { useRecommendedCoupon, usePay } from "@hooks/payHooks";
+import { fenToYuan } from "@utils";
 
 import { ref, unref } from "vue";
 export default {
@@ -58,7 +59,6 @@ export default {
 
     const { navigateBack, navigateTo } = useNavigate();
     const { createOrder, setOrderInfo, orderInfo } = useOrder();
-    const { fenToYuan } = useTransformPrice();
 
     async function buyCouponAndPay() {
       let { isAgreeCouponAccord, selCouponId } = unref(orderInfo);

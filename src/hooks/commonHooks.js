@@ -25,22 +25,6 @@ export function useScrollViewScroll() {
   }
 }
 
-export function useTransformPrice() {
-
-  function fenToYuan(price) {
-    return Math.abs(Number(price / 100).toFixed(2));
-  }
-
-  function yuanToFen(price) {
-    return Number(price * 100);
-  }
-
-  return {
-    fenToYuan,
-    yuanToFen
-  }
-}
-
 export function useNavigate() {
 
   return {

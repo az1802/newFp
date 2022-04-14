@@ -57,8 +57,9 @@
   </div>
 </template>
 <script>
-import { useTransformPrice, useNavigate } from "@hooks/commonHooks";
+import { useNavigate } from "@hooks/commonHooks";
 import { useFanpiaoPay } from "@hooks/payHooks";
+import { fenToYuan } from "@utils";
 const fanpiaoCountArr = [20, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; //饭票数量初始化
 export default {
   props: {
@@ -81,7 +82,6 @@ export default {
   },
   components: {},
   setup() {
-    const { fenToYuan } = useTransformPrice();
     const { navigateTo } = useNavigate();
     const { buyFanpiao } = useFanpiaoPay();
 

@@ -24,7 +24,7 @@
 </template>
 <script>
 import { useDish, useSkuDish } from "@hooks/menuHooks";
-import { useTransformPrice } from "@hooks/commonHooks";
+import { fenToYuan } from "@utils";
 export default {
   props: {
     dishList: {
@@ -35,7 +35,6 @@ export default {
   components: {},
   setup() {
     const { genDishDescribeText } = useSkuDish();
-    let { fenToYuan } = useTransformPrice();
     return {
       genDishDescribeText,
       fenToYuan,

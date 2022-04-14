@@ -31,8 +31,7 @@
 <script>
 import { useDish, useSkuDish } from "@hooks/menuHooks";
 import { useMerchantInfo } from "@hooks/merchantHooks";
-import { useTransformPrice } from "@hooks/commonHooks";
-
+import { fenToYuan } from "@utils";
 import OrderDishList from "../OrderDishList/OrderDishList.vue";
 import CouponReduce from "../CouponReduce/CouponReduce.vue";
 
@@ -58,8 +57,6 @@ export default {
   setup() {
     let { merchantInfo } = useMerchantInfo();
     let { genDishDescribeText } = useSkuDish();
-
-    let { fenToYuan } = useTransformPrice();
 
     return {
       merchantInfo,

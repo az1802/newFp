@@ -85,9 +85,8 @@
 <script>
 import DishOperation from "../Common/DishOperation.vue";
 import { useSkuDish, useDish } from "@hooks/menuHooks";
-import { useTransformPrice } from "@hooks/commonHooks";
 import { reactive, watch, watchEffect, ref, computed, toRaw, unref } from "vue";
-import { showToast } from "@utils";
+import { showToast, fenToYuan } from "@utils";
 import { cloneDeep } from "lodash";
 export default {
   components: {
@@ -108,7 +107,6 @@ export default {
       useSkuDish();
 
     const { addDish } = useDish();
-    let { fenToYuan } = useTransformPrice();
 
     function genRangeText({ orderMin, orderMax }) {
       if (orderMin === orderMax) {
