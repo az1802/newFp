@@ -57,7 +57,7 @@ export default {
       flex: 1;
       .flex-simple(flex-start);
       .img {
-        .box-size(40px,40px);
+        .box-size(40px,40px,#eee);
         flex-basis: 40px;
         margin-right: 8px;
         border-radius: 2px;

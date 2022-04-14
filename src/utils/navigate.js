@@ -1,17 +1,27 @@
 
 import routes from './routes';
-export async function navigateTo(path, pageOpts = {}) {
+
+function parsePath(path) {
   let pathArr = path.split("/");
   let url = "";
 
   pathArr.forEach(item => {
     url = url ? url[item] : routes[item]
   });
+
+  return url;
+
+}
+function genParamsStrs(pageOpts = {}) {
   let paramsStrs = [];
   for (let key in pageOpts) {
     paramsStrs.push(`${key}=${pageOpts[key]}`);
   }
-  console.log('%cparamsStrs: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', url, paramsStrs);
+  return paramsStrs;
+}
+export async function navigateTo(path, pageOpts = {}) {
+  let url = parsePath(path);
+  let paramsStrs = genParamsStrs(pageOpts);
 
   if (url) {
     return new Promise(resolve => {
@@ -35,4 +45,56 @@ export async function navigateTo(path, pageOpts = {}) {
 
 export async function navigateBack(...args) {
   uni.navigateBack(...args)
+}
+
+
+export async function reLaunch(path, pageOpts = {}) {
+  let url = parsePath(path);
+  let paramsStrs = genParamsStrs(pageOpts);
+  return new Promise((resolve, reject) => {
+    uni.reLaunch({
+      url: paramsStrs.length == 0 ? url : `${url}?${paramsStrs.join("&")}`,
+      success() {
+        resolve(true)
+      },
+      fail() {
+        resolve(false)
+      }
+    })
+  })
+}
+export async function reLaunchUrl(url) {
+
+  return new Promise((resolve, reject) => {
+    uni.reLaunch({
+      url,
+      success() {
+        resolve(true)
+      },
+      fail() {
+        resolve(false)
+      }
+    })
+  })
+}
+
+
+
+
+
+
+
+export async function switchTab(url) {
+
+  return new Promise((resolve, reject) => {
+    uni.switchTab({
+      url,
+      success() {
+        resolve(true)
+      },
+      fail() {
+        resolve(false)
+      }
+    })
+  })
 }

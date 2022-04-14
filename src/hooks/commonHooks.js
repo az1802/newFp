@@ -80,3 +80,22 @@ export function useTimeTransform() {
     formatTme
   }
 }
+
+
+export function useModal() {
+  let isShow = ref(false);
+  return {
+    isShow,
+    showModal() {
+      isShow.value = true;
+    },
+    hideModal() {
+      console.log("关闭弹窗")
+      isShow.value = false;
+    },
+    stop(e) {
+      e.stopPropagation();
+      return "";
+    },
+  }
+}

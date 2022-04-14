@@ -7,6 +7,7 @@
  */
 import { computed, ref, reactive, unref } from 'vue'
 import { useState, useGetters, useMutations } from "@hooks/storeHooks";
+import { reLaunch } from "@utils"
 import API from "@api";
 
 
@@ -119,9 +120,6 @@ export function useUserCoupon() {
   }
 
 
-
-
-
   return {
     merchantCoupons,
     usedCouponList,
@@ -130,4 +128,106 @@ export function useUserCoupon() {
     requestUsedCouponList,
     requestExpiredCouponList,
   }
+}
+
+
+
+
+
+
+// 处理用户包含的商户券包
+export function useUserMerchantCoupon() {
+  let { userMerchantCoupons } = useState('user', ["userMerchantCoupons"]);
+  let { setUserMerchantCoupons } = useMutations('user', ["setUserMerchantCoupons"]);
+
+  async function requestUserMerchantCoupons(merchantId) {
+    let res = await API.User.getUserMerchantCoupon(merchantId)
+    setUserMerchantCoupons(res?.coupons || [])
+    return res.coupons;
+  }
+
+
+
+
+
+
+  return {
+    userMerchantCoupons,
+    requestUserMerchantCoupons,
+  }
+}
+
+
+
+
+export function useUserLogin() {
+  async function checkLogin() {
+    let userId = uni.getStorageSync('userId') || "";
+    if (!userId) {
+      let res = await reLaunch("MENU/LOGIN")
+      return ''
+    }
+    return userId;
+  }
+  async function login() {
+
+  }
+  return {
+    checkLogin,
+    login
+  }
+}
+
+
+// 获取和设置用户手机号
+export function useUserPhone() {
+
+  let { phone } = useState('user', ["phone"]);
+  let { setPhone } = useMutations('user', ["setPhone"]);
+  return {
+    phone,
+    setPhone
+  }
+
+}
+
+// 处理用户外卖地址(增删改查)
+export function useUserAddress() {
+
+  const { userAddressList } = useState('user', ["userAddressList"]);
+  const { setUserAddressList } = useMutations('user', ["setUserAddressList"]);
+
+  async function requestUserAddressList() {
+    let res = await API.User.getUserProfile();
+    setUserAddressList(res?.userInfo?.memberProfile?.shippingAddress || [])
+  }
+
+  async function addAddress(addressInfo) {
+    let res = await API.User.addShippingAddress(addressInfo);
+    return res;
+  }
+  async function updateAddress(addressInfo) {
+    let res = await API.User.updateAddressDetail(addressInfo);
+    if (res) {
+      requestUserAddressList()
+    }
+    return res;
+  }
+  async function getAddressDetail(addressId) {
+    let res = await API.User.getAddressDetail(addressId);
+    if (res) {
+      requestUserAddressList()
+    }
+    return res;
+  }
+
+  return {
+    userAddressList,
+    setUserAddressList,
+    requestUserAddressList,
+    addAddress,
+    updateAddress,
+    getAddressDetail
+  }
+
 }

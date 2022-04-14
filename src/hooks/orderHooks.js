@@ -15,25 +15,35 @@ import API from "@api";
 
 export function useOrder() {
 
-  let merchantId = "4146f4810c74424b819d7fcfb84826e8";
+  const { merchantInfo } = useState('merchant', ["merchantInfo"])
   const { orderInfo, payMethod } = useState("order", ["orderInfo", "payMethod"])
   const { selectedDishes } = useState("menu", ["selectedDishes"])
-  const { setPayMethod } = useMutations("order", ["setPayMethod"])
+  const { setPayMethod, setOrderInfo } = useMutations("order", ["setPayMethod", "setOrderInfo"])
   async function createOrder() {
+    let orderInfoTemp = unref(orderInfo);
     let orderArgs = {
       dishList: unref(selectedDishes),
-      groupDiningEventId: "",
-      mealType: "TAKE_AWAY",
-      peopleCount: 1,
+      // groupDiningEventId: "",
+      // mealType: "TAKE_AWAY",
+      // peopleCount: 1,
+      // phone: "17688479248",
+      // remark: "",
+      // shippingAddressId: "",
+      // shippingFee: 0,
+      // tableId: "5c77abcc369d408d96e61a3583022dcd",
+      // appointmentTime: "",
+      mealType: orderInfoTemp.mealType,
+      shippingAddressId: orderInfoTemp.id || '',
+      shippingFee: orderInfoTemp.shippingFee || 0,
+      tableId: orderInfoTemp.tableId,
+      remark: orderInfoTemp.remark,
+      peopleCount: Number(orderInfoTemp.peopleCount || 1),
+      groupDiningEventId: orderInfoTemp.groupDiningEventId,
       phone: "17688479248",
-      remark: "",
-      shippingAddressId: "",
-      shippingFee: 0,
-      tableId: "5c77abcc369d408d96e61a3583022dcd",
-      appointmentTime: "",
+      appointmentTime: orderInfoTemp.takeawayTime || '',
       discountAmount: 0,
     }
-    let res = await API.Order.createOrder(merchantId, orderArgs);;
+    let res = await API.Order.createOrder(unref(merchantInfo).merchantId, orderArgs);;
     return res;
   }
 
@@ -49,7 +59,8 @@ export function useOrder() {
     orderInfo,
     createOrder,
     payOrder,
-    setPayMethod
+    setPayMethod,
+    setOrderInfo
   }
 }
 

@@ -1,6 +1,6 @@
 <template>
   <div class="deposit-rules">
-    <navigation-bar ref="navigationBar" title="储值用户协议"></navigation-bar>
+    <NavigationBar title="储值用户协议" />
     <div class="title-wrapper">
       <img
         class="title-icon"

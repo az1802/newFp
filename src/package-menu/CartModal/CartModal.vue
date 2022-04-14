@@ -83,7 +83,7 @@ export default {
   max-height: 506px;
   .pos-bl-absolute(0,0);
   border-radius: 10px 10px 0 0;
-  padding-bottom: 102px;
+  padding-bottom: 130px;
   overflow: hidden;
   .title {
     .box-size(100%,42px,#f8f8f8);

@@ -8,12 +8,12 @@
 export default {
   // 获取商家详情
   GET_MERCHANT_INFO: "/merchant",
-  DISH_CATALOG_SCENE: "/merchant/dish_catalog/scene/",
-  GET_MERCHANT_DISH_CATEGORY: "/merchant/dish_catalog/",
+  GET_MERCHANT_DISH_CATEGORY: "/merchant/dish_catalog",
+  DISH_SOLD_NUMBER: "/dish/sold-number/", //获取菜品基本的销售数量
   GET_FANPIAO_CATEGORIES: "/fanpiao/fanpiao_categories",
   GET_COUPON_PACKAGE: "/merchant/coupon_package_v2",
-  //饭票购买记录
-  MERCHANT_FANPIAO_BUY_RECORD: "/fanpiao/recently/buy/",
+  MERCHANT_FANPIAO_BUY_RECORD: "/fanpiao/recently/buy", //饭票购买记录
+  GET_RECOMMEND_DISHES: '/order/recommend_dishes', //获取推荐菜
 
   // 订单相关
   CREATE_ORDER: "/order/create",
@@ -31,9 +31,13 @@ export default {
   USER_REFUND_FANPIAO_APPLY: '/fanpiao/balance/refund-apply',
   // 用户饭票交易记录
   GET_FANPIAO_TRANSACTION_DETAIL: "/fanpiao/fanpiao-usage",
+  // 获取商家储值额度选项
+  GET_RECHARGE_CONFIGS: '/membership/recharge_config',
 
 
   // 个人信息相关
+  USER_SIGN_UP: '/user/sign_up',
+  SIGN_UP_ALIPAY: '/user/alipay/sign_up',
   USER_MERCHANT_INFO: "/user/user_merchant_info",
   USER_FANPIAO_BALANCE: "/fanpiao/get_user_fanpiao_fee",
   USER_MEMBER_BALANCE: "/membership/get_user_member_card_deposit",
@@ -45,6 +49,12 @@ export default {
   USER_WITHDRAW: '/wallet/withdraw',
   USER_OWN_COUPON_LIST: '/coupon/list',
   USER_MERCHANT_COUPON: '/coupon/package',
+  GET_ALI_USER_PHONE: '/alipay/miniprogram/user_info',// 获取阿里用户手机
+  GET_USER_PHONE: '/user/phone_authorize',  // 授权用户手机号
+  GET_USER_PROFILE: '/user/user_profile',// 获取用户信息
+  ADD_SHIPPING_ADDRESS: '/user/add_shipping_address',// 添加收货人地址
+  UPDATE_SHIPPING_ADDRESS: '/user/update_shipping_address/', // 更新收货人地址
+  SHIPPING_ADDRESS_DETAIL: '/user/shipping_address/',// 获取接口详情
 
 
   // 饭票所有的购买记录
@@ -52,4 +62,12 @@ export default {
 
   // 用户支付接口
   PAYMENT_PREPAY: '/payment/prepay',
+
+  // 二维码参数解析相关
+  MPQRCODE_TABLE: '/mpqrcode/table',
+  // 获取桌台信息
+  GET_TABLE_INFO: '/merchant/table_info',
+  // 根据scene获取桌台相关参数
+  DISH_CATALOG_SCENE: '/merchant/dish_catalog/scene',
+
 }

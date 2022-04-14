@@ -21,18 +21,24 @@ export default {
       supplyCondiments: [],
       childDishGroups: []
     },
+    curDishDetail: {
+      attrList: [],
+      supplyCondiments: [],
+      childDishGroups: []
+    },
+    showDishDetailModal: false,
+
     showChildSkuDishModal: false,
     selChildDishes: {},
 
     showFanpiaoOpenScreenModal: false,
-    showPhoneAuthorize: false,
-    showScanModal: false,
-    showOptionModal: false,
-    showDishDetail: false,
-    showCodeExpiredModal: false,
-    showOrderStatusModal: false
-
-
+    // showPhoneAuthorize: false,
+    // showScanModal: false,
+    // showOptionModal: false,
+    // showDishDetail: false,
+    // showCodeExpiredModal: false,
+    showOrderStatusModal: false,
+    recommendedDishes: []
   },
   getters: {
     getDishCountById: state => dishId => {
@@ -66,11 +72,21 @@ export default {
       return state.selectedDishes.reduce((sum, item) => sum += item.quantity, 0)
     },
     selectedDishesTotalPrice(state) {
-
       return state.selectedDishes.reduce((sum, dishItem) => {
         return sum += calcSkuDishPrice(dishItem)
       }, 0)
+    },
+    selectedDishesDiscountPrice(state) {
+      return state.selectedDishes.reduce((sum, dishItem) => {
+        return sum += (dishItem.discountPrice * dishItem.quantity)
+      }, 0)
+    },
+    selectedDishesFinalTotalPrice(state) {
+      return state.selectedDishes.reduce((sum, dishItem) => {
+        return sum += (calcSkuDishPrice(dishItem) - (dishItem.discountPrice * dishItem.quantity))
+      }, 0)
     }
+
 
   },
   mutations: {
@@ -116,7 +132,7 @@ export default {
     },
     addSelDish({ selectedDishes }, dishInfo) {
       dishInfo = JSON.parse(JSON.stringify(dishInfo))
-      dishInfo.quantity = 1; //此菜品每次递增的数量
+      dishInfo.quantity = dishInfo.quantity || 1; //此菜品每次递增的数量
       if (dishInfo.isSku) {
         selectedDishes.push(dishInfo)
       } else {
@@ -148,6 +164,12 @@ export default {
     toggleShowCartModal(state, val) {
       state.showCartModal = val
     },
+    toggleShowDishDetailModal(state, val) {
+      state.showDishDetailModal = val
+    },
+    setCurDishDetail(state, val) {
+      state.curDishDetail = val;
+    },
     setCurSkuDish(state, dishInfo) {
       dishInfo = JSON.parse(JSON.stringify(dishInfo))
       state.curSkuDish = dishInfo
@@ -157,7 +179,8 @@ export default {
       state.curChildSkuDish = dishInfo
     },
     saveSelectedDishesStorage({ selectedDishes }) {
-      setStorage("selected-dishes", selectedDishes)
+      let merchantId = uni.getStorageSync("merchantId")
+      setStorage(`selected-dishes-${merchantId}`, selectedDishes)
     },
     addDishQuantity() {
 
@@ -167,6 +190,9 @@ export default {
     },
     toggleShowFanpiaoOpenScreenModal(state, val) {
       state.showFanpiaoOpenScreenModal = val
+    },
+    setRecommendedDishes(state, val) {
+      state.recommendedDishes = val;
     }
   },
   actions: {

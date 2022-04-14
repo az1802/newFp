@@ -6,7 +6,7 @@
  * @FilePath: /new-fanpiao-uniapp/src/utils/hooks/merchantHooks.js
  */
 import { computed, ref, reactive, unref } from 'vue'
-import { getDishInfoById } from "@utils";
+import { sleep, handleDishList, getStorage, getDishInfoById } from "@utils";
 import { useState, useGetters, useMutations } from "@hooks/storeHooks";
 import API from "@api";
 const {
@@ -20,15 +20,12 @@ const {
 
 let mockMerhantId = '1e543376139b474e97d38d487fa9fbe8';
 
-
-
-
 export function useMerchantInfo() {
   const { setMerchantInfo } = useMutations("merchant", ["setMerchantInfo"]);
   const { merchantInfo } = useState("merchant", ['merchantInfo']);
-  if (Object.keys(unref(merchantInfo)).length == 0) {
-    requestMerchantInfo()
-  }
+  // if (Object.keys(unref(merchantInfo)).length == 0) {
+  //   requestMerchantInfo()
+  // }
 
   async function requestMerchantInfo(merchantId) {
     if (!merchantId) {
@@ -36,11 +33,21 @@ export function useMerchantInfo() {
     }
     let res = await getMerchantInfo(merchantId);
     setMerchantInfo(res);
+    uni.setStorageSync("merchantInfo", res);
+    uni.setStorageSync("merchantId", res.merchantId);
     return res;
   }
 
+  async function requestMerchantDishes(merchantId) {
+    if (!merchantId) { return };
+    let dishesRes = await API.Merchant.getMerchantDishCategory(merchantId);
+    let dishBaseSellCountMap = await API.Merchant.getDishSoldNumber(merchantId);
+    let dishListRes = handleDishList(dishesRes.dishes, dishBaseSellCountMap);
+    return dishListRes;
+  }
+
   return {
-    merchantInfo, setMerchantInfo, requestMerchantInfo
+    merchantInfo, setMerchantInfo, requestMerchantInfo, requestMerchantDishes
   }
 }
 
@@ -88,7 +95,9 @@ export function useFanpiaoInfo() {
 
 export function useCouponInfo() {
   const { setCouponList } = useMutations("merchant", ["setCouponList"]);
-  const { couponList } = useState("merchant", ['couponList'])
+  const { couponList } = useState("merchant", ['couponList']);
+
+
   // if (!couponInfo?.value?.length) {
   //   requestCouponList(merchantId)
   // }
@@ -96,7 +105,11 @@ export function useCouponInfo() {
     if (!merchantId) {
       return;
     }
-    let res = await getCouponList(merchantId)
+    let res = await getCouponList(merchantId);
+    for (let key in res.couponPackages) {
+      res.couponPackages[key].availableFee = parseFloat(key)
+      res.couponPackages[key].couponCost = res.couponPackages[key]?.coupons[0]?.reduceCost || 0;
+    }
     setCouponList(Object.values(res.couponPackages));
   }
 
@@ -106,6 +119,9 @@ export function useCouponInfo() {
 
   return { couponList, setCouponList, requestCouponList }
 }
+
+
+
 
 
 export function useRefund() {
@@ -135,18 +151,19 @@ export function useFanpiaoOpenScreen() {
   let { fanpiaoList } = useState('merchant', ["fanpiaoList"]);
   let { setFanpiaoList } = useMutations('merchant', ["setFanpiaoList"]);
 
-  (async function () {
-    if (unref(fanpiaoList).length == 0) {
-      let merchantId = uni.getStorageSync("merchantId");
-      if (merchantId) {
-        let res = await getFanpiaoList(merchantId)
-        setFanpiaoList(res);
-      }
-    }
-  })()
+  // (async function () {
+  //   if (unref(fanpiaoList).length == 0) {
+  //     let merchantId = uni.getStorageSync("merchantId");
+  //     if (merchantId) {
+  //       let res = await getFanpiaoList(merchantId)
+  //       setFanpiaoList(res);
+  //     }
+  //   }
+  // })()
 
   async function requestBuyFanpiaoRecord() {
-    let res = await API.Merchant.getFanpiaoBuyRecord();
+    let merchantId = uni.getStorageSync("merchantId");
+    let res = await API.Merchant.getFanpiaoBuyRecord(merchantId);
     if (Array.isArray(res)) {
       return res
     } else {
@@ -165,4 +182,23 @@ export function useFanpiaoOpenScreen() {
 
 
 
+}
+
+
+export function useRecommendationDish() {
+  let { recommendedDishes } = useState('menu', ["recommendedDishes"]);
+  let { setRecommendedDishes } = useMutations('menu', ["setRecommendedDishes"])
+
+
+  async function requestRecommendDishes(merchantId) {
+    let res = await API.Merchant.getRecommendedDishes(merchantId)
+    setRecommendedDishes(res?.dishes || []);
+  }
+
+
+
+  return {
+    recommendedDishes,
+    requestRecommendDishes
+  }
 }

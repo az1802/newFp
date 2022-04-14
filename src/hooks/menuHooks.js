@@ -51,7 +51,7 @@ export function useDish() {
     ...useState("menu", [
       "selectedDishes",
     ]),
-    ...useGetters("menu", ["dishCountMap", "selectedDishesTotalQuantity", "selectedDishesTotalPrice"]),
+    ...useGetters("menu", ["dishCountMap", "selectedDishesTotalQuantity", "selectedDishesTotalPrice", "selectedDishesDiscountPrice", "selectedDishesFinalTotalPrice"]),
     addDish,
     reduceDish,
     resetSelDishes
@@ -62,7 +62,7 @@ export function useSkuDish() {
 
   // let { curChildSkuDish} = useState('menu',['curChildSkuDish'])
 
-  function addSkuChuildDish(dishInfo){
+  function addSkuChuildDish(dishInfo) {
 
   }
 
@@ -134,5 +134,21 @@ export function useCart() {
       saveSelectedDishesStorage()
     }
 
+  }
+}
+
+export function useDishDetail() {
+  const { showDishDetailModal, curDishDetail } = useState("menu", [
+    "showDishDetailModal", "curDishDetail"
+  ]);
+  const { toggleShowDishDetailModal, setCurDishDetail } = useMutations("menu", [
+    "toggleShowDishDetailModal", "setCurDishDetail"
+  ]);
+
+
+
+
+  return {
+    showDishDetailModal, curDishDetail, toggleShowDishDetailModal, setCurDishDetail
   }
 }

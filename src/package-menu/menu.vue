@@ -16,15 +16,16 @@
     <SkuModal />
     <ChildSkuDishModal />
     <CartModal />
-
     <OpenScreenFanpiaoModal />
     <ScanModal ref="scanModal" @scan="scanOk" />
-
     <OptionModal ref="optionModal" @selPeopleOk="selPeopleOk" />
+    <CodeExpiredModal ref="codeExpiredModal" />
+    <DishDetailModal />
+    <SplashModal ref="splashModal" />
   </div>
 </template>
 <script >
-import { reactive, onBeforeMount, onMounted, ref } from "vue";
+import { reactive, onBeforeMount, onMounted, ref, unref } from "vue";
 import MenuHeader from "./MenuHeader/MenuHeader.vue";
 import MenuList from "./MenuList/MenuList.vue";
 import SkuModal from "./SkuModal/SkuModal.vue";
@@ -34,35 +35,26 @@ import ChildSkuDishModal from "./SkuModal/ChildSkuDishModal.vue";
 import OpenScreenFanpiaoModal from "./OpenScreenFanpiaoModal/OpenScreenFanpiaoModal.vue";
 import ScanModal from "./ScanModal/ScanModal.vue";
 import OptionModal from "./OptionModal/OptionModal.vue";
-
+import CodeExpiredModal from "./CodeExpiredModal/CodeExpiredModal.vue";
+import DishDetailModal from "./DishDetailModal/DishDetailModal.vue";
+import SplashModal from "./SplashModal/SplashModal.vue";
 import API from "@api";
-const {
-  getDishCatalogScene,
-  getMerchantInfo,
-  getMerchantDishCategory,
-  getFanpiaoList,
-  getCouponList,
-} = API.Merchant;
 
 import { sleep, handleDishList, getStorage } from "@utils";
-import { useSystemInfo } from "@hooks/commonHooks";
+import { useSystemInfo, useNavigate } from "@hooks/commonHooks";
 import {
   useMerchantInfo,
   useFanpiaoInfo,
   useCouponInfo,
   useFanpiaoOpenScreen,
 } from "@hooks/merchantHooks";
+import { useUserLogin, useUserCoupon } from "@hooks/userHooks";
 import { useDish } from "@hooks/menuHooks";
+import { useOrder } from "@hooks/orderHooks";
+import { handleQrcodeParams } from "@utils";
 
-// const sceneMock = "5c0daef6ea47421c908047702b0a35a9";
-// const merchantIdMock = "1e543376139b474e97d38d487fa9fbe8";
-// 开发用正式环境
-const sceneMock = "09e36b4cd1ea400ba772443f0d2a8747";
-const merchantIdMock = "611e8d6b48e844a186d5ead5a8340ff0";
+let opts;
 
-// const sceneMock = "e162ac24e1a64dd783f8408741c910b1";
-// const merchantIdMock = "8ec573585d9645229fb01713e30a2a6d";
-let scene, merchantId;
 export default {
   components: {
     MenuList,
@@ -74,36 +66,45 @@ export default {
     OpenScreenFanpiaoModal,
     ScanModal,
     OptionModal,
+    CodeExpiredModal,
+    DishDetailModal,
+    SplashModal,
   },
-  onLoad(opts) {
-    scene = opts.scene || sceneMock;
-    merchantId = opts.merchantId || merchantIdMock;
+  onLoad(options) {
+    // opts = options;
   },
   setup(props, context) {
     let dishList = reactive([]);
     let userInfo = reactive({});
     let scanModal = ref(""),
-      optionModal = ref("");
-    const { requestMerchantInfo } = useMerchantInfo();
+      optionModal = ref(""),
+      codeExpiredModal = ref(""),
+      splashModal = ref("");
+    const { requestMerchantInfo, requestMerchantDishes, merchantInfo } =
+      useMerchantInfo();
     const { statusBarHeight, screenWidth } = useSystemInfo();
     const { requestFanpiaoList } = useFanpiaoInfo();
     const { requestCouponList } = useCouponInfo();
     const { resetSelDishes } = useDish();
     const { toggleShowFanpiaoOpenScreenModal } = useFanpiaoOpenScreen();
-
-    resetSelDishes(getStorage("selected-dishes") || []);
+    const { checkLogin } = useUserLogin();
+    const { requestUserMerchantCoupon } = useUserCoupon();
+    const { orderInfo, setOrderInfo } = useOrder();
 
     async function _handleMerchantConfig() {
-      let merchantInfo = await requestMerchantInfo(merchantId);
-      let { splashMode, disableBuyFanpiao } = merchantInfo;
+      let { splashMode, disableBuyFanpiao } = unref(merchantInfo);
       if (
         (splashMode == "FANPIAO" || splashMode == "FANPIAO_SNAP_UP") &&
         !disableBuyFanpiao
       ) {
-        // toggleShowFanpiaoOpenScreenModal(true);
+        toggleShowFanpiaoOpenScreenModal(true);
+      } else if (splashMode === "IMAGE" || splashMode === "MEMBER_RECHARGE") {
+        splashModal.value.showModal();
       }
 
+      // TODO 点击下单的时候扫码
       if (0) {
+        //扫码桌台码
         // console.log(scanModal);
         scanModal.value.show();
       }
@@ -111,6 +112,11 @@ export default {
       if (0) {
         //选择人数
         optionModal.value.show();
+      }
+
+      if (0) {
+        //二维码过期
+        codeExpiredModal.value.show();
       }
     }
 
@@ -121,17 +127,62 @@ export default {
       //  TODO  选择人数
     }
 
-    onBeforeMount(async () => {
-      let tableInfo = await getDishCatalogScene(scene);
-      let { merchantId } = tableInfo;
-      uni.setStorageSync("merchantId", merchantId);
-      _handleMerchantConfig(merchantId);
-      getMerchantDishCategory(merchantId).then((res) => {
-        let dishListRes = handleDishList(res.dishes);
+    async function loadSource(parseRes) {
+      let { scene, tableId, tableName } = parseRes;
+      if (!scene && tableId) {
+        //只有tableId的情况
+        setOrderInfo({ tableId, tableName });
+        let res = await API.Merchant.getTableInfo(tableId);
+        scene = res.data.id;
+      }
+
+      if (scene) {
+        //通过scene获取桌台相关的配置信息
+        let res = await API.Merchant.getDishCatalogScene(scene);
+        parseRes = Object.assign({}, parseRes, res);
+        setOrderInfo(res);
+      }
+
+      if (parseRes.merchantId) {
+        //获取商户信息和菜单信息
+        let merchantId = parseRes.merchantId;
+        //获取菜品
+        await requestMerchantInfo(merchantId);
+        let dishListRes = await requestMerchantDishes(merchantId);
         dishList.push(...dishListRes);
-      });
-      requestFanpiaoList(merchantId);
-      requestCouponList(merchantId);
+
+        // 进入页面根据缓存重置选中菜
+        resetSelDishes(getStorage(`selected-dishes-${merchantId}`) || []);
+        // 请求资源
+        requestFanpiaoList(merchantId);
+        requestCouponList(merchantId);
+        // requestUserMerchantCoupon(merchantId);
+      }
+    }
+
+    async function prepareMerchantInfo() {
+      // let userId = checkLogin();
+      // if (!userId) {
+      //   return;
+      // }
+      try {
+        let parseRes = await handleQrcodeParams(opts); //处理二维码参数
+        await loadSource(parseRes); //根据不同的解析结果加载不同的数据
+      } catch (err) {
+        console.log(
+          "%cerr: ",
+          "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
+          err
+        );
+      }
+    }
+
+    onBeforeMount(async () => {
+      // 处理参数
+      await prepareMerchantInfo();
+
+      // 根据商户配置处理不同逻辑
+      _handleMerchantConfig();
     });
 
     let menuWrapperStyle = ref({
@@ -144,6 +195,8 @@ export default {
       menuWrapperStyle,
       scanModal,
       optionModal,
+      codeExpiredModal,
+      splashModal,
       scanOk,
       selPeopleOk,
     };

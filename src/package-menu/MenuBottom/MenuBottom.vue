@@ -7,9 +7,18 @@
 -->
 <template>
   <div class="menu-bottom-container">
-    <!-- <div class="discount-tooltip">
-      使用饭票支付,本单可再减
-    </div> -->
+    <div class="discount-tooltip">
+      <!-- <div class="text">
+        使用饭票支付,本单可再减
+        <div class="price">3.1-3.41元</div>
+      </div> -->
+      <div class="text">
+        再买
+        <div class="price">2元</div>
+        ,可再减
+        <div class="price">1元</div>
+      </div>
+    </div>
     <div class="cart-wrapper">
       <div class="cart-info">
         <div class="cart-icon" @click="toggleShowCartModal(!showCartModal)">
@@ -70,11 +79,28 @@ export default {
 @cartHeight: 50px;
 
 .menu-bottom-container {
-  .box-size(100%,0px,transparent);
+  .box-size(100%,50px,transparent);
   flex-shrink: 0;
   padding: 0 12px;
-  position: relative;
+  position: fixed;
+  bottom: 48px;
+  z-index: 100;
+
   .discount-tooltip {
+    .box-size(calc(100% - 24px),57px,#ffebe9);
+    position: absolute;
+    border-radius: 8px 8px 0px 0px;
+    margin-top: -25px;
+    z-index: -1;
+    .flex-simple(center,flex-start);
+    .text {
+      .flex-simple(center,center);
+      .line-center(25px);
+      .normal-font(12px,#333);
+      .price {
+        color: #ff4029;
+      }
+    }
   }
   .cart-wrapper {
     .box-size(calc(100vw - 24px),@cartHeight,#333);
@@ -82,9 +108,7 @@ export default {
     border-radius: calc(@cartHeight / 2);
     padding-left: calc(@cartHeight / 2);
     overflow: hidden;
-    position: fixed;
-    bottom: 45px;
-    z-index: 100;
+    margin: 0 auto;
     .cart-info {
       flex: 1;
       .flex-simple(flex-start,center);

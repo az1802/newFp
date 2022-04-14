@@ -8,22 +8,51 @@
         alt=""
       />
     </div>
-    <div class="coupon-info">
+    <div class="coupon-info" v-if="recommendedCoupon.id">
       <div class="coupon-price">
-        <div class="left">本单支付立省<span class="red">1</span>元</div>
+        <div class="left">
+          本单支付立省<span class="red">{{
+            recommendedCoupon.couponCost / 100
+          }}</span
+          >元
+        </div>
         <div class="right">
           <div class="buy-price">
-            <div class="discount-price">0.1</div>
-            <div class="origin-price">¥10</div>
+            <div class="discount-price">
+              ¥{{ recommendedCoupon.price / 100 }}
+            </div>
+            <div class="origin-price">
+              ¥{{ recommendedCoupon.originalPrice / 100 }}
+            </div>
           </div>
-          <div class="buy-btn">购买</div>
+          <div
+            class="buy"
+            v-if="merchantInfo.enableOrderingCouponPackageUnionPay"
+          >
+            <checkbox-group @change="changeBuyCouponPackage">
+              <checkbox
+                class="checked red"
+                value="1"
+                :checked="orderInfo.isBuyCouponPackage"
+                color="red"
+              ></checkbox>
+            </checkbox-group>
+          </div>
+
+          <div v-else class="buy-btn">购买</div>
         </div>
       </div>
       <div class="coupon-detail">
         <div class="left">
           <p class="text"><span class="dot"></span>72%的顾客使用优惠券买单</p>
-          <p class="text"><span class="dot"></span>每单满元即可使用一张</p>
-          <p class="text"><span class="dot"></span>有效期为60天</p>
+          <p class="text">
+            <span class="dot"></span>每单满{{
+              recommendedCoupon.availableFee / 100
+            }}元即可使用一张
+          </p>
+          <p class="text">
+            <span class="dot"></span>有效期为{{ recommendedCoupon.validDays }}天
+          </p>
         </div>
         <div class="right">
           <img
@@ -33,19 +62,24 @@
           />
           <div class="content">
             <p class="price">
-              <span class="num money">1</span>
+              <span class="num money">{{
+                recommendedCoupon.couponCost / 100
+              }}</span>
               <span class="connection">X</span>
-              <span class="num">6</span>张
+              <span class="num">{{ recommendedCoupon.coupons.length }}</span
+              >张
             </p>
-            <p class="limit">满1可用</p>
+            <p class="limit">
+              满{{ recommendedCoupon.availableFee / 100 }}可用
+            </p>
             <p class="limit">无门槛优惠券</p>
           </div>
         </div>
       </div>
       <div class="accord">
-        <div class="radio-wrapper" @click="isAgreeAccord = !isAgreeAccord">
+        <div class="radio-wrapper" @click="toggleIsAgreeCouponAccord">
           <text
-            v-if="isAgreeAccord"
+            v-if="orderInfo.isAgreeCouponAccord"
             class="text-gray cuIcon-check cuIcon"
           ></text>
         </div>
@@ -58,18 +92,39 @@
 <script>
 import { useCouponInfo } from "@hooks/merchantHooks";
 import { useNavigate } from "@hooks/commonHooks";
+import { useMerchantInfo } from "@hooks/merchantHooks";
+import { useOrder } from "@hooks/orderHooks";
+import { useRecommendedCoupon } from "@hooks/payHooks";
 
 export default {
   components: {},
   setup() {
     let { couponInfo } = useCouponInfo();
     let { navigateTo } = useNavigate();
+    let { merchantInfo } = useMerchantInfo();
+    let { orderInfo, setOrderInfo } = useOrder();
+    let { recommendedCoupon } = useRecommendedCoupon();
+
     // TODO 计算合适的券然后使用
     return {
       isAgreeAccord: false,
       goToAccordPage() {
         navigateTo("OTHER/COUPON_ACCORD_TEXT");
       },
+      merchantInfo,
+      changeBuyCouponPackage(e) {
+        let isBuyCouponPackage = e.detail.value == 1 ? true : false;
+        setOrderInfo({
+          isBuyCouponPackage,
+        });
+      },
+      toggleIsAgreeCouponAccord() {
+        setOrderInfo({
+          issAgreeCouponAccord: !unref(orderInfo).issAgreeCouponAccord,
+        });
+      },
+      recommendedCoupon,
+      orderInfo,
     };
   },
 };
@@ -114,6 +169,7 @@ export default {
           display: flex;
           font-size: 19px;
           align-items: baseline;
+          margin-right: 10px;
           .price-symbol(12px, #333);
           .discount-price {
             .normal-font(19px,#333);
@@ -131,7 +187,6 @@ export default {
           text-align: center;
           border-radius: 14px;
           border: 1px solid #f25643;
-          margin-left: 10px;
         }
       }
     }

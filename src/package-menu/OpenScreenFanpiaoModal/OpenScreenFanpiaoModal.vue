@@ -111,7 +111,7 @@ import API from "@api";
 import { useFanpiaoOpenScreen } from "@hooks/merchantHooks";
 import { usePay } from "@hooks/payhooks";
 import { useNavigate } from "@hooks/commonHooks";
-import { computed, watch, ref, onBeforeMount } from "vue";
+import { computed, watch, ref, onBeforeMount, unref, watchEffect } from "vue";
 
 export default {
   setup() {
@@ -125,9 +125,21 @@ export default {
     let { navigateTo } = useNavigate();
     let buyRecordList = ref([]);
 
-    onBeforeMount(async () => {
-      let res = await requestBuyFanpiaoRecord();
-      buyRecordList.value = res;
+    watch(showFanpiaoOpenScreenModal, async (nval) => {
+      console.log(
+        "%cnval: ",
+        "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
+        nval
+      );
+      if (nval && unref(buyRecordList).length == 0) {
+        let res = await requestBuyFanpiaoRecord();
+        console.log(
+          "%cres: ",
+          "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
+          res
+        );
+        buyRecordList.value = res;
+      }
     });
 
     return {

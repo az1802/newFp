@@ -21,7 +21,9 @@ export default {
     stats: { //用户最近营销使用
 
     },
-    userFanpiaoRecords: []
+    userFanpiaoRecords: [],
+    userAddressList: [],
+    userMerchantCoupons: []
   },
   getters: {
 
@@ -38,7 +40,17 @@ export default {
     },
     setUserFanpiaoRecords(state, userFanpiaoRecords) {
       state.userFanpiaoRecords = userFanpiaoRecords
-    }
+    },
+    setPhone(state, phone) {
+      state.phone = phone;
+    },
+    setUserAddressList(state, userAddressList) {
+      state.userAddressList = userAddressList;
+    },
+    setUserMerchantCoupons(state, userMerchantCoupons) {
+      state.userMerchantCoupons = userMerchantCoupons;
+    },
+
 
   },
   actions: {

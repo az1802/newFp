@@ -6,7 +6,7 @@
  * @FilePath: /new-fanpiao-uniapp/src/package-menu/DishItem/DishItem.vue
 -->
 <template>
-  <div class="container">
+  <div class="container" @click="showDishDetail">
     <div class="img-wrapper">
       <div class="placeholder" v-if="showPlaceHolder || !dish.thumbImage"></div>
       <img
@@ -45,7 +45,7 @@
 import DishOperation from "../Common/DishOperation.vue";
 import { ref, onMounted, watch, unref, computed } from "vue";
 import { useTransformPrice } from "@hooks/commonHooks";
-import { useDish, useSkuDish } from "@hooks/menuHooks";
+import { useDish, useSkuDish, useDishDetail } from "@hooks/menuHooks";
 import { getDishInfoById } from "@utils";
 import { useNavigate } from "@hooks/commonHooks";
 import { useFanpiaoInfo } from "@hooks/merchantHooks";
@@ -66,6 +66,7 @@ export default {
     let { addDish, reduceDish, dishCountMap } = useDish();
     let { setCurSkuDish, toggleShowSkuModal } = useSkuDish();
     let { maxDiscountFanpiao, minDiscountFanpiao } = useFanpiaoInfo();
+    let { setCurDishDetail, toggleShowDishDetailModal } = useDishDetail();
     const { navigateTo } = useNavigate();
 
     // watch(minDiscountFanpiao, (nval) => {
@@ -101,6 +102,10 @@ export default {
         let dishInfo = getDishInfoById(dish.id);
         setCurSkuDish(dishInfo);
         toggleShowSkuModal(true);
+      },
+      showDishDetail() {
+        setCurDishDetail(dish);
+        toggleShowDishDetailModal(true);
       },
     };
   },

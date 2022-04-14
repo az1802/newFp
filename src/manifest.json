@@ -53,9 +53,29 @@
     "appid": "wxdd5cafec95f6cc46",
     "setting": {
       "urlCheck": false,
-      "checkSiteMap":false
+      "minified": true,
+      "checkSiteMap": false
     },
-    "usingComponents": true
+    "usingComponents": true,
+    "optimization": {
+      "subPackages": true
+    },
+    "permission": {
+      "scope.userLocation": {
+        "desc": "你的位置信息将用于小程序位置接口的效果展示"
+      }
+    },
+    "plugins": {
+      "chatGroupPlugin": {
+        "version": "1.1.2",
+        "provider": "wxaae6519cee98d824"
+      },
+      "love-feast": {
+        "version": "latest",
+        "provider": "wxaed6df68ded6342b"
+      }
+    }
+
   },
   "mp-alipay": {
     "usingComponents": true

@@ -9,24 +9,28 @@
   <div class="pay-order-page">
     <NavigationBar title="确认支付" />
     <div class="pay-price-info">
-      <div class="pay-price">{{ orderInfo.paidFee }}</div>
-      <div class="origin-price">{{ orderInfo.billFee }}</div>
+      <div class="pay-price">{{ fenToYuan(orderInfo.paidFee) }}</div>
+      <div class="origin-price">{{ fenToYuan(orderInfo.billFee) }}</div>
     </div>
     <PayMthodList />
-
-    <div class="pay-btn">确认支付</div>
+    <div class="pay-btn" @click="payOrder">确认支付</div>
   </div>
 </template>
 <script>
 import PayMthodList from "./PayMthodList/payMethodList.vue";
 import { useOrder } from "@hooks/orderhooks";
+import { useTransformPrice } from "@hooks/commonHooks";
 export default {
   components: { PayMthodList },
   setup() {
     const { orderInfo } = useOrder();
+    let { fenToYuan } = useTransformPrice();
 
+    async function payOrder() {}
     return {
       orderInfo,
+      fenToYuan,
+      payOrder,
     };
   },
 };

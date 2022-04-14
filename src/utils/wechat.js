@@ -5,7 +5,7 @@
  * @LastEditTime: 2022-02-09 14:28:18
  * @FilePath: /new-fanpiao-uniapp/src/utils/wechat.js
  */
-
+import API from '@api';
 
 export async function wechatPay(signData) {
   return new Promise((resolve, reject) => {
@@ -29,7 +29,7 @@ export async function wechatPay(signData) {
         if (err.errMsg !== "requestPayment:fail cancel") {
           resolve(false)
         } else {
-          resolve(true)
+          resolve(false)
         }
       }
     });
@@ -109,4 +109,73 @@ export function isOpenSetting(subscriptionsSetting, TMPL_ID) {
     return true
   }
   return false
+}
+
+export function getUserInfo() {
+  //#ifdef MP-WEIXIN
+  return new Promise((resolve, reject) => {
+    wx.getUserProfile({
+      desc: "个人主页信息展示",
+      complete(res) {
+        console.log("complete", res);
+        resolve(res)
+      },
+      success: (res) => {
+        console.log("success", res);
+        resolve(res);
+      }, fail: (err) => { //获取个人信息失败
+        console.log("err", err);
+        resolve(false)
+      }
+    })
+  });
+  //#endif
+
+  //#ifndef MP-WEIXIN
+  return new Promise((resolve, reject) => {
+    uni.getUserInfo({ success: resolve, fail: reject })
+  })
+  //#endif
+}
+
+
+export async function getWechatPhone(e) {
+  let codeMsg = await uni.login();
+  if (e.target.errMsg !== "getPhoneNumber:ok") {
+    return false;
+  }
+  let data = {
+    code: codeMsg.code,
+    iv: e.target.iv,
+    encryptedData: e.target.encryptedData,
+  };
+  let phoneRes = await API.User.getUserPhone(data);
+  return phoneRes?.phone || false;
+}
+
+export async function chooseLocation() {
+  let addressRes = {}
+  let res = await uni.chooseLocation()
+  //#ifdef MP-ALIPAY
+  if (res && res.error == 11) {
+    return;
+  }
+  const { provinceName, cityName, address, name, latitude, longitude } = res
+  addressRes.street = provinceName + cityName + address + name
+  addressRes.latitude = latitude
+  addressRes.longitude = longitude
+  //#endif
+
+  //#ifndef MP-ALIPAY
+  if (res.errMsg !== 'chooseLocation:ok') {
+    return
+  }
+  const { name, address, latitude, longitude } = res
+  addressRes.street = address + name
+  addressRes.latitude = latitude
+  addressRes.longitude = longitude
+  //#endif
+
+
+  return addressRes;
 }

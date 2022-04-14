@@ -14,8 +14,14 @@ const MERCHANT = '/package-merchant'
 
 
 export default {
+  "TABS": {
+    "HOME": '/pages/index/index',
+    "ORDER": '/pages/order/order',
+    "MINE": '/pages/mine/mine',
+  },
   "MENU": {
-    "MENU": `${MENU}/menu`
+    "MENU": `${MENU}/menu`,
+    "LOGIN": `${MENU}/login`,
   },
   "MERCHANT": {
     "HOME": `${MERCHANT}/home`
@@ -27,6 +33,8 @@ export default {
   },
   "MARKETING": {
     "BUY_FANPIAO": `${MARKETING}/buy-fanpiao/buy-fanpiao`,
+    "MAKE_DEPOSIT": `${MARKETING}/make-deposit/make-deposit`,
+    "DIRECT_PAYMENT": `${MARKETING}/direct-payment/direct-payment`
   },
   "OTHER": {
     "COUPON_ACCORD_TEXT": `${OTHER}/coupon-accord-text/coupon-accord-text`,

@@ -16,13 +16,14 @@
     <div class="dish-list-wrapper">
       <OrderDishList :dishList="dishList" />
     </div>
+    <CouponReduce />
     <SplitLine paddingTop="16" />
     <div class="price-info">
       <div class="discount-price">
         已优惠<span class="num">{{ fenToYuan(discountPrice) }}</span>
       </div>
       <div class="total-price">
-        小计<span class="num">{{ fenToYuan(totalPrce) }}</span>
+        小计<span class="num">{{ fenToYuan(totalPrce - discountPrice) }}</span>
       </div>
     </div>
   </div>
@@ -31,11 +32,14 @@
 import { useDish, useSkuDish } from "@hooks/menuHooks";
 import { useMerchantInfo } from "@hooks/merchantHooks";
 import { useTransformPrice } from "@hooks/commonHooks";
+
 import OrderDishList from "../OrderDishList/OrderDishList.vue";
+import CouponReduce from "../CouponReduce/CouponReduce.vue";
 
 export default {
   components: {
     OrderDishList,
+    CouponReduce,
   },
   props: {
     dishList: {
@@ -54,6 +58,7 @@ export default {
   setup() {
     let { merchantInfo } = useMerchantInfo();
     let { genDishDescribeText } = useSkuDish();
+
     let { fenToYuan } = useTransformPrice();
 
     return {

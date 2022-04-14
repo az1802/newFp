@@ -8,17 +8,24 @@
 <template >
   <div class="create-order-container">
     <NavigationBar title="订单" />
-    <TableInfo />
-    <!-- <div style="height: 8px"></div> -->
-    <OrderDishInfo
-      :dishList="selectedDishes"
-      :totalPrce="selectedDishesTotalPrice"
-    />
-    <div style="height: 18px"></div>
-    <CouponInfo />
-    <OrderRemarks />
-    <div style="height: 100px"></div>
+    <scroll-view class="page-content" scroll-y>
+      <TableInfo />
+      <div style="height: 8px"></div>
+      <OrderDishInfo
+        :dishList="selectedDishes"
+        :totalPrce="selectedDishesTotalPrice"
+        :discountPrice="orderDiscountPrice"
+      />
+      <div style="height: 18px"></div>
+      <CouponInfo />
+      <OrderRemarks />
+      <div style="height: 100px"></div>
+    </scroll-view>
     <ConfirmOrder />
+    <RecommendationModal
+      ref="recommendationModal"
+      :recommendedDishes="autoRecommendedDishes"
+    />
   </div>
 </template>
 <script>
@@ -27,12 +34,16 @@ import OrderDishInfo from "./OrderDishInfo/OrderDishInfo.vue";
 import ConfirmOrder from "./ConfirmOrder/ConfirmOrder.vue";
 import CouponInfo from "./CouponInfo/CouponInfo.vue";
 import OrderRemarks from "./OrderRemarks/OrderRemarks.vue";
+import RecommendationModal from "./RecommendationModal/RecommendationModal.vue";
 import { getStorage } from "@utils";
 
 import { useDish } from "@hooks/menuHooks";
 import { useTransformPrice } from "@hooks/commonHooks";
-import { useMerchantInfo } from "@hooks/merchantHooks";
-import {} from "@hooks/orderHooks";
+import { useMerchantInfo, useRecommendationDish } from "@hooks/merchantHooks";
+import { useOrder } from "@hooks/orderHooks";
+import { useRecommendedCoupon } from "@hooks/payHooks";
+import { useUserMerchantCoupon } from "@hooks/userHooks";
+import { onBeforeMount, ref, computed, unref, watch } from "vue";
 export default {
   components: {
     TableInfo,
@@ -40,20 +51,94 @@ export default {
     ConfirmOrder,
     CouponInfo,
     OrderRemarks,
+    RecommendationModal,
   },
   onLoad() {},
   setup() {
-    let { selectedDishes, selectedDishesTotalPrice, resetSelDishes } =
-      useDish();
-    let { requestMerchantInfo } = useMerchantInfo();
+    let {
+      selectedDishes,
+      selectedDishesTotalPrice,
+      selectedDishesDiscountPrice,
+      resetSelDishes,
+    } = useDish();
+    let { recommendedDishes, requestRecommendDishes } = useRecommendationDish();
+    let { merchantInfo } = useMerchantInfo();
+    let { orderInfo, setOrderInfo } = useOrder();
+    let { recommendedCoupon, userAvailableMerchantCoupon } =
+      useRecommendedCoupon();
+    let { requestUserMerchantCoupons } = useUserMerchantCoupon();
+    let recommendationModal = ref("");
 
-    //TODO  后续拿掉
-    resetSelDishes(getStorage("selected-dishes"));
-    requestMerchantInfo("4146f4810c74424b819d7fcfb84826e8");
+    onBeforeMount(async () => {
+      let merchanrtId = unref(merchantInfo).merchantId;
+      requestRecommendDishes(merchanrtId); //请求推荐菜品
+      let userCoupons = await requestUserMerchantCoupons(merchanrtId); //请求用户已有的商户券包
+      // 默认设置用户可使用的券包
+      let maxReduceCostCoupon = "";
+      userCopons.forEach((item) => {
+        if (
+          item.leastCost <= billFee &&
+          (!maxReduceCostCoupon ||
+            maxReduceCostCoupon.reduceCost < item.reduceCost)
+        ) {
+          maxReduceCostCoupon = item;
+        }
+      });
 
+      if (maxReduceCostCoupon) {
+        setOrderInfo({
+          selCouponId: maxReduceCostCoupon.id,
+          selCouponReduceCost: maxReduceCostCoupon.reduceCost,
+        });
+      }
+    });
+
+    // TODO 选中菜发生变化会重新弹窗
+    let autoRecommendedDishes = computed(() => {
+      return unref(recommendedDishes).filter((dishItem) => {
+        dishItem.quantity = 0;
+        let isSel = unref(selectedDishes).some((sleItem) => {
+          if (sleItem.id == dishItem.id) {
+            return true;
+          }
+          if (
+            sleItem?.attrs?.some((attrItem) => attrItem.name == dishItem.name)
+          ) {
+            return true;
+          }
+          if (
+            sleItem?.supplyCondiments?.some(
+              (condimentItem) => condimentItem.name == dishItem.name
+            )
+          ) {
+            return true;
+          }
+        });
+        return !isSel;
+      });
+    });
+
+    watch(autoRecommendedDishes, (nval) => {
+      if (nval?.length > 0) {
+        recommendationModal.value.showModal();
+      }
+    });
+
+    const orderDiscountPrice = computed(() => {
+      let res = unref(selectedDishesDiscountPrice) || 0;
+      if (unref(orderInfo).isBuyCouponPackage) {
+        res += unref(recommendedCoupon).couponCost;
+      } else if (unref(orderInfo).selCouponId > 0) {
+        res += unref(orderInfo).selCouponReduceCost;
+      }
+      return res;
+    });
     return {
       selectedDishes,
       selectedDishesTotalPrice,
+      orderDiscountPrice,
+      recommendationModal,
+      autoRecommendedDishes,
     };
   },
 };
@@ -63,5 +148,8 @@ export default {
 .create-order-container {
   .box-size(100vw,100vh);
   background: #f8f8f8;
+  .page-content {
+    .box-size(100vw,calc(100vh - 80px),#f8f8f8);
+  }
 }
 </style>

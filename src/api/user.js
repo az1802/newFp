@@ -8,10 +8,25 @@
 
 import URLS from './urls'
 import http from './http';
-http.setHeaders({
-  userId: "d4848915-b103-4e1a-abfd-a04886fa61e6"
-})
 
+let userIdMock = "d4848915-b103-4e1a-abfd-a04886fa61e6"
+
+export async function setUserHeader(userId = userIdMock) {
+  http.setHeaders({
+    userId,
+  })
+}
+
+export async function signUp(data) {
+  let url = `${URLS.USER_SIGN_UP}`;
+  let res = await http.post(url, data);
+  return res;
+}
+export async function signUpAlipay(data) {
+  let url = `${URLS.SIGN_UP_ALIPAY}`;
+  let res = await http.post(url, data);
+  return res;
+}
 
 export async function getUserMerchantInfo(merchantId) {
   let url = `${URLS.USER_MERCHANT_INFO}/${merchantId}`;
@@ -87,5 +102,48 @@ export async function refundFanpiao(transactionId, args) {
 export async function refundCoupon(transactionId, args) {
   const url = URLS.USER_REFUND_COUPON + `${transactionId}`
   let res = await http.post(url, args);
+  return res;
+}
+
+
+export async function getAliUserPhone(data) {
+  const url = URLS.GET_ALI_USER_PHONE;
+  let res = await http.post(url, data);
+  return res;
+}
+export async function getUserPhone(data) {
+  const url = URLS.GET_USER_PHONE;
+  let res = await http.post(url, data);
+  return res;
+}
+export async function getUserProfile() {
+  let userId = uni.getStorageSync('userId')
+  const url = `${URLS.GET_USER_PROFILE}/${userId}`
+  let res = await http.get(url);
+  return res;
+}
+export async function addShippingAddress(addressInfo) {
+  const url = `${URLS.ADD_SHIPPING_ADDRESS}`
+  let res = await http.post(url, addressInfo);
+  if (res.errcode == 0) {
+    return true
+  } else {
+    return false;
+  }
+}
+
+export async function updateAddressDetail(addressInfo) {
+  const url = `${URLS.UPDATE_SHIPPING_ADDRESS}/${addressInfo.id}`
+  let res = await http.post(url, addressInfo);
+  if (res.errcode == 0) {
+    return true
+  } else {
+    return false;
+  }
+}
+export async function getAddressDetail(id) {
+  const url = `${URLS.SHIPPING_ADDRESS_DETAIL}/${id}`
+  let res = await http.get(url);
+  console.log('%cres: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', res);
   return res;
 }

@@ -28,7 +28,7 @@ function _processDishAttr(dish) {
   }
 }
 
-export function handleDishList(dishes) {
+export function handleDishList(dishes, dishBaseSellCountMap = {}) {
 
   let dishesMap = {}, dishNameMap = {}, attrDishMap = {}, hotDishes = [];
   let dishSrollTops = [], categoryScrollTops = [], scrollTop = 0;
@@ -71,6 +71,7 @@ export function handleDishList(dishes) {
 
     categoryItem.dishList.forEach(dishItem => {
       dishItem.isSku = isSkuDish(dishItem)
+      dishItem.soldNumber += (dishBaseSellCountMap[dishItem.id]?.soldNumber || 0)
       _processDishAttr(dishItem)
 
       scrollTop += DISH_ITEM_HEIGHT;

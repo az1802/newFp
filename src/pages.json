@@ -35,6 +35,11 @@
         "style": {
           "disableScroll": true
         }
+      }, {
+        "path": "login",
+        "style": {
+          "disableScroll": true
+        }
       }]
     },
     {
@@ -106,6 +111,16 @@
         "style": {
           "disableScroll": false
         }
+      }, {
+        "path": "make-deposit/make-deposit",
+        "style": {
+          "disableScroll": false
+        }
+      }, {
+        "path": "direct-payment/direct-payment",
+        "style": {
+          "disableScroll": false
+        }
       }, ]
     },
     {
@@ -159,6 +174,11 @@
     },
 
   ],
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于小程序位置接口的效果展示"
+    }
+  },
   "globalStyle": {
     "navigationStyle": "custom",
   },

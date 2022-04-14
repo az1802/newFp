@@ -15,8 +15,10 @@
 </template>
 
 <script type="text/ecmascript-6">
+import { ref } from "vue";
 export default {
   setup() {
+    let isShow = ref(false);
     return {
       isShow,
       show() {
@@ -45,12 +47,18 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  z-index: 110;
+  z-index: -100;
   background: rgba(0, 0, 0, 0.6);
+
+  &.fade-modal-enter-active {
+    display: flex;
+    z-index: 100;
+  }
 
   &.hide-modal {
     opacity: 0;
     transition: all 0.5s;
+    z-index: -100;
   }
 
   .expired-message {

@@ -1,8 +1,8 @@
-import { computed, ref, reactive, unref } from 'vue'
-import { getDishInfoById } from "@utils";
+import { computed, ref, reactive, unref, toRaw, watch } from 'vue'
+import { getDishInfoById, calcRecommendCoupon, calcRecommendFanpiao, calcUserAvailableMerchantCoupon } from "@utils";
 import { useState, useGetters, useMutations } from "@hooks/storeHooks";
 import API from "@api";
-import { wechatPay, aliPay } from '@utils';
+import { wechatPay, aliPay, showToast } from '@utils';
 
 
 async function commonPay(args) {
@@ -66,6 +66,26 @@ export function usePay() {
     return payRes
   }
 
+  async function buyStoredVal(merchantId, storedInfo) {
+    console.log('%cstoredInfo: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', storedInfo);
+    let data = {
+      rechargeCategoryId: storedInfo.id,
+      billFee: storedInfo.amount,
+      paidFee: storedInfo.sellPrice,
+      merchantId: merchantId,
+      transactionType: 'SHILAI_MEMBER_CARD_RECHARGE',
+      payMethod: 'WECHAT_PAY' // 'WALLET' //
+    }
+    let res = await commonPay(data);
+    let transactionId = res.transactionId || ''
+    if (!transactionId) {
+      await showToast('充值失败，请稍后再试')
+      return
+    }
+    let payRes = await wechatPay(res.signData);
+    return payRes
+  }
+
   async function payOrder() {
 
   }
@@ -75,8 +95,33 @@ export function usePay() {
     buyFanpiao,
     buyFanpiaoAndPay,
     buyCoupon,
-    payOrder
+    payOrder,
+    buyStoredVal
 
+  }
+
+}
+
+
+export function useRecommendedCoupon() {
+  const { couponList } = useState("merchant", ['couponList']);
+  const { selectedDishesFinalTotalPrice } = useGetters('menu', ["selectedDishesFinalTotalPrice"]);
+  const { userMerchantCoupons } = useState('user', ["userMerchantCoupons"])
+
+
+  const recommendedCoupon = computed(() => {
+    let calcRes = calcRecommendCoupon(toRaw(unref(couponList)), unref(selectedDishesFinalTotalPrice));
+    return calcRes
+  })
+  const userAvailableMerchantCoupon = computed(() => {
+    let calcRes = calcUserAvailableMerchantCoupon(toRaw(unref(userMerchantCoupons)), unref(selectedDishesFinalTotalPrice));
+    return calcRes
+  })
+
+  return {
+    recommendedCoupon,
+    userAvailableMerchantCoupon,
+    setDefaultSelCoupon
   }
 
 }

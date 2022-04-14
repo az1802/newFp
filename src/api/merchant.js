@@ -41,6 +41,17 @@ export async function getMerchantDishCategory(merchantId) {
   let res = await http.get(url);
   return res;
 }
+export async function getDishSoldNumber(merchantId) {
+  let url = `${URLS.DISH_SOLD_NUMBER}/${merchantId}`;
+  let res = await http.get(url);
+  return res;
+}
+export async function getRecommendedDishes(merchantId) {
+  let url = `${URLS.GET_RECOMMEND_DISHES}/${merchantId}`;
+  let res = await http.get(url);
+  return res;
+}
+
 
 export async function getFanpiaoList(merchantId) {
   let url = `${URLS.GET_FANPIAO_CATEGORIES}/${merchantId}`;
@@ -73,5 +84,20 @@ export async function getFanpiaoTransactionDetail(merchantId, fanpiaoInfo) {
 export async function getFanpiaoBuyRecord(merchantId, args) {
   let url = `${URLS.MERCHANT_FANPIAO_BUY_RECORD}/${merchantId}`;
   let res = await http.get(url, args)
+  return res;
+}
+export async function getRechargeConfigs(merchantId, args) {
+  let url = `${URLS.GET_RECHARGE_CONFIGS}/${merchantId}`;
+  let res = await http.get(url, args)
+  return res;
+}
+export async function getMpqrcodeTable(qrCodeId) {
+  let url = `${URLS.MPQRCODE_TABLE}`;
+  let res = await http.get(url, { data: { qrCodeId } })
+  return res;
+}
+export async function getTableInfo(tableId) {
+  let url = `${URLS.GET_TABLE_INFO}/${tableId}`;
+  let res = await http.get(url)
   return res;
 }
