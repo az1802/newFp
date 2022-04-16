@@ -99,3 +99,9 @@ export async function getTableInfo(tableId) {
   let res = await http.get(url)
   return res;
 }
+
+export async function getQrcodeInfo(scene) {
+  let url = `${URLS.MERCHANT_QRCODE_INFO}/${scene}`;
+  let res = await http.post(url)
+  return res;
+}

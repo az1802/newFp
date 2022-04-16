@@ -163,7 +163,7 @@ export default {
           showToast(
             `${
               type == "NUMBER_REQUIRED" ? "必须" : "至少"
-            }选择${lowerLimit}加料`
+            }选择${lowerLimit}份加料`
           );
           return false;
         } else if (countNum > upperLimit) {

@@ -53,6 +53,11 @@ export async function getUserInfo() {
   let res = await http.get(url);
   return res;
 }
+export async function updateUserInfo(args) {
+  let url = `${URLS.UPDATE_USER_INFO}`;
+  let res = await http.post(url, args);
+  return res;
+}
 export async function getUserSavingStats() {
   let url = `${URLS.USER_SAVING_STATS}`;
   let res = await http.get(url);
@@ -131,5 +136,11 @@ export async function updateAddressDetail(addressInfo) {
 export async function getAddressDetail(id) {
   const url = `${URLS.SHIPPING_ADDRESS_DETAIL}/${id}`
   let res = await http.get(url);
+  return res;
+}
+
+export async function getUserQrcode(data) {
+  const url = URLS.GET_USER_QRCODE;
+  let res = await http.post(url, data);
   return res;
 }

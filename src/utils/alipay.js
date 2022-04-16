@@ -49,4 +49,31 @@ export async function getAliPhoneNumber() {
       }
     })
   })
-} 
+}
+
+
+
+export async function aliSignUp() {
+  my.getAuthCode({
+    scopes: "auth_base",
+    success: async (res) => {
+      await this._signUpAlipay(res.authCode);
+    },
+    fail: (res) => { },
+    complete: (res) => { },
+  });
+  return;
+}
+async function _signUpAlipay(authCode) {
+  if (authCode.split('&').length > 1) {
+    authCode = authCode.split('&')[0]
+  }
+  let data = { authCode: authCode, platform: "MINIPROGRAM", version: 1 };
+  let res = await API.Login.signUpAlipay({ data });
+  const { alipayProfile = {}, memberProfile, id } = res;
+  if (id) {
+    uni.setStorageSync("userId", id);
+    API.User.setUserHeader(id)
+  }
+  return;
+}

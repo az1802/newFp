@@ -12,6 +12,7 @@
     <div class="menu-wrapper" :style="menuWrapperStyle">
       <MenuList :dishList="dishList" />
     </div>
+    <!-- <MenuList :dishList="dishList" /> -->
     <MenuBottom />
     <SkuModal />
     <ChildSkuDishModal />
@@ -88,7 +89,7 @@ export default {
     const { resetSelDishes } = useDish();
     const { toggleShowFanpiaoOpenScreenModal } = useFanpiaoOpenScreen();
     const { checkLogin } = useUserLogin();
-    const { requestUserMerchantCoupon } = useUserCoupon();
+    // const { requestUserMerchantCoupons } = useUserMerchantCoupon();
     const { orderInfo, setOrderInfo } = useOrder();
 
     async function _handleMerchantConfig() {
@@ -155,7 +156,7 @@ export default {
         // 请求资源
         requestFanpiaoList(merchantId);
         requestCouponList(merchantId);
-        // requestUserMerchantCoupon(merchantId);
+        // requestUserMerchantCoupons(merchantId);
       }
     }
 

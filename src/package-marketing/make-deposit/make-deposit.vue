@@ -50,13 +50,13 @@
 import API from "@api";
 import { ref, computed, onBeforeMount, unref } from "vue";
 import { useNavigate } from "@hooks/commonHooks";
-import { useSorePay } from "@hooks/payHooks";
+import { useStorePay } from "@hooks/payHooks";
 import { showToast, sleep } from "@utils";
 
 export default {
   setup() {
     let { navigateTo, navigateBack } = useNavigate();
-    let { buyStoredVal } = useSorePay();
+    let { buyStoredVal } = useStorePay();
     let depositBalance = ref(0),
       selectedCategory = ref({}),
       rechargeConfigs = ref([]);

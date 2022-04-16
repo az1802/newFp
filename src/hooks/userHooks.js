@@ -7,7 +7,7 @@
  */
 import { computed, ref, reactive, unref } from 'vue'
 import { useState, useGetters, useMutations } from "@hooks/storeHooks";
-import { reLaunch } from "@utils"
+import { reLaunch, wechatSignUp, aliSignUp } from "@utils"
 import API from "@api";
 
 export function useUserInfo() {
@@ -46,7 +46,6 @@ export function useUserInfo() {
     userId,
     userWallet,
     requestUserInfo,
-    requestUserStats,
     requestUserWallet,
     getUserMerchantInfo
   }
@@ -97,15 +96,9 @@ const SIZE = 100
 export function useUserCoupon() {
 
 
-  let merchantCoupons = ref([]), usedCouponList = ref([]), expiredCouponList = ref([]);
+  let usedCouponList = ref([]), expiredCouponList = ref([]);
 
-  async function requestUserMerchantCoupon(merchantId) {
-    let res = await API.User.getUserMerchantCoupon(merchantId)
-    if (res.errcode == 0) {
-      return res.data || []
-    }
-    return []
-  }
+
   async function requestUsedCouponList() {
     let acceptData = {
       page: PAGE,
@@ -133,10 +126,8 @@ export function useUserCoupon() {
 
 
   return {
-    merchantCoupons,
     usedCouponList,
     expiredCouponList,
-    requestUserMerchantCoupon,
     requestUsedCouponList,
     requestExpiredCouponList,
   }
@@ -153,32 +144,9 @@ export function useUserMerchantCoupon() {
     return res.coupons;
   }
 
-
-
-
-
-
   return {
     userMerchantCoupons,
     requestUserMerchantCoupons,
-  }
-}
-
-export function useUserLogin() {
-  async function checkLogin() {
-    let userId = uni.getStorageSync('userId') || "";
-    if (!userId) {
-      let res = await reLaunch("MENU/LOGIN")
-      return ''
-    }
-    return userId;
-  }
-  async function login() {
-
-  }
-  return {
-    checkLogin,
-    login
   }
 }
 
@@ -281,5 +249,75 @@ export function useUserMerchantWallet() {
     userWallet,
     requestUserWallet,
     requestFanpiaoPaidFee
+  }
+}
+
+
+
+export function useUserMerchantFanpiaoBalance() {
+
+  let userMerchantFanpiaoBalance = ref(0), fanpiaoBalancePaidFee = ref(0);
+  async function requestUserMerchantFanpiaoBalance(merchantId) {
+    let res = await API.User.getUserFanpiaoBalance(merchantId);
+    userMerchantFanpiaoBalance.value = res.balance;
+  }
+
+  async function requestFanpiaoBalancePaidFee(merchantId) {
+    let billFee = 10000 * 100;
+    let res = await API.User.getUserFanpiaoPaidFee({
+      merchantId,
+      billFee,
+      noDiscountFee: 0
+    });
+    fanpiaoBalancePaidFee.value = billFee - res.remainFee;
+    return res;
+  }
+
+  async function calcFanpiaoPaidBill(merchantId, billFee) {
+    let res = await API.User.getUserFanpiaoPaidFee({
+      merchantId,
+      billFee,
+      noDiscountFee: 0
+    });
+    return res;
+  }
+
+
+
+  return {
+    userMerchantFanpiaoBalance,
+    requestUserMerchantFanpiaoBalance,
+    fanpiaoBalancePaidFee,
+    requestFanpiaoBalancePaidFee,
+    calcFanpiaoPaidBill
+
+  }
+}
+
+
+export function useUserLogin() {
+
+  async function checkLogin() {
+    let userId = uni.getStorageSync('userId') || "";
+    if (!userId) {
+      let res = await reLaunch("MENU/LOGIN")
+      return ''
+    }
+    return userId;
+  }
+
+  async function signUp() {
+    //#ifdef MP-WEIXIN
+    await wechatSignUp();
+    //#endif
+
+    //#ifdef MP-ALIPAY
+    await aliSignUp();
+    //#endif
+  }
+
+  return {
+    checkLogin,
+    signUp,
   }
 }

@@ -22,6 +22,7 @@ let mockMerhantId = '1e543376139b474e97d38d487fa9fbe8';
 
 export function useMerchantInfo() {
   const { setMerchantInfo } = useMutations("merchant", ["setMerchantInfo"]);
+  const { setPackagingBoxConfig } = useMutations("menu", ["setPackagingBoxConfig"]);
   const { merchantInfo } = useState("merchant", ['merchantInfo']);
   async function requestMerchantInfo(merchantId) {
     if (!merchantId) {
@@ -29,6 +30,9 @@ export function useMerchantInfo() {
     }
     let res = await getMerchantInfo(merchantId);
     setMerchantInfo(res);
+    setPackagingBoxConfig({ //设置打包费配置
+      packageBoxType: res.packageBoxType
+    })
     uni.setStorageSync("merchantInfo", res);
     uni.setStorageSync("merchantId", res.merchantId);
     return res;
@@ -36,6 +40,9 @@ export function useMerchantInfo() {
   async function requestMerchantDishes(merchantId) {
     if (!merchantId) { return };
     let dishesRes = await API.Merchant.getMerchantDishCategory(merchantId);
+    setPackagingBoxConfig({ //设置打包费配置
+      packageBoxDishPrice: dishesRes.packagingBoxConfig?.dish?.prce || 0
+    })
     let dishBaseSellCountMap = await API.Merchant.getDishSoldNumber(merchantId);
     let dishListRes = handleDishList(dishesRes.dishes, dishBaseSellCountMap);
     return dishListRes;

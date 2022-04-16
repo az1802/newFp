@@ -14,6 +14,7 @@ export default {
   GET_COUPON_PACKAGE: "/merchant/coupon_package_v2",
   MERCHANT_FANPIAO_BUY_RECORD: "/fanpiao/recently/buy", //饭票购买记录
   GET_RECOMMEND_DISHES: '/order/recommend_dishes', //获取推荐菜
+  MERCHANT_QRCODE_INFO: '/qrcode-info',    // 获取商户二维码信息
 
   // 订单相关
   CREATE_ORDER: "/order/create",
@@ -42,6 +43,7 @@ export default {
   USER_FANPIAO_BALANCE: "/fanpiao/get_user_fanpiao_fee",
   USER_MEMBER_BALANCE: "/membership/get_user_member_card_deposit",
   USER_INFO: "/user/info",
+  UPDATE_USER_INFO: '/user/update',
   USER_SAVING_STATS: "/user/saving_stats",
   USER_WALLET: '/wallet',
   USER_FANPIAO_RECORDS: '/fanpiao/get_user_fanpiao_list',
@@ -71,4 +73,5 @@ export default {
   // 根据scene获取桌台相关参数
   DISH_CATALOG_SCENE: '/merchant/dish_catalog/scene',
 
+  GET_USER_QRCODE: '/fanpiao/scan-qrcode',  // 获取用户的二维码
 }

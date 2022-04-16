@@ -88,7 +88,6 @@ export function useCart() {
     "saveSelectedDishesStorage"
   ])
 
-
   return {
     ...useState("menu", [
       "showCartModal",
@@ -102,7 +101,6 @@ export function useCart() {
       reduceCartDish(...args);
       saveSelectedDishesStorage()
     }
-
   }
 }
 

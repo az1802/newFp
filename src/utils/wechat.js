@@ -179,3 +179,17 @@ export async function chooseLocation() {
 
   return addressRes;
 }
+
+
+export async function wechatSignUp() {
+  let codeMsg = await uni.login();
+  console.log('%ccodeMsg: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', codeMsg);
+  let data = { code: codeMsg.code };
+  let res = await API.User.signUp(data)
+  let userId = res.id;
+  if (userId) {
+    uni.setStorageSync("userId", userId);
+    uni.setStorageSync("wechatOpenid", res.wechatOpenid);
+    API.User.setUserHeader(userId)
+  }
+}

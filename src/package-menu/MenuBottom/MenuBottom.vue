@@ -8,16 +8,16 @@
 <template>
   <div class="menu-bottom-container">
     <div class="discount-tooltip">
-      <!-- <div class="text">
-        使用饭票支付,本单可再减
-        <div class="price">3.1-3.41元</div>
-      </div> -->
       <div class="text">
+        使用饭票支付,本单可再减
+        <div class="price">{{ priceTooltipText }}元</div>
+      </div>
+      <!-- <div class="text">
         再买
         <div class="price">2元</div>
         ,可再减
         <div class="price">1元</div>
-      </div>
+      </div> -->
     </div>
     <div class="cart-wrapper">
       <div class="cart-info">
@@ -44,7 +44,8 @@
 <script>
 import { useCart, useDish } from "@hooks/menuHooks";
 import { useNavigate } from "@hooks/commonHooks";
-import { unref } from "vue";
+import { useFanpiaoInfo } from "@hooks/merchantHooks";
+import { unref, computed } from "vue";
 import { fenToYuan } from "@utils";
 export default {
   setup() {
@@ -54,12 +55,24 @@ export default {
       selectedDishesTotalQuantity,
       selectedDishesTotalPrice,
     } = useDish();
+    const { maxDiscountFanpiao, minDiscountFanpiao } = useFanpiaoInfo();
     let { navigateTo } = useNavigate();
     function createOrder() {
       if (unref(selectedDishes).length > 0) {
         navigateTo("ORDER/CREATE_ORDER");
       }
     }
+
+    let priceTooltipText = computed(() => {
+      let max = (unref(maxDiscountFanpiao).discount || 0) / 100;
+      let min = (unref(minDiscountFanpiao).discount || 0) / 100;
+      return max != min
+        ? `${(unref(selectedDishesTotalPrice) / 100) * min}-${
+            (unref(selectedDishesTotalPrice) / 100) * max
+          }`
+        : `${(unref(selectedDishesTotalPrice) / 100) * max}`;
+    });
+
     return {
       toggleShowCartModal,
       showCartModal,
@@ -68,6 +81,7 @@ export default {
       selectedDishesTotalPrice,
       fenToYuan,
       createOrder,
+      priceTooltipText,
     };
   },
 };

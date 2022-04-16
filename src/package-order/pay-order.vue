@@ -100,7 +100,10 @@ export default {
     });
 
     async function payOrder() {
-      // 根号有不同的支付方式选择
+      let payRquestParams = {};
+      if (unref(payMethod) == "WECHAT") {
+      } else if (unref(payMethod) == "FANPIAO_PAY") {
+      }
     }
     return {
       orderInfo,

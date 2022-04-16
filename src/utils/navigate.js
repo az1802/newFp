@@ -22,6 +22,7 @@ function genParamsStrs(pageOpts = {}) {
 export async function navigateTo(path, pageOpts = {}) {
   let url = parsePath(path);
   let paramsStrs = genParamsStrs(pageOpts);
+  console.log('%curl: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', url, paramsStrs);
 
   if (url) {
     return new Promise(resolve => {
@@ -31,6 +32,7 @@ export async function navigateTo(path, pageOpts = {}) {
           resolve(true)
         },
         fail(err) {
+          console.log('%cerr: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', err);
           resolve(false)
         }
       })

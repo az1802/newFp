@@ -56,11 +56,8 @@ export default {
     let { curTabIndex, switchTab, tabs } = useTabs(TAB_ARR);
     let usedCouponList = ref([]),
       expiredCouponList = ref([]);
-    const {
-      requestUserMerchantCoupon,
-      requestUsedCouponList,
-      requestExpiredCouponList,
-    } = useUserCoupon();
+    const { requestUsedCouponList, requestExpiredCouponList } = useUserCoupon();
+
     let couponsCount = computed(() => {
       return {
         EXPIRED: unref(expiredCouponList).length,
@@ -80,7 +77,7 @@ export default {
 
     onBeforeMount(async () => {
       if (merchantId) {
-        let merchantCoupons = await requestUserMerchantCoupon(merchantId);
+        let merchantCoupons = await useUserMerchantCoupon(merchantId);
         let merchantUsedCoupons = merchantCoupons.filter((couponItem) => {
           return couponItem.state == "USED";
         });

@@ -31,8 +31,9 @@ export default {
     const { setPhone } = useUserPhone();
     return {
       async getPhone(e) {
+        let phoneRes = {};
         for (let i = 0; i < 3; i++) {
-          let phoneRes = await getWechatPhone(e);
+          phoneRes = await getWechatPhone(e);
         }
         setPhone(phoneRes?.phone || "");
       },
@@ -49,6 +50,9 @@ export default {
 </script>
 <style lang="less" scoped>
 .phone-button {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
   margin: 0;
   padding: 0;
   border: none;
@@ -60,5 +64,8 @@ export default {
   line-height: 1;
   color: inherit;
   display: inline-block;
+  &:after {
+    border-width: 0px;
+  }
 }
 </style>

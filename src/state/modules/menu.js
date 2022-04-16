@@ -38,7 +38,11 @@ export default {
     // showDishDetail: false,
     // showCodeExpiredModal: false,
     showOrderStatusModal: false,
-    recommendedDishes: []
+    recommendedDishes: [],
+    packagingBoxConfig: {
+      packageBoxType: "KRY_BOX_QTY", // LADDER
+      packageBoxDishPrice: 0,
+    }
   },
   getters: {
     getDishCountById: state => dishId => {
@@ -71,26 +75,35 @@ export default {
     selectedDishesTotalQuantity(state) {
       return state.selectedDishes.reduce((sum, item) => sum += item.quantity, 0)
     },
-    selectedDishesTotalPrice(state) {
+    selectedDishesTotalPrice(state) { //菜品的原价总价
       return state.selectedDishes.reduce((sum, dishItem) => {
         return sum += calcSkuDishPrice(dishItem)
       }, 0)
     },
-    selectedDishesDiscountPrice(state) {
+    selectedDishesDiscountPrice(state) { //菜品的折扣价部分
       return state.selectedDishes.reduce((sum, dishItem) => {
         return sum += (dishItem.discountPrice * dishItem.quantity)
       }, 0)
     },
-    selectedDishesFinalTotalPrice(state) {
+    selectedDishesPackageboxTotalPrice(state) {
+      let sum = 2000, { packageBoxType, packageBoxDishPrice = 0 } = state.packagingBoxConfig;
+      if (packageBoxType == "KRY_BOX_QTY") { //按菜品收取打包费 
+        state.selectedDishes.reduce((sum, dishItem) => {
+          return sum += (dishItem.boxQty * dishItem.quantity) * packageBoxDishPrice;
+        }, 0)
+      } else if (packageBoxType == "LADDER") { //TODO 阶梯收取打包费
+        return 0
+      }
+      return sum;
+    },
+    selectedDishesFinalTotalPrice(state) { //菜品最终的总价
       return state.selectedDishes.reduce((sum, dishItem) => {
         return sum += (calcSkuDishPrice(dishItem) - (dishItem.discountPrice * dishItem.quantity))
       }, 0)
     },
-    maxFanpiaoDiscount(){
+    maxFanpiaoDiscount() {
 
     },
-    
-
 
   },
   mutations: {
@@ -197,6 +210,11 @@ export default {
     },
     setRecommendedDishes(state, val) {
       state.recommendedDishes = val;
+    },
+    setPackagingBoxConfig(state, packagingBoxConfig) {
+      for (let key in packagingBoxConfig) {
+        state.packagingBoxConfig[key] = packagingBoxConfig[key];
+      }
     }
   },
   actions: {

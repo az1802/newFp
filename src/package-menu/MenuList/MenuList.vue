@@ -56,6 +56,7 @@ const DISH_ITEM_HEIGHT = 86 + 24;
 import CategoryItem from "../CategoryItem/CategoryItem.vue";
 import DishItem from "../DishItem/DishItem.vue";
 import { useDebounceFn, useThrottleFn } from "@vueuse/core";
+import { useSystemInfo, useNavigate } from "@hooks/commonHooks";
 import { ref } from "vue";
 export default {
   components: {
@@ -69,6 +70,10 @@ export default {
     },
   },
   setup() {
+    const { statusBarHeight, screenWidth } = useSystemInfo();
+    let menuWrapperStyle = ref({
+      height: `calc(100vh - 250px - ${screenWidth / 3}px)`,
+    });
     let categoryActiveIndex = ref(0),
       scrollIntoView = ref("category-view-0"),
       scrollIntoCategoryView = ref("category-index-0");
@@ -92,6 +97,7 @@ export default {
       scrollIntoCategoryView,
       dishScroll,
       changeCategory,
+      menuWrapperStyle,
     };
   },
 };

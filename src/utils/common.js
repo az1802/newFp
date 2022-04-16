@@ -36,6 +36,23 @@ export async function showToast(msg = '', icon = 'none', duration = 1500) {
 
 }
 
+export async function tipSuccess(msg = '', duration = 1500) {
+  return new Promise((resolve, reject) => {
+    uni.showToast({
+      title: msg,
+      image: '/static/icon-selected.svg',
+      mask: true,
+      duration: duration,
+      success() {
+        resolve(true);
+      },
+      fail() {
+        resolve(false);
+      }
+    })
+  })
+}
+
 export async function showConfirmModal(title = '', content = "") {
   return new Promise(resolve => {
     uni.showModal({
@@ -89,4 +106,20 @@ export function fenToYuan(price) {
 
 export function yuanToFen(price) {
   return Number(price * 100);
+}
+
+
+export function throttle(fn, wait) {
+  var isRun = false;
+  return function () {
+    var context = this;
+    var args = arguments;
+    if (!isRun) {
+      isRun = true;
+      setTimeout(() => {
+        isRun = false;
+      }, wait)
+      fn.apply(context, args);
+    }
+  }
 }

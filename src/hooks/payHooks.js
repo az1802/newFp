@@ -37,7 +37,7 @@ export function usePay() {
   }
 }
 
-export function useSorePay() {
+export function useStorePay() {
   async function buyStoredVal(merchantId, storedInfo) {
     let data = {
       rechargeCategoryId: storedInfo.id,
@@ -169,5 +169,29 @@ export function useRecommendedCoupon() {
   return {
     recommendedCoupon,
     userAvailableMerchantCoupon,
+  }
+}
+
+
+export function useDirectPay(payMethod, params) {
+
+
+  async function directPay(params) {
+    let payRes = false;
+    let res = await API.Order.pay(params);
+    if (params.payMethod == "WECHAT_PAY") {
+      payRes = await wechatPay(res.signData);
+    } else if (params.payMethod == "FANPIAO_PAY") {
+      return res.errcode == 0;
+    }
+
+    return payRes;
+  }
+
+
+
+
+  return {
+    directPay
   }
 }

@@ -127,6 +127,11 @@
         "style": {
           "disableScroll": false
         }
+      }, {
+        "path": "fanpiao-qrcode/fanpiao-qrcode",
+        "style": {
+          "disableScroll": false
+        }
       }, ]
     },
     {

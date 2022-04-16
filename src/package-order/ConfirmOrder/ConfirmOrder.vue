@@ -43,7 +43,7 @@ import { useNavigate } from "@hooks/commonHooks";
 import { useOrder } from "@hooks/orderHooks";
 import { useDish } from "@hooks/menuHooks";
 import { useRecommendedCoupon, usePay } from "@hooks/payHooks";
-import { fenToYuan } from "@utils";
+import { fenToYuan, showToast } from "@utils";
 
 import { ref, unref } from "vue";
 export default {

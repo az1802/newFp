@@ -36,6 +36,7 @@ export default {
     "BUY_FANPIAO": `${MARKETING}/buy-fanpiao/buy-fanpiao`,
     "MAKE_DEPOSIT": `${MARKETING}/make-deposit/make-deposit`,
     "DIRECT_PAYMENT": `${MARKETING}/direct-payment/direct-payment`,
+    "FANPIAO_QRCODE": `${MARKETING}/fanpiao-qrcode/fanpiao-qrcode`,
   },
   "OTHER": {
     "COUPON_ACCORD_TEXT": `${OTHER}/coupon-accord-text/coupon-accord-text`,
