@@ -9,7 +9,8 @@
     <HomeHeader :merchantInfo="merchantInfo" />
     <MealTypes
       :merchantInfo="merchantInfo"
-      :enableOrderingService="enableOrderingService"
+      :enableOrderingService="merchantInfo.enableOrderingService"
+      @mealTypeClick="goToMenu"
     />
     <RecommendDish :dishList="merchantInfo.recommendedFoodPhotoUrls" />
     <HomeCouponList
@@ -31,7 +32,6 @@
   </div>
 </template>
 <script>
-import { useNavigate } from "@hooks/commonHooks";
 import {
   useMerchantInfo,
   useCouponInfo,
@@ -43,13 +43,14 @@ import RecommendDish from "./RecommendDish/RecommendDish.vue";
 import HomeCouponList from "./HomeCouponList/HomeCouponList.vue";
 import HomeFanpiaoList from "./HomeFanpiaoList/HomeFanpiaoList.vue";
 
-import { ref, onBeforeMount, watch } from "vue";
-import { handleQrcodeStr } from "@utils";
+import { ref, onBeforeMount, watch, unref } from "vue";
+import { handleQrcodeStr, navigateTo } from "@utils";
 
 let merchantId = "",
   scene = "",
-  ownTableId = "",
-  enableOrderingService = false;
+  // ownTableId = "", //用于首页跳转到不同桌台
+  tableId = "",
+  tableName = "";
 
 export default {
   components: {
@@ -60,35 +61,32 @@ export default {
     HomeFanpiaoList,
   },
   onLoad(opts) {
-    merchantId = opts.merchantId;
-
     // // 二合一码参数解析
-    // if (option.q) {
-    //   let queryParams = handleQrcodeStr(decodeURIComponent(option.q));
-    //   ownTableId = queryParams.id;
-    //   merchantId = queryParams.merchantId;
-    // }
-    // //#ifdef MP-ALIPAY
-    // let qrCodeJson = my.getStorageSync({ key: "qrCode" }).data;
-    // if (qrCodeJson) {
-    //   ownTableId = qrCodeJson.id;
-    //   merchantId = qrCodeJson.merchantId;
-    //   // 清除扫码留下的内容避免后续订单进入仍显示这家店铺
-    //   my.setStorageSync({
-    //     key: "qrCode",
-    //     data: "",
-    //   });
-    // }
-    // //#endif
+    if (opts.q) {
+      let queryParams = handleQrcodeStr(decodeURIComponent(opts.q));
+      // ownTableId = queryParams.id;
+      merchantId = queryParams.merchantId;
+    }
+    //#ifdef MP-ALIPAY
+    let qrCodeJson = my.getStorageSync({ key: "qrCode" }).data;
+    if (qrCodeJson) {
+      // ownTableId = qrCodeJson.id;
+      merchantId = qrCodeJson.merchantId;
+      // 清除扫码留下的内容避免后续订单进入仍显示这家店铺
+      my.setStorageSync({
+        key: "qrCode",
+        data: "",
+      });
+    }
+    //#endif
 
-    // if (opts.merchantId) {
-    //   merchantId = opts.merchantId;
-    //   enableOrderingService = opts.enableOrderingService == "true";
-    // }
+    if (opts.merchantId) {
+      merchantId = opts.merchantId;
+    }
 
-    // if (opts.scene) {
-    //   scene = opts.scene;
-    // }
+    if (opts.scene) {
+      scene = opts.scene;
+    }
   },
   setup() {
     const { merchantInfo, requestMerchantInfo } = useMerchantInfo();
@@ -96,16 +94,62 @@ export default {
     const { fanpiaoList, requestFanpiaoList } = useFanpiaoInfo();
 
     onBeforeMount(async () => {
+      if (scene) {
+        //根据scene值获取商户信息
+        let res = await API.Merchant.getDishCatalogScene(scene);
+        tableId = res.tableId;
+        tableName = res.tableName;
+        mealType = res.mealType;
+        merchantId = res.merchantId;
+
+        if (!tableId && !merchantId) {
+          let res = API.Merchant.getOptions({ code: scene });
+          merchantId = res.merchantId;
+        }
+      }
+
       requestMerchantInfo(merchantId);
       requestCouponList(merchantId);
       requestFanpiaoList(merchantId);
     });
 
+    function goToMenu(mealType) {
+      let userId = uni.getStorageSync("userId") || "";
+      if (!userId) {
+        navigateTo("MENU/LOGIN");
+        return "";
+      }
+      if (
+        !unref(merchantInfo).opening &&
+        (mealType === "SELF_PICK_UP" || mealType === "TAKE_OUT")
+      ) {
+        return;
+      }
+      let menuParams = {
+        merchantId,
+      };
+      if (mealType == "EAT_IN") {
+        menuParams.tableId = tableId;
+        menuParams.tableName = tableName;
+      }
+      if (unref(merchantInfo).enableOrderingService) {
+        menuParams.peopleCount = 1;
+        menuParams.mealType = mealType;
+        navigateTo("MENU/MENU", menuParams);
+      }
+    }
+
     return {
       merchantInfo,
-      enableOrderingService,
       couponList,
       fanpiaoList,
+      goToMenu,
+    };
+  },
+  onShareAppMessage() {
+    return {
+      title: this.merchantInfo.name,
+      imageUrl: this.merchantInfo.logoUrl,
     };
   },
 };

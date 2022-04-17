@@ -113,7 +113,7 @@ export default {
     },
   },
   components: {},
-  setup(props) {
+  setup(props, { emit }) {
     // const mealCounts = computed(() => {
     //   let count = 0;
     //   let optionsArr = [
@@ -133,7 +133,9 @@ export default {
 
     return {
       mealCounts,
-      handleMealType() {},
+      handleMealType(mealType) {
+        emit("mealTypeClick", mealType);
+      },
     };
   },
 };

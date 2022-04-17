@@ -31,6 +31,11 @@ export async function getDishCatalogScene(scene) {
   let res = await http.get(url);
   return res;
 }
+export async function getOptions(params) {
+  let url = `${URLS.MERCHANT_OPTIONS}}`;
+  let res = await http.get(url, { params });
+  return res;
+}
 
 export async function getMerchantDishCategory(merchantId) {
   let url = `${URLS.GET_MERCHANT_DISH_CATEGORY}/${merchantId}`;

@@ -72,6 +72,11 @@ export default {
     SplashModal,
   },
   onLoad(options) {
+    console.log(
+      "%coptions: ",
+      "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
+      options
+    );
     // opts = options;
   },
   setup(props, context) {
