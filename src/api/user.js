@@ -84,15 +84,9 @@ export async function withdraw(args) {
   let res = await http.post(url, args);
   return res;
 }
-export async function getUserOwnCouponList(args) {
+export async function getUserOwnCouponList(params) {
   let url = `${URLS.USER_OWN_COUPON_LIST}`;
-  let res = await http.get(url, {
-    data: {
-      page: 1,
-      size: 50,
-      state: "ACCEPTED"
-    }
-  });
+  let res = await http.get(url, { params: params });
   return res;
 }
 export async function getUserMerchantCoupon(merchantId) {
@@ -142,6 +136,13 @@ export async function getAddressDetail(id) {
 
 export async function getUserQrcode(data) {
   const url = URLS.GET_USER_QRCODE;
+  let res = await http.post(url, data);
+  return res;
+}
+
+
+export async function feedback(data) {
+  const url = URLS.FEEDBACK
   let res = await http.post(url, data);
   return res;
 }

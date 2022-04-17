@@ -34,6 +34,7 @@ export function useUserInfo() {
 
   async function requestUserWallet() {
     let res = await API.User.getUserWallet();
+    console.log('%cres: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', res);
     setUserWallet(res)
   }
 
@@ -106,11 +107,9 @@ export function useUserCoupon() {
       size: SIZE,
       state: "USED",
     };
-    let res = await API.User.getUserOwnCouponList({ data: acceptData });
-    if (res.errcode == 0) {
-      return res.data || []
-    }
-    return []
+    let res = await API.User.getUserOwnCouponList(acceptData);
+
+    return res || []
   }
   async function requestExpiredCouponList() {
     let acceptData = {
@@ -118,11 +117,9 @@ export function useUserCoupon() {
       size: SIZE,
       state: "EXPIRED",
     };
-    let res = await API.User.getUserOwnCouponList({ data: acceptData });
-    if (res.errcode == 0) {
-      return res.data || []
-    }
-    return []
+    let res = await API.User.getUserOwnCouponList(acceptData);
+
+    return res || []
   }
 
 

@@ -56,7 +56,12 @@ http.interceptors.response.use(function (response) {
   // TODO 根据不同的status对数据做不同的处理 然后返回.
   if (response.data.errcode == 0) {
     if (response.config.url == "/wallet") {
-      return response.data.wallet
+      let res = {
+        ...response.data.wallet,
+        ...response.data.data,
+
+      }
+      return res
     }
     return response.data.data || response.data;
   } else {

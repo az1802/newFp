@@ -25,7 +25,10 @@
         v-for="(coupon, index) in coupons"
         :key="index"
       >
-        <CouponItem :coupon="coupon" />
+        <UsedCouponInfo
+          :coupon="coupon"
+          :disabled="TAB_ARR[curTabIndex].state"
+        />
       </div>
     </div>
     <div v-if="coupons && !coupons.length">
@@ -105,6 +108,7 @@ export default {
       emptyContent,
       usedCouponList,
       expiredCouponList,
+      TAB_ARR,
     };
   },
 };

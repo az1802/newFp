@@ -8,10 +8,7 @@
 -->
 <template>
   <div class="fanpiao-transaction-detail">
-    <NavigationBar
-      title=""
-      backgroundColor="linear-gradient(90deg, #fc8b56 0%, #ff5b47 100%);"
-    />
+    <NavigationBar title="饭票交易记录" />
     <div class="detail-top">
       <div class="info-wrapper">
         <div class="info-left">

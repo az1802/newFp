@@ -111,7 +111,7 @@ export default {
         size: SIZE,
         state: "ACCEPTED",
       };
-      let res = await API.User.getUserOwnCouponList({ data: acceptData });
+      let res = await API.User.getUserOwnCouponList(acceptData);
       if (res.errcode == 0) {
         let cashCouponsRes = res.data || [];
         cashCouponsRes = cashCouponsRes.filter((couponItem) => {
