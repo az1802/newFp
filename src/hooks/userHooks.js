@@ -11,13 +11,14 @@ import { reLaunch, wechatSignUp, aliSignUp, navigateTo } from "@utils"
 import API from "@api";
 
 export function useUserInfo() {
-  const { userInfo, userId, userWallet } = useState("user", ['userInfo', "userId", "userWallet"])
+  let { userInfo, userId, userWallet } = useState("user", ['userInfo', "userId", "userWallet"])
   const { setUserInfo, setStats, setUserWallet } = useMutations("user", ["setUserInfo", "setUserWallet"]);
+  userId.value = userId.value || uni.getStorageSync("userId");
   async function requestUserInfo() {
-    // let userId = uni.getStorageSync("userId");
-    // if (!userId) {
-    //   return;
-    // }
+    let userId = uni.getStorageSync("userId");
+    if (!userId) {
+      return;
+    }
     let res = await API.User.getUserInfo();
     if (res) {
       const { alipayProfile = {}, memberProfile, id, wechatProfile } = res.user;

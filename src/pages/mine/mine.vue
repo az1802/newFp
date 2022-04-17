@@ -38,7 +38,7 @@
           <p class="desc">用券次数</p>
         </div>
         <div class="content">
-          <p class="number">{{ stats.sumSavingAmountText || "0" }}</p>
+          <p class="number">{{ (stats.sumSavingAmount || 0) / 100 }}</p>
           <p class="desc">已节省(元)</p>
         </div>
       </div>
@@ -82,7 +82,8 @@ import { computed, onBeforeMount } from "vue";
 export default {
   setup() {
     const { navigateTo } = useNavigate();
-    const { userInfo, requestUserInfo, userId } = useUserInfo();
+    const { userInfo, requestUserInfo } = useUserInfo();
+    let userId = uni.getStorageSync("userId");
     const { stats, requestUserStats } = useUserStats();
     onBeforeMount(() => {
       requestUserInfo();

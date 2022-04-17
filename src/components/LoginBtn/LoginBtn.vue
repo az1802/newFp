@@ -22,7 +22,6 @@
 <script>
 import API from "@api";
 import { getUserInfo, showToast } from "@utils";
-
 export default {
   data() {
     return {
@@ -69,6 +68,7 @@ export default {
       uni.setStorageSync("userId", res.id);
       uni.setStorageSync("wechatOpenid", res.wechatOpenid);
       API.User.setUserHeader(res.id);
+
       this.$emit("loginSuccess");
       return;
     },

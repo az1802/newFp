@@ -11,7 +11,7 @@
 </template>
 <script>
 import { computed, unref, ref, toRefs, watch } from "vue";
-import { formatDate, payMethodMap } from "@utils";
+import { formatTme, payMethodMap } from "@utils";
 const orderKeyList = [
   {
     label: "订单号",
@@ -51,7 +51,10 @@ export default {
     watch(orderInfo, (newOrderInfo) => {
       if (newOrderInfo.id) {
         newOrderInfo.payMethod = payMethodMap[newOrderInfo.payMethod];
-        newOrderInfo.paidTime = formatDate(newOrderInfo.paidTime);
+        newOrderInfo.paidTime = formatTme(
+          newOrderInfo.paidTime,
+          "yyyy-MM-dd hh:mm"
+        );
       }
     });
 

@@ -24,7 +24,7 @@ export default {
     OrderDishInfo,
   },
   onLoad(opts) {
-    orderId = opts.orderId || "dcb51bc95528408c8f6f338cb895d85d";
+    orderId = opts.orderId;
   },
   setup() {
     let { orderDetail, getOrderDetailById } = useOrderDetail();
@@ -33,10 +33,10 @@ export default {
       getOrderDetailById(orderId);
     });
     let orderDiscountPrice = computed(() => {
-      return unref(orderDetail).billFee - unref(orderDetail).totalFee;
+      return unref(orderDetail).billFee - unref(orderDetail).paidFee;
     });
     let orderTotalPrice = computed(() => {
-      return unref(orderDetail).totalFee;
+      return unref(orderDetail).billFee;
     });
 
     return {
