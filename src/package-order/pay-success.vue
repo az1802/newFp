@@ -11,7 +11,7 @@
   </div>
 </template>
 <script>
-import { useOrderRecord } from "@hooks/orderHooks";
+import { useOrderDetail } from "@hooks/orderHooks";
 import { computed, onBeforeMount, unref } from "vue";
 import OrderStatusInfo from "./OrderStatusInfo/OrderStatusInfo.vue";
 import OrderDishInfo from "./OrderDishInfo/OrderDishInfo.vue";

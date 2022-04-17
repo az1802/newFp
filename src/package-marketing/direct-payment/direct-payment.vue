@@ -41,6 +41,7 @@
         :userMerchantCoupons="userMerchantCoupons"
         :couponList="couponList"
         v-model:isAgreeRules="isAgreeRules"
+        :merchantId="merchantInfo.merchantId"
       />
     </div>
   </div>
@@ -61,6 +62,7 @@ import {
 } from "@hooks/merchantHooks";
 import { useDirectPay } from "@hooks/payHooks";
 import { useSystemInfo, useNavigate } from "@hooks/commonHooks";
+import { useDirectPaySelCoupon } from "@hooks/directPayHooks";
 import { calcRecommendFanpiao, showToast, sleep, switchTab } from "@utils";
 
 import { onBeforeMount, ref, unref, computed, watchEffect, watch } from "vue";
@@ -78,6 +80,7 @@ export default {
     const { fanpiaoList, requestFanpiaoList } = useFanpiaoInfo();
     const { couponList, requestCouponList } = useCouponInfo();
     const { directPay } = useDirectPay();
+    const { selCoupon } = useDirectPaySelCoupon();
     const {
       userMerchantFanpiaoBalance,
       requestUserMerchantFanpiaoBalance,
@@ -98,7 +101,6 @@ export default {
       needBuyCoupon = ref(false),
       buyCouponInfo = ref({}),
       isBuyCoupon = ref(false),
-      selCoupon = ref({}),
       isAgreeRules = ref(true);
 
     onBeforeMount(async () => {
@@ -262,9 +264,6 @@ export default {
         }
       }
       payRes = await directPay(params);
-
-      showToast(payRes ? "买单成功" : "买单失败，请重试");
-      await sleep(1000);
       if (payRes) {
         switchTab("/pages/order/order");
       }

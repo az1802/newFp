@@ -16,7 +16,9 @@
         </div>
       </div>
       <div class="right">
-        <div class="price">{{ fenToYuan(dishItem.price) }}</div>
+        <div class="price">
+          {{ fenToYuan(calcSkuDishPrice(dishItem)) }}
+        </div>
         <div class="quantity">{{ dishItem.quantity }}</div>
       </div>
     </div>
@@ -24,7 +26,7 @@
 </template>
 <script>
 import { useDish, useSkuDish } from "@hooks/menuHooks";
-import { fenToYuan } from "@utils";
+import { fenToYuan, calcSkuDishPrice } from "@utils";
 export default {
   props: {
     dishList: {
@@ -38,6 +40,7 @@ export default {
     return {
       genDishDescribeText,
       fenToYuan,
+      calcSkuDishPrice,
     };
   },
 };

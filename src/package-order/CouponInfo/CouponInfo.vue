@@ -109,7 +109,8 @@ export default {
     // TODO 计算合适的券然后使用
     return {
       goToAccordPage() {
-        navigateTo("OTHER/COUPON_ACCORD_TEXT");
+        let { merchantId } = unref(merchantInfo);
+        navigateTo("OTHER/COUPON_ACCORD_TEXT", { merchantId });
       },
       merchantInfo,
       changeBuyCouponPackage(e) {
@@ -119,7 +120,6 @@ export default {
         });
       },
       toggleIsAgreeCouponAccord() {
-        console.log(unref(orderInfo).isAgreeCouponAccord);
         setOrderInfo({
           isAgreeCouponAccord: !unref(orderInfo).isAgreeCouponAccord,
         });

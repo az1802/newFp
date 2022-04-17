@@ -24,7 +24,6 @@ axios.defaults.adapter = function (config) {
       responseType: config.responseType,
       sslVerify: config.sslVerify,
       complete: function complete(response) {
-        // console.log("执行完成：", response)
         response = {
           data: response.data,
           status: response.statusCode,
@@ -46,7 +45,6 @@ const baseConfig = {
     test: "sunj",
   },
   transformResponse(data) {
-    // console.log('%cdata1: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', data);
     return data;
   }
 }
@@ -62,6 +60,9 @@ http.interceptors.response.use(function (response) {
     }
     return response.data.data || response.data;
   } else {
+    if (response.config.url == "/payment/prepay") {
+      return response.data
+    }
     return false;
   }
 }, function (error) {

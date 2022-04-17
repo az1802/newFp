@@ -11,9 +11,9 @@ export default {
     orderId: "",
     orderInfo: {
       orderId: "",//订单id
-      remark: "测试备注",//订单备注
-      billFee: 80000,//账单金额
-      paidFee: 80000,//支付金额 饭票支付金额为动态的更新
+      remark: "",//订单备注
+      billFee: 0,//账单金额
+      paidFee: 0,//支付金额 饭票支付金额为动态的更新
       packageFee: 0,//打包费
       discountAmount: 0, //菜品折扣已优惠的价格
       phoneMemberDiscount: 11,//会员折扣

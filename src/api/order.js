@@ -10,10 +10,6 @@ import http from './http';
 import { reduceRight } from 'lodash';
 
 
-http.setHeaders({
-  userId: "d4848915-b103-4e1a-abfd-a04886fa61e6"
-})
-
 
 export async function getOrderDetail(orderId) {
   let url = `${URLS.GET_COUPON_PACKAGE}/${orderId}`;

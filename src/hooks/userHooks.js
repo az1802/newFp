@@ -7,7 +7,7 @@
  */
 import { computed, ref, reactive, unref } from 'vue'
 import { useState, useGetters, useMutations } from "@hooks/storeHooks";
-import { reLaunch, wechatSignUp, aliSignUp } from "@utils"
+import { reLaunch, wechatSignUp, aliSignUp, navigateTo } from "@utils"
 import API from "@api";
 
 export function useUserInfo() {
@@ -300,7 +300,7 @@ export function useUserLogin() {
   async function checkLogin() {
     let userId = uni.getStorageSync('userId') || "";
     if (!userId) {
-      let res = await reLaunch("MENU/LOGIN")
+      navigateTo("MENU/LOGIN")
       return ''
     }
     return userId;

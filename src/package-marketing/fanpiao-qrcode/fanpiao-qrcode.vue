@@ -155,7 +155,6 @@ export default {
         let msg = {};
         try {
           msg = JSON.parse(data.data);
-          console.log(msg);
         } catch (err) {
           msg = {};
         }

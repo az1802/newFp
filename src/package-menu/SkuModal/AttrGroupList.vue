@@ -51,12 +51,7 @@ export default {
     }
 
     function toggleAttr(toggleAttr, { id }) {
-      console.log(
-        "%ctoggleAttr: ",
-        "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-        toggleAttr,
-        id
-      );
+      
       let selIndex = selAttrIds.indexOf(id);
 
       if (toggleAttr.selType == "SINGLE" && selIndex == -1) {

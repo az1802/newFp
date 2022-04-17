@@ -27,6 +27,7 @@
         merchantInfo.disableShowFanpiaoPurchaseNumber
       "
     />
+    <div style="height: 100px"></div>
   </div>
 </template>
 <script>
@@ -59,8 +60,8 @@ export default {
     HomeFanpiaoList,
   },
   onLoad(opts) {
-  
-    merchantId = opts.merchantId || "1e543376139b474e97d38d487fa9fbe8";
+    merchantId = opts.merchantId;
+
     // // 二合一码参数解析
     // if (option.q) {
     //   let queryParams = handleQrcodeStr(decodeURIComponent(option.q));

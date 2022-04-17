@@ -22,12 +22,20 @@
           class="tooltip-wrapper"
           v-if="minLeastCostCoupon && billFee >= minLeastCostCoupon.leastCost"
         >
-          <div class="price-text">
+          <div
+            class="price-text"
+            v-if="!(!selCoupon.id && payMethod == 'COUPON_PAY')"
+          >
             -¥{{ minLeastCostCoupon.reduceCost / 100 }}
           </div>
-          （已选择最佳优惠）
-          <div class="arrow-icon">></div>
+          {{
+            !selCoupon.id && payMethod == "COUPON_PAY"
+              ? "（未选择优惠券）"
+              : "（已选择最佳优惠）"
+          }}
+          <div class="arrow-icon" @click="goToSelectCoupon">></div>
         </div>
+
         <div
           class="tooltip-wrapper"
           v-if="minLeastCostCoupon && billFee < minLeastCostCoupon.leastCost"
@@ -134,8 +142,13 @@
 <script>
 import { watch, ref, unref, toRefs, computed, toRaw } from "vue";
 import { navigateTo } from "@utils";
+import { useDirectPaySelCoupon } from "@hooks/directPayHooks";
 export default {
   props: {
+    merchantId: {
+      type: String,
+      default: "",
+    },
     enableMarketing: {
       type: Boolean,
       default: false,
@@ -160,10 +173,6 @@ export default {
       type: String,
       default: "",
     },
-    selCoupon: {
-      type: Object,
-      default: {},
-    },
     isBuyCoupon: {
       type: Boolean,
       default: false,
@@ -181,8 +190,9 @@ export default {
       couponList,
       payMethod,
       isAgreeRules,
+      merchantId,
     } = toRefs(props);
-
+    const { selCoupon, setSelCoupon } = useDirectPaySelCoupon();
     let minLeastCostCoupon = computed(() => {
       let res = null;
       if (unref(userMerchantCoupons).length > 0) {
@@ -216,14 +226,18 @@ export default {
     });
 
     watch([billFee, payMethod], ([newBillFee, newPayMethod]) => {
+      console.log(unref(selCoupon));
       if (
         newPayMethod == "COUPON_PAY" &&
         unref(minLeastCostCoupon) &&
-        unref(billFee) >= unref(minLeastCostCoupon).leastCost
+        unref(billFee) >= unref(minLeastCostCoupon).leastCost &&
+        !unref(selCoupon).id
       ) {
-        emit("update:selCoupon", toRaw(unref(minLeastCostCoupon)));
+        setSelCoupon(toRaw(unref(minLeastCostCoupon)));
+        // emit("update:selCoupon", toRaw(unref(minLeastCostCoupon)));
       } else {
-        emit("update:selCoupon", {});
+        setSelCoupon({});
+        // emit("update:selCoupon", {});
       }
 
       if (
@@ -251,12 +265,25 @@ export default {
       emit("update:isAgreeRules", !unref(isAgreeRules));
     }
 
+    function goToSelectCoupon() {
+      if (unref(payMethod) != "COUPON_PAY") {
+        return;
+      }
+      navigateTo("ORDER/SELECT_COUPON", {
+        merchantId: unref(merchantId),
+        billFee: unref(billFee),
+        from: "directPay",
+      });
+    }
+
     return {
       minLeastCostCoupon,
       minMerchantLeastCostCoupon,
       togglePayMethod,
       toggleAgreeRules,
       navigateTo,
+      goToSelectCoupon,
+      selCoupon,
     };
   },
 };

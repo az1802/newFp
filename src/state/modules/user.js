@@ -7,7 +7,7 @@
  */
 export default {
   state: {
-    userId: "d4848915-b103-4e1a-abfd-a04886fa61e6",//用户id
+    userId: "",//用户id
     userWallet: {
       fanpiaoBalance: "",//饭票余额
       redPacketBalance: "", //红包余额
@@ -17,7 +17,7 @@ export default {
     phone: "",//手机号码
     userCoupons: [],//用户券包
     userInfo: { //用户信息
-      nickname: "sunjie",
+      nickname: "",
     },
     stats: { //用户最近营销使用用券次数和已省金额
       sumUsedCoupons: 0,

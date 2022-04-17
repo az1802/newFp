@@ -1,8 +1,9 @@
 import { computed, ref, reactive, unref, toRaw, watch } from 'vue'
-import { getDishInfoById, calcRecommendCoupon, calcRecommendFanpiao, calcUserAvailableMerchantCoupon } from "@utils";
+import { getDishInfoById, calcRecommendCoupon, calcRecommendFanpiao, calcUserAvailableMerchantCoupon, navigateTo } from "@utils";
 import { useState, useGetters, useMutations } from "@hooks/storeHooks";
+import { useUserLogin } from '@hooks/userHooks'
 import API from "@api";
-import { wechatPay, aliPay, showToast } from '@utils';
+import { wechatPay, aliPay, showToast, sleep } from '@utils';
 
 async function getTransactionId(args) {
   let res = await API.Order.pay(args);
@@ -61,6 +62,7 @@ export function useStorePay() {
 export function useCouponPay() {
 
   async function buyCoupon(merchantId, fanpiaoInfo) {
+    if (!uni.getStorageSync('userId')) { navigateTo("MENU/LOGIN"); return };
     let data = {
       fanpiaoCategoryId: fanpiaoInfo.id,
       billFee: fanpiaoInfo.totalValue,
@@ -128,7 +130,7 @@ export function useCouponPay() {
 
 export function useFanpiaoPay() {
   async function buyFanpiao(fanpiaoInfo, merchantId = uni.getStorageSync("merchantId")) {
-
+    if (!uni.getStorageSync('userId')) { navigateTo("MENU/LOGIN"); return };
     let data = {
       fanpiaoCategoryId: fanpiaoInfo.id,
       billFee: fanpiaoInfo.totalValue,
@@ -179,11 +181,20 @@ export function useDirectPay(payMethod, params) {
   async function directPay(params) {
     let payRes = false;
     let res = await API.Order.pay(params);
+    console.log('%cres: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', res);
     if (params.payMethod == "WECHAT_PAY") {
       payRes = await wechatPay(res.signData);
     } else if (params.payMethod == "FANPIAO_PAY") {
-      return res.errcode == 0;
+
+      console.log(res)
+      if (res.errcode != 0) {
+        showToast(res.errmsg);
+        return false;
+      }
+      payRes = true;
     }
+    await showToast(payRes ? "买单成功" : "买单失败，请重试");
+    await sleep(2000);
 
     return payRes;
   }

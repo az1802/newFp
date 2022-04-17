@@ -161,19 +161,15 @@ export default {
     }
 
     async function prepareMerchantInfo() {
-      // let userId = checkLogin();
-      // if (!userId) {
-      //   return;
-      // }
+      let userId = checkLogin();
+      if (!userId) {
+        return;
+      }
       try {
         let parseRes = await handleQrcodeParams(opts); //处理二维码参数
         await loadSource(parseRes); //根据不同的解析结果加载不同的数据
       } catch (err) {
-        console.log(
-          "%cerr: ",
-          "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-          err
-        );
+        console.log(err);
       }
     }
 

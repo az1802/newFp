@@ -9,7 +9,8 @@
 import URLS from './urls'
 import http from './http';
 
-let userIdMock = "d4848915-b103-4e1a-abfd-a04886fa61e6"
+// let userIdMock = "d4848915-b103-4e1a-abfd-a04886fa61e6"
+let userIdMock = ""
 
 export async function setUserHeader(userId = userIdMock) {
   http.setHeaders({

@@ -161,7 +161,6 @@ export default {
       dishInfo.quantity = dishInfo.quantityIncrement || 1;
       dishInfo.addPrice = unref(totalPrice);
       unref(selChildDishes)[dishInfo.groupId].push(dishInfo);
-      console.log(unref(selChildDishes));
       toggleShowChildSkuModal(false);
     }
 

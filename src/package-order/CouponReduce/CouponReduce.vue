@@ -19,13 +19,13 @@
         </p>
         <div class="reduce-text">
           <div class="symbol">-¥</div>
-          {{ recommendedCoupon.couponCost/100 }}
+          {{ recommendedCoupon.couponCost / 100 }}
         </div>
       </div>
       <div
         v-else-if="orderInfo.selCouponId"
         class="available-coupon"
-        @click="navigateTo('ORDER/SELECT_COUPON')"
+        @click="goToSelectCoupon"
       >
         <div class="price">
           -
@@ -42,7 +42,7 @@
           !orderInfo.selCouponId && userAvailableMerchantCoupon.length > 0
         "
         class="available-coupon"
-        @click="navigateTo('ORDER/SELECT_COUPON')"
+        @click="goToSelectCoupon"
       >
         <span class="total-count">
           <img
@@ -72,6 +72,10 @@ export default {
     const { recommendedCoupon, userAvailableMerchantCoupon } =
       useRecommendedCoupon();
 
+    function goToSelectCoupon() {
+      let merchantId = uni.getStorageSync("merchantId");
+      navigateTo("ORDER/SELECT_COUPON", { merchantId });
+    }
     return {
       navigateTo,
       userMerchantCoupons,

@@ -10,7 +10,8 @@
   </div>
 </template>
 <script>
-import { computed, unref, ref, toRefs } from "vue";
+import { computed, unref, ref, toRefs, watch } from "vue";
+import { formatDate, payMethodMap } from "@utils";
 const orderKeyList = [
   {
     label: "订单号",
@@ -45,6 +46,13 @@ export default {
 
     let show = computed(() => {
       return Object.keys(unref(orderInfo)).length > 0;
+    });
+
+    watch(orderInfo, (newOrderInfo) => {
+      if (newOrderInfo.id) {
+        newOrderInfo.payMethod = payMethodMap[newOrderInfo.payMethod];
+        newOrderInfo.paidTime = formatDate(newOrderInfo.paidTime);
+      }
     });
 
     return {

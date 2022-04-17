@@ -117,14 +117,11 @@ export function getUserInfo() {
     wx.getUserProfile({
       desc: "个人主页信息展示",
       complete(res) {
-        console.log("complete", res);
         resolve(res)
       },
       success: (res) => {
-        console.log("success", res);
         resolve(res);
       }, fail: (err) => { //获取个人信息失败
-        console.log("err", err);
         resolve(false)
       }
     })
@@ -183,7 +180,6 @@ export async function chooseLocation() {
 
 export async function wechatSignUp() {
   let codeMsg = await uni.login();
-  console.log('%ccodeMsg: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', codeMsg);
   let data = { code: codeMsg.code };
   let res = await API.User.signUp(data)
   let userId = res.id;

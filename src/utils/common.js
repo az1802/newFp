@@ -123,3 +123,15 @@ export function throttle(fn, wait) {
     }
   }
 }
+
+
+
+export const payMethodMap = {
+  'WALLET': "时来钱包",
+  'WECHAT_PAY': "微信支付",
+  "ALIPAY": "支付宝支付",
+  'SHILAI_MEMBER_CARD_PAY': "储值支付",
+  'PHONE_MEMBER_PAY': "会员支付",
+  'FANPIAO_PAY': "时来饭票",
+  'TIAN_QUE_PAY': "微信支付",
+}

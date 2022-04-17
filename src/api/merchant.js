@@ -19,9 +19,6 @@ import { reduceRight } from 'lodash';
 // import catalogScene from '@mockData/catalogScene.js'
 // import dishCategory from '@mockData/dishCategory.js'
 
-http.setHeaders({
-  userId: "d4848915-b103-4e1a-abfd-a04886fa61e6"
-})
 
 export async function getMerchantInfo(merchantId) {
   let url = `${URLS.GET_MERCHANT_INFO}/${merchantId}`;

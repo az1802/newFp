@@ -70,46 +70,63 @@ import { useUserMerchantCoupon } from "@hooks/userHooks";
 import { useOrder } from "@hooks/orderHooks";
 import { useDish } from "@hooks/menuHooks";
 import { useNavigate } from "@hooks/commonHooks";
+import { useDirectPaySelCoupon } from "@hooks/directPayHooks";
 
+let merchantId, from, billFee;
 export default {
+  onLoad(opts) {
+    merchantId = opts.merchantId;
+    billFee = opts.billFee;
+    from = opts.from;
+  },
   setup() {
     let { userMerchantCoupons, requestUserMerchantCoupons } =
       useUserMerchantCoupon();
     let { orderInfo, setOrderInfo } = useOrder();
+    const { selCoupon, setSelCoupon } = useDirectPaySelCoupon();
+    console.log(
+      "%cselCoupon: ",
+      "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
+      selCoupon
+    );
     onBeforeMount(async () => {
-      let mertchantId = uni.getStorageSync("merchantId");
-      requestUserMerchantCoupons(mertchantId);
+      requestUserMerchantCoupons(merchantId);
     });
+
     const { navigateBack } = useNavigate();
 
     const { selectedDishesFinalTotalPrice } = useDish();
 
     const avaiableMerchantCoupons = computed(() => {
+      let payFee = billFee ? billFee : unref(selectedDishesFinalTotalPrice);
       return unref(userMerchantCoupons).filter((couponItem) => {
-        if (
-          couponItem?.leastCost <= unref(selectedDishesFinalTotalPrice) &&
-          couponItem.state == "ACCEPTED"
-        ) {
+        if (couponItem?.leastCost <= payFee && couponItem.state == "ACCEPTED") {
           return true;
         }
       });
     });
     const disabledCoupons = computed(() => {
+      let payFee = billFee ? billFee : unref(selectedDishesFinalTotalPrice);
       return unref(userMerchantCoupons).filter((couponItem) => {
-        if (
-          couponItem?.leastCost <= unref(selectedDishesFinalTotalPrice) &&
-          couponItem.state == "ACCEPTED"
-        ) {
+        if (couponItem?.leastCost <= payFee && couponItem.state == "ACCEPTED") {
         } else {
           false;
         }
       });
     });
 
-    let selCouponInfo = ref({
-      id: unref(orderInfo)?.selCouponId || "",
-      reduceCost: unref(orderInfo)?.selCouponReduceCost || "",
-    });
+    let selCouponInfo;
+    if ((from = "directPay")) {
+      selCouponInfo = ref({
+        id: unref(selCoupon)?.id || "",
+        reduceCost: unref(selCoupon)?.reduceCost || "",
+      });
+    } else {
+      selCouponInfo = ref({
+        id: unref(orderInfo)?.selCouponId || "",
+        reduceCost: unref(orderInfo)?.selCouponReduceCost || "",
+      });
+    }
 
     function changeSelCoupon(coupon) {
       if (!coupon) {
@@ -121,16 +138,28 @@ export default {
 
     function selectCoupon() {
       let selInfo = unref(selCouponInfo);
+
       if (!selInfo) {
-        setOrderInfo({
-          selCouponReduceCost: 0, //使用券包的价格
-          selCouponId: "", //使用券包的id
-        });
+        if (from == "directPay") {
+          setSelCoupon({});
+        } else {
+          setOrderInfo({
+            selCouponReduceCost: 0, //使用券包的价格
+            selCouponId: "", //使用券包的id
+          });
+        }
       } else {
-        setOrderInfo({
-          selCouponReduceCost: selInfo.reduceCost, //使用券包的价格
-          selCouponId: selInfo.id, //使用券包的id
-        });
+        if (from == "directPay") {
+          setSelCoupon({
+            id: selInfo.id,
+            reduceCost: selInfo.reduceCost,
+          });
+        } else {
+          setOrderInfo({
+            selCouponReduceCost: selInfo.reduceCost, //使用券包的价格
+            selCouponId: selInfo.id, //使用券包的id
+          });
+        }
       }
       navigateBack();
     }
@@ -139,7 +168,6 @@ export default {
       avaiableMerchantCoupons,
       disabledCoupons,
       changeSelCoupon,
-      orderInfo,
       selectCoupon,
     };
   },

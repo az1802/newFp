@@ -69,11 +69,6 @@ export default {
     onBeforeMount(async () => {
       let merchantId = uni.getStorageSync("merchantId");
       let rechargeList = await API.Merchant.getRechargeConfigs(merchantId);
-      console.log(
-        "%crechargeList: ",
-        "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-        rechargeList
-      );
       rechargeConfigs.value = rechargeList;
     });
     async function pay() {

@@ -29,7 +29,14 @@
 
 <script type="text/ecmascript-6">
 import API from "@api";
-import { getUserInfo, showToast, switchTab, reLaunchUrl, sleep } from "@utils";
+import {
+  getUserInfo,
+  showToast,
+  switchTab,
+  reLaunchUrl,
+  sleep,
+  navigateBack,
+} from "@utils";
 
 let loginTime = 3;
 const TAB_BAR = [
@@ -69,7 +76,8 @@ export default {
           : reLaunchUrl("/" + targetPage);
         return;
       }
-      switchTab("/" + TAB_BAR[0].pagePath);
+      navigateBack();
+      // switchTab("/" + TAB_BAR[0].pagePath);
       //#endif
 
       //#ifdef MP-ALIPAY
@@ -81,7 +89,8 @@ export default {
         reLaunchUrl("/" + targetPage);
         return;
       }
-      reLaunchUrl("/" + targetPage);
+      navigateBack();
+      // reLaunchUrl("/" + targetPage);
       //#endif
     },
     refuseLogin() {
@@ -90,7 +99,7 @@ export default {
         this.navigateNextPage();
         return;
       }
-      switchTab("/" + TAB_BAR[0].pagePath);
+      navigateBack();
     },
   },
 };

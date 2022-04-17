@@ -543,11 +543,7 @@ export default {
       this.getUserFanpiaoList();
     },
     async showMerchantFanpiaoList(fanpiaoItem) {
-      console.log(
-        "%cfanpiaoItem: ",
-        "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-        fanpiaoItem
-      );
+      
       let merchantId = fanpiaoItem.merchantId;
       navigateTo("MARKETING/FANPIAO_QRCODE", {
         merchantId,

@@ -5,7 +5,7 @@
     v-if="merchantInfo.merchantId != 'b46b022cf7024f0aab9ba1793cb75036'"
   >
     <div
-      class="meal-item"
+      class="meal-type-item"
       @click="handleMealType('EAT_IN')"
       v-if="
         !(
