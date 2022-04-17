@@ -1,5 +1,5 @@
 <template>
-  <div class="fanpiao-info-wrapper">
+  <div class="fanpiao-info-wrapper" v-if="fanpiaoList.length">
     <div class="title">
       超值饭票
       <view

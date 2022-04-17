@@ -1,5 +1,5 @@
 <template>
-  <div class="recommend-wrapper" v-if="dishList.length != 0">
+  <div class="recommend-wrapper" v-if="dishList.length">
     <div class="title">推荐菜展示</div>
     <div class="recommend">
       <scroll-view class="scroll" scroll-x scroll-with-animation>

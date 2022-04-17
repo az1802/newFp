@@ -51,7 +51,7 @@
               class="operation"
               :class="disableShowCouponPackagePurchaseNumber ? 'only-buy' : ''"
             >
-              <div class="buy" @click="buyCoupon(merchantId, couponName)">
+              <div class="buy" @click="buyCoupon(merchantId, couponItem)">
                 抢购
               </div>
               <div

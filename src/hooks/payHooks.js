@@ -61,16 +61,17 @@ export function useStorePay() {
 
 export function useCouponPay() {
 
-  async function buyCoupon(merchantId, fanpiaoInfo) {
+  async function buyCoupon(merchantId, couponInfo) {
     if (!uni.getStorageSync('userId')) { navigateTo("MENU/LOGIN"); return };
     let data = {
-      fanpiaoCategoryId: fanpiaoInfo.id,
-      billFee: fanpiaoInfo.totalValue,
-      paidFee: fanpiaoInfo.totalValue,
+      couponPackageId: couponInfo.id,
+      billFee: couponInfo.price,
+      paidFee: couponInfo.price,
       merchantId: merchantId,
-      transactionType: "FANPIAO_PURCHASE",
-      payMethod: "WECHAT_PAY", // 'WALLET' //
-    };
+      transactionType: "COUPON_PACKAGE_PURCHASE",
+      // 券包仅限用微信支付渠道购买，不可用其他优惠渠道如红包、饭票等购买
+      payMethod: 'WECHAT_PAY'
+    }
     // #ifdef MP-ALIPAY
     data.payMethod = "ALIPAY";
     // #endif
