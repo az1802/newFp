@@ -107,3 +107,19 @@ export async function getQrcodeInfo(scene) {
   let res = await http.post(url)
   return res;
 }
+export async function getOrderRecordList(merchantId, params) {
+  console.log('%cmerchantId: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', merchantId);
+  let url = `${URLS.USER_ORDER_LIST}/${merchantId}`;
+  let res = await http.get(url, { params })
+  return res;
+}
+export async function getFanpiaoRecordList(merchantId, params) {
+  let url = `${URLS.USER_FANPIAO_LIST}/${merchantId}`;
+  let res = await http.get(url, { params })
+  return res;
+}
+export async function getCouponRecordList(merchantId, params) {
+  let url = `${URLS.USER_COUPON_LIST}/${merchantId}`;
+  let res = await http.get(url, { params })
+  return res;
+}

@@ -34,6 +34,7 @@
           :orderType="orderType"
           :orderInfo="item"
           :key="item.id"
+          :showMerchantName="false"
           @openRefundModal="openRefundModal"
         />
       </scroll-view>
@@ -44,7 +45,7 @@
 
 <script>
 import { useTabs, useSystemInfo } from "@hooks/commonHooks";
-import { useOrderRecord } from "@hooks/orderHooks";
+import { useMerchantOrderRecord } from "@hooks/merchantHooks";
 import { computed, unref, onBeforeMount, ref, toRefs } from "vue";
 
 const TAB_ARR = [
@@ -72,16 +73,17 @@ export default {
     let { statusBarHeight } = useSystemInfo();
     let showRefundModal = ref(false),
       refundInfo;
+    let merchantId = uni.getStorageSync("merchantId");
     let {
       orderList,
       fanpiaoList,
       couponList,
-      getOrderList,
+      getOrderRecordList,
       getFanpiaoRecordList,
       getCouponRecordList,
       refundFanpiao,
       refundCoupon,
-    } = useOrderRecord();
+    } = useMerchantOrderRecord(merchantId);
 
     let lineStyle = computed(() => {
       return {
@@ -90,8 +92,9 @@ export default {
     });
 
     async function requestMoreOrder() {
+      console.log(1);
       if (unref(curTabIndex) == 0) {
-        getOrderList(false);
+        getOrderRecordList(false);
       } else if (unref(curTabIndex) == 1) {
         getCouponRecordList(false);
       } else if (unref(curTabIndex) == 2) {
@@ -138,7 +141,7 @@ export default {
       showRefundModal.value = false;
     }
     function requestAllOrderList() {
-      getOrderList();
+      getOrderRecordList();
       getFanpiaoRecordList();
       getCouponRecordList();
     }

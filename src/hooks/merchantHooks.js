@@ -184,3 +184,87 @@ export function useRechargeInfo() {
     rechargeConfigs
   }
 }
+
+
+export function useMerchantOrderRecord(merchantId) {
+
+  const orderList = ref([]), fanpiaoList = ref([]), couponList = ref([]), moreOrder = {}, moreFanpiao = {}, moreCoupon = {};
+
+  let orderParams = {}, fanpiaoParams = {}, couponParams = {};
+  async function getOrderRecordList(first = true) {
+    let res = await API.Merchant.getOrderRecordList(merchantId, orderParams) || { orders: [] };
+    let { hasMore, latestTime, orders = [] } = res;
+    orderList.value = orderList.value.concat(orders);
+    if (hasMore) {
+      orderParams = {
+        hasMore,
+        latestTime
+      }
+    }
+
+  }
+
+  async function getFanpiaoRecordList(first = true) {
+    let res = await API.Merchant.getFanpiaoRecordList(merchantId, fanpiaoParams) || { fanpiaos: [] };
+    let { hasMore, latestTime, fanpiaos = [] } = res;
+    fanpiaoList.value = fanpiaoList.value.concat(fanpiaos);
+    if (hasMore) {
+      fanpiaoParams = {
+        hasMore,
+        latestTime
+      }
+    }
+
+  }
+
+  async function getCouponRecordList(first = true) {
+    let res = await API.Merchant.getCouponRecordList(merchantId, couponParams) || { couponPackages: [] };
+    let { hasMore, latestTime, couponPackages = [] } = res;
+    couponList.value = couponList.value.concat(couponPackages);
+    if (hasMore) {
+      couponParams = {
+        hasMore,
+        latestTime
+      }
+    }
+
+  }
+
+  async function refundFanpiao(transactionId, args) {
+    let res = await API.Order.refundFanpiao(transactionId, args)
+    showToast('饭票退款成功')
+    if (res.errcode == 0) {
+      fanpiaoList.value.forEach(item => {
+        if (item.transactionId == transactionId) {
+          item.status = "REFUND"
+          item.canRefund = false;
+        }
+      })
+    }
+
+  }
+
+  async function refundCoupon(transactionId, args) {
+    let res = await API.Order.refundCoupon(transactionId, args)
+    showToast('券包退款成功')
+    if (res.errcode == 0) {
+      couponList.value.forEach(item => {
+        if (item.transactionId == transactionId) {
+          item.status = "REFUND";
+          item.canRefund = false;
+        }
+      })
+    }
+  }
+
+  return {
+    orderList,
+    fanpiaoList,
+    couponList,
+    getOrderRecordList,
+    getFanpiaoRecordList,
+    getCouponRecordList,
+    refundFanpiao,
+    refundCoupon
+  }
+}

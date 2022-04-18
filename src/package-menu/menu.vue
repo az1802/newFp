@@ -7,7 +7,7 @@
 -->
 <template>
   <div class="container">
-    <NavigationBar title="" />
+    <NavigationBar title="" showOrderIcon/>
     <MenuHeader />
     <div class="menu-wrapper" :style="menuWrapperStyle">
       <MenuList :dishList="dishList" />

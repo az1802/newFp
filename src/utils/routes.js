@@ -24,13 +24,15 @@ export default {
     "LOGIN": `${MENU}/login`,
   },
   "MERCHANT": {
-    "HOME": `${MERCHANT}/home`
+    "HOME": `${MERCHANT}/home`,
+    "ORDER": `${MERCHANT}/merchant-order`,
   },
   "ORDER": {
     "CREATE_ORDER": `${ORDER}/create-order`,
     "PAY_ORDER": `${ORDER}/pay-order`,
     "PAY_SUCCESS": `${ORDER}/pay-success`,
     "SELECT_COUPON": `${ORDER}/select-coupon`,
+
   },
   "MARKETING": {
     "BUY_FANPIAO": `${MARKETING}/buy-fanpiao/buy-fanpiao`,

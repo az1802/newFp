@@ -21,7 +21,7 @@
       </div>
     </div>
     <div class="order-records">
-      <span class="iconfont icon-dingdan1"></span>
+      <!-- <span class="iconfont icon-dingdan1"></span> -->
     </div>
   </div>
 </template>

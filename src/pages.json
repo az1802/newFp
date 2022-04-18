@@ -43,6 +43,11 @@
         "style": {
           "disableScroll": false
         }
+      }, {
+        "path": "merchant-order",
+        "style": {
+          "disableScroll": false
+        }
       }]
     },
     {

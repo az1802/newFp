@@ -35,19 +35,19 @@ export async function getOrderDetailById(orderId) {
   return res;
 }
 
-export async function getOrderList() {
+export async function getOrderList(params = {}) {
   let url = `${URLS.USER_ORDER_LIST}`;
-  let res = await http.get(url);
+  let res = await http.get(url, { params });
   return res;
 }
-export async function getFanpiaoList() {
+export async function getFanpiaoList(params = {}) {
   let url = `${URLS.USER_FANPIAO_LIST}`;
-  let res = await http.get(url);
+  let res = await http.get(url, { params });
   return res;
 }
-export async function getCouponList() {
+export async function getCouponList(params = {}) {
   let url = `${URLS.USER_COUPON_LIST}`;
-  let res = await http.get(url);
+  let res = await http.get(url, { params });
   return res;
 }
 

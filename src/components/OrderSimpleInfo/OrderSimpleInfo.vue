@@ -5,7 +5,7 @@
         <div class="tag" v-if="orderType == 'DISH'">{{ mealType }}</div>
         <div
           class="merchant-name"
-          v-if="shooMerchantName"
+          v-if="showMerchantName"
           @click="navigateToMerchantHome"
         >
           {{ orderInfo.merchantName }}
@@ -124,7 +124,7 @@ export default {
       type: String,
       default: "DISH",
     },
-    shooMerchantName: {
+    showMerchantName: {
       type: Boolean,
       default: true,
     },
