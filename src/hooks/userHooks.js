@@ -39,7 +39,10 @@ export function useUserInfo() {
   }
 
   async function getUserMerchantInfo(merchantId) {
-    let res = await API.User.getUserMerchantInfo(merchantId)
+    let res = await API.User.getUserMerchantInfo(merchantId);
+    if (res) {
+      setUserInfo(res)
+    }
   }
 
 

@@ -32,6 +32,12 @@ export async function signUpAlipay(data) {
 export async function getUserMerchantInfo(merchantId) {
   let url = `${URLS.USER_MERCHANT_INFO}/${merchantId}`;
   let res = await http.get(url);
+  // return {
+  //   isPhoneMember: true,
+  //   phone: "17688479248",
+  //   phoneMemberDiscount: 10,
+  //   userId: "d4848915-b103-4e1a-abfd-a04886fa61e6"
+  // }
   return res;
 }
 export async function getUserFanpiaoBalance(merchantId) {

@@ -15,7 +15,7 @@
       position: position,
     }"
   >
-    <div class="arrow" v-if="showArrow" @click="navigateBack">
+    <div class="arrow" v-if="showArrow" @click="back">
       <span
         class="iconfont icon-dajiantouzuo"
         :style="{ color: iconColor }"
@@ -60,13 +60,26 @@ export default {
       type: String,
       default: "relative",
     },
+    customBack: {
+      type: Function,
+      default: () => {},
+    },
   },
-  setup(props, context) {
+  setup(props, { emit }) {
     let { statusBarHeight } = useSystemInfo();
     let { navigateBack } = useNavigate();
+
+    function back() {
+      console.log(props);
+      if (props.customBack) {
+        emit("customBack");
+      } else {
+        navigateBack();
+      }
+    }
     return {
       statusBarHeight,
-      navigateBack,
+      back,
     };
   },
 };

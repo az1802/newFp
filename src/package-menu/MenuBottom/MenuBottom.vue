@@ -78,13 +78,17 @@ export default {
     }
 
     let priceTooltipText = computed(() => {
-      let max = (unref(maxDiscountFanpiao).discount || 0) / 100;
-      let min = (unref(minDiscountFanpiao).discount || 0) / 100;
-      return max != min
-        ? `${(unref(selectedDishesTotalPrice) / 100) * min}-${
-            (unref(selectedDishesTotalPrice) / 100) * max
-          }`
-        : `${(unref(selectedDishesTotalPrice) / 100) * max}`;
+      let max = Number(
+        (unref(selectedDishesTotalPrice) / 100) *
+          ((unref(maxDiscountFanpiao).discount || 0) / 100)
+      ).toFixed(2);
+      let min = Number(
+        ((unref(selectedDishesTotalPrice) / 100) *
+          (unref(minDiscountFanpiao).discount || 0)) /
+          100
+      ).toFixed(2);
+
+      return max != min ? `${min}-${max}` : `${max}`;
     });
 
     return {

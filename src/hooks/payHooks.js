@@ -1,12 +1,14 @@
 import { computed, ref, reactive, unref, toRaw, watch } from 'vue'
 import { getDishInfoById, calcRecommendCoupon, calcRecommendFanpiao, calcUserAvailableMerchantCoupon, navigateTo } from "@utils";
 import { useState, useGetters, useMutations } from "@hooks/storeHooks";
-import { useUserLogin } from '@hooks/userHooks'
+import { useUserLogin, useUserInfo } from '@hooks/userHooks'
+import { useDish } from '@hooks/menuHooks';
 import API from "@api";
 import { wechatPay, aliPay, showToast, sleep } from '@utils';
 
 async function getTransactionId(args) {
   let res = await API.Order.pay(args);
+  console.log('%cres: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', res);
   if (!res?.transactionId) {
     return false;
   }
@@ -16,7 +18,7 @@ async function getTransactionId(args) {
 async function commonPay(data) {
   let res = await getTransactionId(data);
   if (res) {
-    let payRes = false;
+    let payRes = res;
     if (data.payMethod == "WECHAT_PAY") {
       payRes = await wechatPay(res.signData);
     } else if (data.payMethod == "ALIPAY") {
@@ -26,15 +28,113 @@ async function commonPay(data) {
   }
 }
 
+
 export function usePay() {
 
-  async function payOrder() {
+
+  return {
+    commonPay
+  }
+}
+export function usePayOrder() {
+
+  // const { userInfo } = useUserInfo()
+
+
+  async function buyFanpiaoAndPay(fanpiaoInfo, orderInfo) {
+    let payMethod = 'WECHAT_PAY';
+    // #ifdef MP-ALIPAY
+    payMethod = 'ALIPAY' //支付宝支付方式调整
+    // #endif
+    let data = {
+      fanpiaoCategoryId: fanpiaoInfo.id,
+      billFee: fanpiaoInfo.sellPrice,
+      paidFee: fanpiaoInfo.sellPrice,
+      merchantId: orderInfo.merchantId,
+      transactionType: 'FANPIAO_PURCHASE',
+      orderId: orderInfo.orderId,
+      payMethod: payMethod// 'WALLET' //
+    };
+
+    let payRes = await commonPay(data);
+
+    return payRes;
+  }
+
+  async function payOrder(payMethod, orderInfo, userWallet) {
+    console.log('%cpayMethod, orderInfo: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', payMethod, orderInfo);
+    let params = {
+      merchantId: orderInfo.merchantId,
+      orderId: orderInfo.orderId,
+      billFee: orderInfo.billFee,
+      paidFee: orderInfo.paidFee,
+      noDiscountBillFee: orderInfo.noDiscountBillFee || 0,
+      transactionType: orderInfo.transactionType,
+      payMethod: payMethod,
+      isInvoice: orderInfo.isInvoice || false,
+      isFromGroup: orderInfo.isWechatGroupActivity || false,
+    }
+
+    // TODO 外卖菜品打包费
+
+    //使用券包
+    if (orderInfo.couponId && payMethod !== 'FANPIAO_PAY' && payMethod !== 'SHILAI_MEMBER_CARD_PAY') {
+      params.couponId = orderInfo.selCouponId
+    }
+
+
+
+    if (payMethod == "FANPIAO_PAY") {
+      let { fanpiaoRemainPaidFee, selFanpiaoId, selFanpiaoInfo, fanpiaoPaidFee } = orderInfo.orderFanpiaoPayInfo;
+      if (fanpiaoRemainPaidFee) {
+        if (!selFanpiaoId) {
+          showToast('饭票余额不足，购买下列饭票即享优惠');
+        } else {
+          let res = await buyFanpiaoAndPay(selFanpiaoInfo, orderInfo);
+          showToast(res ? "购买成功" : "购买失败,请稍后重试");
+        }
+        return;
+      } else { //饭票直接支付
+        params.paidFee = fanpiaoPaidFee
+      }
+    } else if (payMethod === 'SHILAI_MEMBER_CARD_PAY' && orderInfo.billFee > userWallet.memberCardBalance) {
+      // TODO 购买储值并支付
+      showToast('储值余额不足');
+      return
+    } else if (payMethod === "WALLET" && orderInfo.billFee > userWallet.redPacketBalance) {
+      showToast('红包余额不足');
+      return;
+    }
+
+    params.transactionType = "SELF_DISH_ORDER_PAYMENT";
+
+    let res = await commonPay(params);
+    // TODO 清除本地缓存菜品
+
+    //  跳转到支付成功页面
+    showToast(res ? "买单成功" : "买单失败,请稍后重试");
+
+
+    return res;
+    // res&&resetSelDishes([]);
+
+
+
+
+
+
+
+
+
+
 
   }
+
 
   return {
     payOrder,
     commonPay,
+    buyFanpiaoAndPay
   }
 }
 

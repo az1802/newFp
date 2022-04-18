@@ -54,6 +54,7 @@ import {
   useUserLogin,
   useUserCoupon,
   useUserMerchantFanpiaoBalance,
+  useUserInfo,
 } from "@hooks/userHooks";
 import { useDish, useScanModal, useOptionModal } from "@hooks/menuHooks";
 import { useOrder } from "@hooks/orderHooks";
@@ -91,6 +92,7 @@ export default {
       splashModal = ref("");
     const { requestMerchantInfo, requestMerchantDishes, merchantInfo } =
       useMerchantInfo();
+    const { getUserMerchantInfo } = useUserInfo();
     const { statusBarHeight, screenWidth } = useSystemInfo();
     const { requestFanpiaoList } = useFanpiaoInfo();
     const { requestCouponList } = useCouponInfo();
@@ -176,6 +178,7 @@ export default {
         requestFanpiaoList(merchantId);
         requestCouponList(merchantId);
         requestUserMerchantFanpiaoBalance(merchantId); //获取饭票余额
+        getUserMerchantInfo(merchantId); //获取该用户是否是商户的会员
       }
     }
 
@@ -185,7 +188,7 @@ export default {
         return;
       }
       try {
-        let parseRes = await handleQrcodeParams(opts); //处理二维码参数
+        let parseRes = await handleQrcodeParams(); //处理二维码参数
         if (parseRes.codeExpiredModal) {
           //二维码过期
           codeExpiredModal.value.show();

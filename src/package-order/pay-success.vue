@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <NavigationBar title="订单详情" />
+    <NavigationBar title="订单详情" @customBack="navBack" />
     <OrderStatusInfo :orderInfo="orderDetail" />
     <OrderDishInfo
       :dishList="orderDetail.dishList"
@@ -16,6 +16,7 @@ import { computed, onBeforeMount, unref } from "vue";
 import OrderStatusInfo from "./OrderStatusInfo/OrderStatusInfo.vue";
 import OrderDishInfo from "./OrderDishInfo/OrderDishInfo.vue";
 import OrderInfoList from "./OrderInfoList/OrderInfoList.vue";
+import { navigateBack, navigateTo } from "@utils";
 let orderId = "";
 export default {
   components: {
@@ -38,11 +39,27 @@ export default {
     let orderTotalPrice = computed(() => {
       return unref(orderDetail).billFee;
     });
+    function navBack() {
+      let pages = getCurrentPages(),
+        delta = 1;
+      let menuPageIndex = pages.findIndex((item) => {
+        return item.route == "package-menu/menu";
+      });
+
+      if (menuPageIndex != -1) {
+        delta = pages.length - 1 - menuPageIndex || 1;
+      }
+
+      navigateBack({
+        delta,
+      });
+    }
 
     return {
       orderDetail,
       orderDiscountPrice,
       orderTotalPrice,
+      navBack,
     };
   },
 };

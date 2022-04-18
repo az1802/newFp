@@ -35,3 +35,17 @@ export function calcUserAvailableMerchantCoupon(userMerchantCoupons, billFee) {
   }
   return res;
 }
+
+
+export function calcRecommendRecharge(merchantRechargeList, billFee, balance) {
+  let res = [];
+
+  if (billFee > balance) {
+    res = merchantRechargeList.filter(item => {
+      return item.amount > billFee - balance;
+    })
+  }
+
+
+  return res
+}

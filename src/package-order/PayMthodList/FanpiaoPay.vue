@@ -19,7 +19,13 @@
           <div class="balance">
             饭票(余额:{{ userWallet.fanpiaoBalance / 100 }})
           </div>
-          <div class="tooltip">饭票支付，本单立省0.35-0.75元</div>
+          <div
+            v-if="orderFanpiaoPayInfo.recommendFanpiaoList.length > 0"
+            class="tooltip"
+          >
+            饭票余额不足，购买下列饭票即享优惠
+          </div>
+          <div v-else class="tooltip">饭票支付，本单立省0.35-0.75元</div>
         </div>
         <CustomImgRadio :checked="payMethod == 'FANPIAO_PAY'" />
       </div>

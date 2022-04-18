@@ -35,15 +35,11 @@ export function useOrder() {
     return res?.orderId;
   }
 
-  async function payOrder() {
-
-  }
 
   return {
     payMethod,
     orderInfo,
     createOrder,
-    payOrder,
     setPayMethod,
     setOrderInfo
   }
@@ -163,5 +159,14 @@ export function useFanpiaoPayInfo() {
     orderFanpiaoPayInfo,
     finalFanpiaoPaidFee,
     setOrderFanpiaoPayInfo
+  }
+}
+
+export function useOrderRechargeInfo() {
+  const { orderRechargeInfo } = useState('order', ["orderRechargeInfo"]);
+  const { setOrderRechargeInfo } = useMutations("order", ["setOrderRechargeInfo"])
+  return {
+    orderRechargeInfo,
+    setOrderRechargeInfo
   }
 }

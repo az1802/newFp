@@ -13,6 +13,7 @@ export default {
     couponList: [], //券包目录
     fanpiaoUserAvaterList: [], //券包购买头像
     fanpiaoUserNum: 0,//饭票抢购人数
+    rechargeConfigs: []
   },
   getters: {
     maxDiscountFanpiao(state) {
@@ -38,6 +39,9 @@ export default {
     setFanpiaoUserNum(state, fanpiaoUserNum) {
       state.fanpiaoUserNum = fanpiaoUserNum;
     },
+    setRechargeConfigs(state, rechargeConfigs) {
+      state.rechargeConfigs = rechargeConfigs;
+    }
 
   }
 }

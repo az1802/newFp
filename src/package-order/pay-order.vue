@@ -22,38 +22,60 @@
       </div>
     </div>
     <PayMthodList />
-    <div class="pay-btn" @click="payOrder">确认支付</div>
+    <div class="pay-btn" @click="payOrderInfo">{{ payText }}</div>
   </div>
 </template>
 <script>
 import PayMthodList from "./PayMthodList/payMethodList.vue";
-import { useOrder, usePayMethod, useFanpiaoPayInfo } from "@hooks/orderhooks";
-import { useUserMerchantWallet } from "@hooks/userHooks";
-import { useFanpiaoInfo } from "@hooks/merchantHooks";
-import { calcRecommendFanpiao, fenToYuan } from "@utils";
+import {
+  useOrder,
+  usePayMethod,
+  useFanpiaoPayInfo,
+  useOrderRechargeInfo,
+} from "@hooks/orderHooks";
+import { useUserMerchantWallet, useUserInfo } from "@hooks/userHooks";
+import {
+  useFanpiaoInfo,
+  useMerchantInfo,
+  useRechargeInfo,
+} from "@hooks/merchantHooks";
+import { usePayOrder } from "@hooks/payHooks";
+import { useDish } from "@hooks/menuHooks";
+import {
+  calcRecommendFanpiao,
+  fenToYuan,
+  calcRecommendRecharge,
+  navigateTo,
+  sleep,
+} from "@utils";
 
 import { onBeforeMount, computed, unref } from "vue";
 export default {
   components: { PayMthodList },
   setup() {
+    const { resetSelDishes } = useDish();
     const { orderInfo } = useOrder();
-    const { setOrderFanpiaoPayInfo, finalFanpiaoPaidFee } = useFanpiaoPayInfo();
+    const { payOrder } = usePayOrder();
+    const { merchantInfo } = useMerchantInfo();
+    const { setOrderFanpiaoPayInfo, finalFanpiaoPaidFee, orderFanpiaoPayInfo } =
+      useFanpiaoPayInfo();
+    const { orderRechargeInfo, setOrderRechargeInfo } = useOrderRechargeInfo();
+
     const { requestFanpiaoList, fanpiaoList } = useFanpiaoInfo();
+    const { userInfo } = useUserInfo();
 
     const { userWallet, requestUserWallet, requestFanpiaoPaidFee } =
       useUserMerchantWallet();
+
+    const { requestMerchantRecharges, rechargeConfigs } = useRechargeInfo();
     const { payMethod } = usePayMethod();
 
-    // 请求钱包信息,计算所有饭票支付相关额
-    onBeforeMount(async () => {
-      // 获取余额
-      let merchantId = uni.getStorageSync("merchantId");
-      await requestFanpiaoList(uni.getStorageSync("merchantId")); //TODO 可以移除
-      await requestUserWallet(merchantId); //请求用户所有相关的余额
+    async function genRecommendFanpiaoList(merchantId) {
       let res = await requestFanpiaoPaidFee(
         merchantId,
         unref(orderInfo).billFee
       );
+
       let remainPaidFee = res.remainDiscountFee + res.remainNoDiscountFee;
       let recommendFanpiaoList = [];
       if (remainPaidFee > 0) {
@@ -69,6 +91,36 @@ export default {
         fanpiaoRemainPaidFee: remainPaidFee,
         recommendFanpiaoList: recommendFanpiaoList || [],
       });
+    }
+
+    async function genRecommendRechargeList() {
+      let { memberCardBalance } = unref(userWallet),
+        recommendRechargeList = [];
+      console.log(unref(rechargeConfigs), memberCardBalance);
+
+      let { billFee } = unref(orderInfo);
+      if (memberCardBalance < billFee) {
+        recommendRechargeList = calcRecommendRecharge(
+          unref(rechargeConfigs),
+          (billFee = 0),
+          memberCardBalance
+        );
+      }
+
+      setOrderFanpiaoPayInfo({
+        recommendRechargeList,
+      });
+    }
+
+    // 请求钱包信息,计算所有饭票支付相关额
+    onBeforeMount(async () => {
+      // 获取余额
+      let merchantId = uni.getStorageSync("merchantId");
+      await requestMerchantRecharges(merchantId); //获取商户储值列表
+      await requestFanpiaoList(merchantId); //TODO 可以移除
+      await requestUserWallet(merchantId); //请求用户所有相关d余额
+      genRecommendFanpiaoList(merchantId);
+      genRecommendRechargeList();
     });
 
     const billFee = computed(() => {
@@ -76,44 +128,92 @@ export default {
         return unref(orderInfo).paidFee;
       } else if (unref(payMethod) == "FANPIAO_PAY") {
         return unref(orderInfo).paidFee;
+      } else {
+        return unref(orderInfo).paidFee;
       }
     });
 
     // 根据支付金额来进行显示
     const paidFee = computed(() => {
       if (
-        unref(payMethod) == "WECHAT" ||
+        unref(payMethod) == "WECHAT_PAY" ||
         unref(payMethod) == "ALIPAY" ||
         unref(payMethod) == "WALLET"
       ) {
-        //可以使用券包
+        console.log(unref(orderInfo));
         return unref(orderInfo).paidFee;
       } else if (unref(payMethod) == "SHILAI_MEMBER_CARD_PAY") {
         let { selCouponReduceCost, paidFee } = unref(orderInfo);
         // TODO  不可以使用券包
         return selCouponReduceCost ? paidFee + selCouponReduceCost : paidFee;
       } else if (unref(payMethod) == "MEMBER_PAY") {
-        return unref(orderInfo).paidFee * 0.95;
+        let discount = unref(userInfo).phoneMemberDiscount || 0;
+        return ((unref(orderInfo).paidFee * (100 - discount)) / 100).toFixed(0);
       } else if (unref(payMethod) == "FANPIAO_PAY") {
         return unref(finalFanpiaoPaidFee);
       }
     });
 
-    async function payOrder() {
-      console.log(unref(orderInfo));
-      let payRquestParams = {};
-      if (unref(payMethod) == "WECHAT") {
-      } else if (unref(payMethod) == "FANPIAO_PAY") {
+    const payText = computed(() => {
+      let pm = unref(payMethod),
+        resText = "";
+      if (pm == "WECHAT_PAY") {
+        resText = "微信支付";
+      } else if (pm == "ALIPAY") {
+        resText = "支付宝支付";
+      } else if (pm == "FANPIAO_PAY") {
+        let { selFanpiaoId, selFanpiaoInfo } = unref(orderFanpiaoPayInfo);
+        if (selFanpiaoId && selFanpiaoInfo?.totalValue) {
+          resText = `购买饭票￥${selFanpiaoInfo.totalValue / 100}并支付`;
+        } else {
+          resText = `饭票支付`;
+        }
+      } else if (pm == "SHILAI_MEMBER_CARD_PAY") {
+        //  if(this.selectRechargeId&&this.depositBalance < this.billFee){
+        //     resText =  `会员储值￥${this.selectRecharge.sellPrice ? parseFloat(this.selectRecharge.sellPrice)/100 : ''}并支付`
+        //  }else{
+        //     resText =  `会员储值支付`
+        //  }
+        resText = `会员储值支付`;
+      } else if (pm == "WALLET") {
+        resText = "红包支付";
+      } else if (pm == "MEMBER_PAY") {
+        resText = "会员支付";
+      } else {
+        resText = "确认支付";
       }
+
+      return resText;
+    });
+
+    async function payOrderInfo() {
+      let tempOrderInfo = { ...unref(orderInfo) };
+      tempOrderInfo.merchantId = unref(merchantInfo).merchantId;
+      tempOrderInfo.billFee = unref(billFee);
+      tempOrderInfo.paidFee = unref(paidFee);
+      tempOrderInfo.orderFanpiaoPayInfo = { ...unref(orderFanpiaoPayInfo) };
+      let res = payOrder(unref(payMethod), tempOrderInfo, unref(userWallet));
+      res && resetSelDishes([]);
+      await sleep(2000);
+      // 跳转到支付成功野蛮
+      navigateTo("ORDER/PAY_SUCCESS", {
+        from: "payOrder",
+        orderId: tempOrderInfo.orderId,
+        transactionId: res?.transactionId || "",
+        payMethod: unref(payMethod),
+        redPacketValue: res?.redPacketValue || 0,
+      });
     }
     return {
       orderInfo,
       billFee,
       paidFee,
       fenToYuan,
-      payOrder,
+      payOrderInfo,
       userWallet,
       payMethod,
+      orderFanpiaoPayInfo,
+      payText,
     };
   },
 };

@@ -7,13 +7,13 @@
  */
 export default {
   state: {
-    payMethod: "WECHAT",//支付方式
+    payMethod: "WECHAT_PAY",//支付方式
     orderId: "",
     orderInfo: {
       currentType: "CREATE",
       orderId: "",//订单id
       remark: "",//订单备注
-      billFee: 0,//账单金额
+      billFee: 10000,//账单金额
       paidFee: 0,//支付金额 饭票支付金额为动态的更新
       packageFee: 0,//打包费
       discountAmount: 0, //菜品折扣已优惠的价格
@@ -31,10 +31,12 @@ export default {
       tableId: "", //桌台id
       tableName: "", //桌台名称
       couponPackageId: "",//券包合并支付的id
+      couponPackagePrice: "",//券包合并支付券包的价格
       isBuyCouponPackage: false, //是否开启券包合并支付
       selCouponReduceCost: 0, //使用券包的价格
       selCouponId: "",//使用券包的id
       isAgreeCouponAccord: true, //是否统一付费券包协议
+      selRechargeInfo: {},
     },
     orderFanpiaoPayInfo: {
       fanpiaoPaidFee: 0,
@@ -42,6 +44,11 @@ export default {
       recommendFanpiaoList: [],
       selFanpiaoId: "",
       selFanpiaoInfo: "",
+    },
+    orderRechargeInfo: {
+      recommendRechargeList: [],
+      selRechargeId: "",
+      selRechargeIfo: {},
     }
   },
   getters: {
@@ -73,6 +80,11 @@ export default {
     setOrderFanpiaoPayInfo(state, orderFanpiaoPayObj) {
       for (let key in orderFanpiaoPayObj) {
         state.orderFanpiaoPayInfo[key] = orderFanpiaoPayObj[key];
+      }
+    },
+    setOrderRechargeInfo(state, orderRechargeInfo) {
+      for (let key in orderRechargeInfo) {
+        state.orderRechargeInfo[key] = orderRechargeInfo[key];
       }
     }
   },

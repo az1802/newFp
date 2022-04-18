@@ -166,3 +166,21 @@ export function useRecommendationDish() {
     requestRecommendDishes
   }
 }
+
+
+export function useRechargeInfo() {
+  const { rechargeConfigs } = useState('merchant', ["rechargeConfigs"]);
+  const { setRechargeConfigs } = useMutations('merchant', ["setRechargeConfigs"]);
+
+
+  async function requestMerchantRecharges(merchantId) {
+    let rechargeList = await API.Merchant.getRechargeConfigs(merchantId);
+    setRechargeConfigs(rechargeList)
+  }
+
+
+  return {
+    requestMerchantRecharges,
+    rechargeConfigs
+  }
+}

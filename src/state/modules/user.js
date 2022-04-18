@@ -18,6 +18,10 @@ export default {
     userCoupons: [],//用户券包
     userInfo: { //用户信息
       nickname: "",
+      isPhoneMember: false,
+      phone: "",
+      phoneMemberDiscount: 0,
+      userId: "",
     },
     stats: { //用户最近营销使用用券次数和已省金额
       sumUsedCoupons: 0,
@@ -32,7 +36,9 @@ export default {
   },
   mutations: {
     setUserInfo(state, userInfo) {
-      state.userInfo = userInfo
+      for (let key in userInfo) {
+        state.userInfo[key] = userInfo[key]
+      }
     },
     setStats(state, stats) {
       state.stats = stats
