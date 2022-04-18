@@ -83,12 +83,8 @@ export default {
     let { userMerchantCoupons, requestUserMerchantCoupons } =
       useUserMerchantCoupon();
     let { orderInfo, setOrderInfo } = useOrder();
-    const { selCoupon, setSelCoupon } = useDirectPaySelCoupon();
-    console.log(
-      "%cselCoupon: ",
-      "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-      selCoupon
-    );
+    const { selCoupon, setSelCoupon, toogleAutoSelCoupon } =
+      useDirectPaySelCoupon();
     onBeforeMount(async () => {
       requestUserMerchantCoupons(merchantId);
     });
@@ -142,6 +138,7 @@ export default {
       if (!selInfo) {
         if (from == "directPay") {
           setSelCoupon({});
+          toogleAutoSelCoupon(false);
         } else {
           setOrderInfo({
             selCouponReduceCost: 0, //使用券包的价格
@@ -150,6 +147,7 @@ export default {
         }
       } else {
         if (from == "directPay") {
+          toogleAutoSelCoupon(true);
           setSelCoupon({
             id: selInfo.id,
             reduceCost: selInfo.reduceCost,

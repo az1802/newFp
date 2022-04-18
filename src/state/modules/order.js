@@ -10,6 +10,7 @@ export default {
     payMethod: "WECHAT",//支付方式
     orderId: "",
     orderInfo: {
+      currentType: "CREATE",
       orderId: "",//订单id
       remark: "",//订单备注
       billFee: 0,//账单金额

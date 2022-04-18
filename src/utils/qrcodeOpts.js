@@ -63,6 +63,7 @@ let mockOpts = {
 }
 
 export async function handleQrcodeParams(opts = mockOpts) {
+  console.log('%c菜单页面入参: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', opts);
   let { merchantId, peopleCount, mealType, scene, timestamp, q, tableId, tableName, id } = opts, parseRes = {};
   parseRes.tableId = tableId;
   parseRes.tableName = tableName;
@@ -83,7 +84,7 @@ export async function handleQrcodeParams(opts = mockOpts) {
     }
   }
 
-  if (merchantId && peopleCount && mealType) {
+  if (merchantId && peopleCount && mealType) { //首页点击就餐模式进行跳转到点餐页面
     parseRes.merchantId = merchantId
     parseRes.peopleCount = Number(peopleCount)
     parseRes.mealType = mealType

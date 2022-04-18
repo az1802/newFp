@@ -33,7 +33,7 @@
     </div>
     <div class="count-container">
       <div class="count-wrapper common-card">
-        <div class="content">
+        <div class="content" @click="goToDirectPay">
           <p class="number">{{ stats.sumUsedCoupons || "0" }}</p>
           <p class="desc">用券次数</p>
         </div>
@@ -89,11 +89,18 @@ export default {
       requestUserInfo();
       requestUserStats();
     });
+
+    async function goToDirectPay() {
+      navigateTo("MARKETING/DIRECT_PAYMENT", {
+        merchantId: "8ec573585d9645229fb01713e30a2a6d",
+      });
+    }
     return {
       navigateTo,
       userInfo,
       stats,
       userId,
+      goToDirectPay,
     };
   },
 };

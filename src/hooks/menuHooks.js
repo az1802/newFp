@@ -115,3 +115,23 @@ export function useDishDetail() {
     showDishDetailModal, curDishDetail, toggleShowDishDetailModal, setCurDishDetail
   }
 }
+
+
+export function useScanModal() {
+  const { showScanModal } = useState('menu', ["showScanModal"]);
+  const { toggleShowScanModal } = useMutations('menu', ["toggleShowScanModal"]);
+
+  return {
+    showScanModal,
+    toggleShowScanModal
+  }
+}
+export function useOptionModal() {
+  const { showOptionModal } = useState('menu', ["showOptionModal"]);
+  const { toggleShowOptionModal } = useMutations('menu', ["toggleShowOptionModal"]);
+
+  return {
+    showOptionModal,
+    toggleShowOptionModal
+  }
+} 

@@ -1,13 +1,13 @@
 <template>
   <div
     class="scan-modal"
-    :class="isShow ? 'fade-modal-enter-active' : 'hide'"
+    :class="showScanModal ? 'fade-modal-enter-active' : 'hide'"
     @touchmove.stop="stop"
     @click="hideModal"
   >
     <div
       class="scan-modal-wrapper border-bottom-1px"
-      :class="isShow ? 'up-modal-enter-active' : 'up-modal-leave-to'"
+      :class="showScanModal ? 'up-modal-enter-active' : 'up-modal-leave-to'"
       @click.stop="stop"
     >
       <div v-if="!tableId">
@@ -39,7 +39,7 @@
 import { showToast } from "@utils";
 import { ref, unref } from "vue";
 import API from "@api";
-
+import { useScanModal } from "@hooks/menuHooks";
 function formatPathStr(pathStr) {
   let res = {};
   if (pathStr.indexOf("?") != -1) {
@@ -57,10 +57,11 @@ function formatPathStr(pathStr) {
 const SPLIT_STR = "package-merchant/menu?scene=";
 export default {
   setup(props, { emit }) {
-    let isShow = ref(false),
-      tableId = ref(""),
+    let tableId = ref(""),
       tableName = ref(""),
       mealType = ref("");
+
+    const { showScanModal, toggleShowScanModal } = useScanModal();
 
     async function scanCode() {
       let code = await uni.scanCode(false);
@@ -96,19 +97,23 @@ export default {
     }
 
     function confirm() {
-      isShow.value = false;
-      emit("scan", unref(tableId), unref(tableName), unref(mealType));
+      toggleShowScanModal(false);
+      emit("scan", {
+        tableId: unref(tableId),
+        tableName: unref(tableName),
+        mealType: unref(mealType),
+      });
     }
 
     return {
       tableId,
       tableName,
-      isShow,
+      showScanModal,
       show() {
-        isShow.value = true;
+        toggleShowScanModal(true);
       },
       hideModal() {
-        isShow.value = false;
+        toggleShowScanModal(false);
       },
       stop() {
         return "";

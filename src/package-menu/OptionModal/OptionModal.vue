@@ -1,12 +1,12 @@
 <template>
   <div
     class="option-modal"
-    :class="isShow ? 'fade-modal-enter-active' : 'hide'"
+    :class="showOptionModal ? 'fade-modal-enter-active' : 'hide'"
     @click.stop="stop"
   >
     <div
       class="option-modal-wrapper border-bottom-1px"
-      :class="isShow ? 'up-modal-enter-active' : 'up-modal-leave-to'"
+      :class="showOptionModal ? 'up-modal-enter-active' : 'up-modal-leave-to'"
       @click.stop="stop"
     >
       <div class="person-wrapper">
@@ -38,7 +38,7 @@
 
 <script type="text/ecmascript-6">
 import { computed, ref, unref } from "vue";
-
+import { useOptionModal } from "@hooks/menuHooks";
 export default {
   props: {
     tableName: {
@@ -51,9 +51,8 @@ export default {
     },
   },
   setup(props, { emit }) {
-    let isShow = ref(false),
-      selectedPersonNumber = ref(1);
-
+    let selectedPersonNumber = ref(1);
+    let { showOptionModal, toggleShowOptionModal } = useOptionModal();
     let personSelect = computed(() => {
       let personLimit = props.personLimit;
       return Array.apply(null, Array(personLimit)).map((item, i) => {
@@ -62,7 +61,7 @@ export default {
     });
 
     function selected() {
-      isShow.value = false;
+      toggleShowOptionModal(false);
       emit("selPeopleOk", unref(selectedPersonNumber));
     }
 
@@ -71,12 +70,12 @@ export default {
     }
 
     return {
-      isShow,
+      showOptionModal,
       show() {
-        isShow.value = true;
+        toggleShowOptionModal(true);
       },
       hideModal() {
-        isShow.value = false;
+        toggleShowOptionModal(false);
       },
       stop() {
         return "";

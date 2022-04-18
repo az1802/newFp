@@ -34,7 +34,7 @@
       <div
         class="text-wrapper"
         :class="[selectedDishes.length > 0 ? 'has-dish' : '']"
-        @click="createOrder"
+        @click.stop="createOrder"
       >
         {{ selectedDishes.length > 0 ? "去下单" : "请先点菜" }}
       </div>
@@ -42,25 +42,39 @@
   </div>
 </template>
 <script>
-import { useCart, useDish } from "@hooks/menuHooks";
+import { useCart, useDish, useScanModal } from "@hooks/menuHooks";
 import { useNavigate } from "@hooks/commonHooks";
 import { useFanpiaoInfo } from "@hooks/merchantHooks";
+import { useOrder } from "@hooks/orderHooks";
 import { unref, computed } from "vue";
-import { fenToYuan } from "@utils";
+import { fenToYuan, showToast } from "@utils";
 export default {
   setup() {
     const { showCartModal, toggleShowCartModal } = useCart();
+    const { toggleShowScanModal } = useScanModal();
+
     const {
       selectedDishes,
       selectedDishesTotalQuantity,
       selectedDishesTotalPrice,
     } = useDish();
     const { maxDiscountFanpiao, minDiscountFanpiao } = useFanpiaoInfo();
+    const { orderInfo, setOrderInfo } = useOrder();
     let { navigateTo } = useNavigate();
     function createOrder() {
-      if (unref(selectedDishes).length > 0) {
-        navigateTo("ORDER/CREATE_ORDER");
+      console.log(unref(orderInfo));
+      if (!unref(orderInfo).tableId) {
+        toggleShowScanModal(true);
+        return;
       }
+
+      // TODO 多人点餐
+      if (unref(selectedDishes).length == 0) {
+        showToast("请先点菜");
+        return;
+      }
+
+      navigateTo("ORDER/CREATE_ORDER");
     }
 
     let priceTooltipText = computed(() => {

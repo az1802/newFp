@@ -33,8 +33,8 @@ export default {
 
     showFanpiaoOpenScreenModal: false,
     // showPhoneAuthorize: false,
-    // showScanModal: false,
-    // showOptionModal: false,
+    showScanModal: false,
+    showOptionModal: false,
     // showDishDetail: false,
     // showCodeExpiredModal: false,
     showOrderStatusModal: false,
@@ -215,7 +215,14 @@ export default {
       for (let key in packagingBoxConfig) {
         state.packagingBoxConfig[key] = packagingBoxConfig[key];
       }
-    }
+    },
+    toggleShowScanModal(state, isShow) {
+      state.showScanModal = isShow;
+    },
+    toggleShowOptionModal(state, isShow) {
+      state.showOptionModal = isShow;
+    },
+
   },
   actions: {
 

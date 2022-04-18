@@ -100,6 +100,7 @@ export default {
     });
 
     async function payOrder() {
+      console.log(unref(orderInfo));
       let payRquestParams = {};
       if (unref(payMethod) == "WECHAT") {
       } else if (unref(payMethod) == "FANPIAO_PAY") {

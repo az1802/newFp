@@ -33,7 +33,12 @@
               ? "（未选择优惠券）"
               : "（已选择最佳优惠）"
           }}
-          <div class="arrow-icon" @click="goToSelectCoupon">></div>
+          <img
+            src="https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/package-static/package-payment/directPayment/arrow-right.png"
+            alt=""
+            class="arrow-icon"
+            @click="goToSelectCoupon"
+          />
         </div>
 
         <div
@@ -48,7 +53,11 @@
           <div class="price-text">
             ¥{{ minLeastCostCoupon.reduceCost / 100 }}
           </div>
-          <div class="arrow-icon">></div>
+          <img
+            src="https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/package-static/package-payment/directPayment/arrow-right.png"
+            alt=""
+            class="arrow-icon"
+          />
         </div>
 
         <div
@@ -61,7 +70,12 @@
             -¥{{ minMerchantLeastCostCoupon.couponCost / 100 }}
           </div>
           （已选择最佳优惠）
-          <div class="arrow-icon">></div>
+
+          <img
+            src="https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/package-static/package-payment/directPayment/arrow-right.png"
+            alt=""
+            class="arrow-icon"
+          />
         </div>
 
         <div class="checked" @click="togglePayMethod">
@@ -92,24 +106,32 @@
     >
       <div class="coupon-detail-wrapper">
         <div class="left">
-          <div class="reduce-cost-price">
-            {{ minMerchantLeastCostCoupon.couponCost / 100 }}
-          </div>
-          <img
-            src="https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/package-static/package-payment/directPayment/mul.png"
-            alt=""
-            class="mul-icon"
-          />
-          <div class="coupon-number">
-            {{ minMerchantLeastCostCoupon.number }}
-          </div>
-        </div>
-        <div class="right">
-          <div class="total-value">
-            价值{{ minMerchantLeastCostCoupon.totalPrice / 100 }}元
+          <div class="count-and-price">
+            <div class="reduce-cost-price">
+              {{ minMerchantLeastCostCoupon.couponCost / 100 }}
+            </div>
+            <img
+              src="https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/package-static/package-payment/directPayment/mul.png"
+              alt=""
+              class="mul-icon"
+            />
+            <div class="coupon-number">
+              {{ minMerchantLeastCostCoupon.number }}
+            </div>
           </div>
           <div class="sell-quantity">
             已售{{ minMerchantLeastCostCoupon.sellingQuantity }}张
+          </div>
+        </div>
+        <div class="right">
+          <div class="current-price">
+            优惠价￥{{ minMerchantLeastCostCoupon.price / 100 }}
+          </div>
+          <div class="total-value">
+            原价
+            <div class="text">
+              ￥{{ minMerchantLeastCostCoupon.totalPrice / 100 }}
+            </div>
           </div>
         </div>
       </div>
@@ -192,7 +214,7 @@ export default {
       isAgreeRules,
       merchantId,
     } = toRefs(props);
-    const { selCoupon, setSelCoupon } = useDirectPaySelCoupon();
+    const { selCoupon, setSelCoupon, autoSelCoupon } = useDirectPaySelCoupon();
     let minLeastCostCoupon = computed(() => {
       let res = null;
       if (unref(userMerchantCoupons).length > 0) {
@@ -231,7 +253,8 @@ export default {
         newPayMethod == "COUPON_PAY" &&
         unref(minLeastCostCoupon) &&
         unref(billFee) >= unref(minLeastCostCoupon).leastCost &&
-        !unref(selCoupon).id
+        !unref(selCoupon).id &&
+        unref(autoSelCoupon)
       ) {
         setSelCoupon(toRaw(unref(minLeastCostCoupon)));
         // emit("update:selCoupon", toRaw(unref(minLeastCostCoupon)));
@@ -322,8 +345,8 @@ export default {
         .normal-font(14px,rgba(242, 86, 67, 1));
       }
       .arrow-icon {
-        font-size: 10px;
-        color: rgba(27, 27, 33, 0.8);
+        .box-size(8px,11px,transparent);
+        margin-left: 2px;
       }
     }
     .checked {
@@ -338,42 +361,57 @@ export default {
   .coupon-detail-wrapper {
     .box-size(calc(100% - 16px),100px,transparent);
     .flex-simple(space-between,center);
-    padding: 0 7.88% 0 16.84%;
+    padding: 0 5.01% 0 16.84%;
     background: url("https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/package-static/package-payment/directPayment/coupon-background.png")
       0 0/100% 100% no-repeat;
     .left {
       .flex-simple(flex-start,center);
-      .reduce-cost-price {
-        .bold-font(24px,rgba(242, 86, 67, 1));
-        &:after {
-          content: "元";
-          font-size: 14px;
-          margin-left: 2px;
-        }
-      }
-      .mul-icon {
-        .box-size(9px,9px);
-        margin: 0 6px;
-      }
-      .coupon-number {
-        .bold-font(24px,rgba(242, 86, 67, 1));
-        &:after {
-          content: "张";
-          font-size: 14px;
-          margin-left: 2px;
-        }
-      }
-    }
-    .right {
-      .flex-simple(flex-start,center);
       flex-direction: column;
-      .total-value {
-        .line-center(22px);
-        .bold-font(16px,rgba(255, 255, 255, 1));
+      .line-center(53px);
+      .count-and-price {
+        .flex-simple(space-between,center);
+        .line-center(33px);
+        .reduce-cost-price {
+          .bold-font(24px,rgba(242, 86, 67, 1));
+          &:after {
+            content: "元";
+            font-size: 14px;
+            margin-left: 2px;
+          }
+        }
+        .mul-icon {
+          .box-size(9px,9px);
+          margin: 0 6px;
+        }
+        .coupon-number {
+          .bold-font(24px,rgba(242, 86, 67, 1));
+          &:after {
+            content: "张";
+            font-size: 14px;
+            margin-left: 2px;
+          }
+        }
       }
       .sell-quantity {
         .line-center(20px);
-        .normal-font(14px,rgba(255, 255, 255, 0.8));
+        .normal-font(14px,rgba(121, 74, 7, 1));
+      }
+    }
+    .right {
+      .flex-simple(flex-start,flex-start);
+      flex-direction: column;
+      .current-price {
+        .line-center(22px);
+        .bold-font(16px,white);
+      }
+      .total-value {
+        .line-center(22px);
+        .normal-font(16px,white);
+        font-family: "PingFangSC-Light";
+        .text {
+          display: inline-block;
+          text-decoration: line-through;
+        }
       }
     }
   }

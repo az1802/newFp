@@ -52,7 +52,7 @@ export function useMerchantInfo() {
   }
 }
 
-let merchantId = '1e543376139b474e97d38d487fa9fbe8';
+// let merchantId = '1e543376139b474e97d38d487fa9fbe8';
 export function useFanpiaoInfo() {
   const { setFanpiaoList, setFanpiaoUserList, setFanpiaoUserNum } = useMutations("merchant", ["setFanpiaoList", "setFanpiaoUserList", "setFanpiaoUserNum"]);
   const { fanpiaoList, fanpiaoUserAvaterList, fanpiaoUserNum } = useState("merchant", ['fanpiaoList', "fanpiaoUserAvaterList", 'fanpiaoUserNum']);

@@ -18,8 +18,9 @@
     <ChildSkuDishModal />
     <CartModal />
     <OpenScreenFanpiaoModal />
-    <ScanModal ref="scanModal" @scan="scanOk" />
-    <OptionModal ref="optionModal" @selPeopleOk="selPeopleOk" />
+
+    <ScanModal @scan="scanOk" />
+    <OptionModal @selPeopleOk="selPeopleOk" :tableName="orderInfo.tableName" />
     <CodeExpiredModal ref="codeExpiredModal" />
     <DishDetailModal />
     <SplashModal ref="splashModal" />
@@ -42,17 +43,21 @@ import SplashModal from "./SplashModal/SplashModal.vue";
 import API from "@api";
 
 import { sleep, handleDishList, getStorage } from "@utils";
-import { useSystemInfo, useNavigate } from "@hooks/commonHooks";
+import { useSystemInfo } from "@hooks/commonHooks";
 import {
   useMerchantInfo,
   useFanpiaoInfo,
   useCouponInfo,
   useFanpiaoOpenScreen,
 } from "@hooks/merchantHooks";
-import { useUserLogin, useUserCoupon } from "@hooks/userHooks";
-import { useDish } from "@hooks/menuHooks";
+import {
+  useUserLogin,
+  useUserCoupon,
+  useUserMerchantFanpiaoBalance,
+} from "@hooks/userHooks";
+import { useDish, useScanModal, useOptionModal } from "@hooks/menuHooks";
 import { useOrder } from "@hooks/orderHooks";
-import { handleQrcodeParams } from "@utils";
+import { handleQrcodeParams, navigateTo, showToast } from "@utils";
 
 let opts;
 
@@ -72,19 +77,17 @@ export default {
     SplashModal,
   },
   onLoad(options) {
-    console.log(
-      "%coptions: ",
-      "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-      options
-    );
-    // opts = options;
+    let userId = uni.getStorageSync("userId") || "";
+    if (!userId) {
+      navigateTo("MENU/LOGIN");
+      return "";
+    }
+    opts = options;
   },
   setup(props, context) {
     let dishList = reactive([]);
     let userInfo = reactive({});
-    let scanModal = ref(""),
-      optionModal = ref(""),
-      codeExpiredModal = ref(""),
+    let codeExpiredModal = ref(""),
       splashModal = ref("");
     const { requestMerchantInfo, requestMerchantDishes, merchantInfo } =
       useMerchantInfo();
@@ -94,8 +97,11 @@ export default {
     const { resetSelDishes } = useDish();
     const { toggleShowFanpiaoOpenScreenModal } = useFanpiaoOpenScreen();
     const { checkLogin } = useUserLogin();
-    // const { requestUserMerchantCoupons } = useUserMerchantCoupon();
+    const { userMerchantFanpiaoBalance, requestUserMerchantFanpiaoBalance } =
+      useUserMerchantFanpiaoBalance();
     const { orderInfo, setOrderInfo } = useOrder();
+    const { showScanModal } = useScanModal();
+    const { showOptionModal, toggleShowOptionModal } = useOptionModal();
 
     async function _handleMerchantConfig() {
       let { splashMode, disableBuyFanpiao } = unref(merchantInfo);
@@ -107,44 +113,52 @@ export default {
       } else if (splashMode === "IMAGE" || splashMode === "MEMBER_RECHARGE") {
         splashModal.value.showModal();
       }
-
-      // TODO 点击下单的时候扫码
-      if (0) {
-        //扫码桌台码
-        scanModal.value.show();
-      }
-
-      if (0) {
-        //选择人数
-        optionModal.value.show();
-      }
-
-      if (0) {
-        //二维码过期
-        codeExpiredModal.value.show();
+      if (!unref(orderInfo).peopleCount) {
+        toggleShowOptionModal(true);
+        return;
       }
     }
 
-    function scanOk(...args) {
-      //  TODO  选桌台之后的操作
+    function scanOk(tableInfo) {
+      opts = {
+        ...opts,
+        ...tableInfo,
+      };
+
+      setOrderInfo(tableInfo);
+      // TODO 多人点餐;
     }
-    function selPeopleOk(...args) {
-      //  TODO  选择人数
+    function selPeopleOk(peopleCount) {
+      setOrderInfo({
+        peopleCount,
+      });
     }
 
     async function loadSource(parseRes) {
-      let { scene, tableId, tableName } = parseRes;
+      let { scene, tableId, tableName, merchantId } = parseRes;
+      if (!scene && !merchantId) {
+        showToast("二维码信息错误");
+        return;
+      }
       if (!scene && tableId) {
         //只有tableId的情况
         setOrderInfo({ tableId, tableName });
         let res = await API.Merchant.getTableInfo(tableId);
-        scene = res.data.id;
+        scene = res.id;
       }
 
       if (scene) {
         //通过scene获取桌台相关的配置信息
         let res = await API.Merchant.getDishCatalogScene(scene);
-        parseRes = Object.assign({}, parseRes, res);
+        parseRes.merchantId = res.merchantId;
+        parseRes.tableId = res.tableId || parseRes.tableId;
+        parseRes.tableName = res.tableName || parseRes.tableName;
+        parseRes.mealType = res.mealType;
+        parseRes.peopleCount =
+          parseRes.peopleCount || (res.mealType !== "EAT_IN" ? 0 : 1);
+        parseRes.onlyForPay = res.onlyForPay;
+        parseRes.isSelectTablePay = res.isSelectTablePay;
+        parseRes = Object.assign({}, parseRes);
         setOrderInfo(res);
       }
 
@@ -161,7 +175,7 @@ export default {
         // 请求资源
         requestFanpiaoList(merchantId);
         requestCouponList(merchantId);
-        // requestUserMerchantCoupons(merchantId);
+        requestUserMerchantFanpiaoBalance(merchantId); //获取饭票余额
       }
     }
 
@@ -172,6 +186,11 @@ export default {
       }
       try {
         let parseRes = await handleQrcodeParams(opts); //处理二维码参数
+        if (parseRes.codeExpiredModal) {
+          //二维码过期
+          codeExpiredModal.value.show();
+          return;
+        }
         await loadSource(parseRes); //根据不同的解析结果加载不同的数据
       } catch (err) {
         console.log(err);
@@ -182,6 +201,7 @@ export default {
       // 处理参数
       await prepareMerchantInfo();
 
+      // TODO 处理selectTable以及recentOrderId  强制收取手机号的配置处理
       // 根据商户配置处理不同逻辑
       _handleMerchantConfig();
     });
@@ -194,12 +214,13 @@ export default {
       dishList,
       userInfo,
       menuWrapperStyle,
-      scanModal,
-      optionModal,
       codeExpiredModal,
       splashModal,
       scanOk,
       selPeopleOk,
+      showScanModal,
+      showOptionModal,
+      orderInfo,
     };
   },
 };
