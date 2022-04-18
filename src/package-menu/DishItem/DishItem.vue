@@ -7,6 +7,34 @@
 -->
 <template>
   <div class="container" @click="showDishDetail">
+    <div
+      class="sell-out-placeholder"
+      v-if="dish.status == 'GUQING' && merchantInfo.enableShowSoldOutDishes"
+    >
+      <div class="img-wrappper">
+        <img
+          class="img"
+          src="https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/common/sell-out_01.png"
+          alt=""
+          mode="scaleToFill"
+        />
+      </div>
+    </div>
+    <div
+      class="time-limit-placeholder"
+      v-else-if="
+        dish.status == 'NOT_IN_TIME_LIMIT_SALE' &&
+        merchantInfo.enableShowTimeLimitSale
+      "
+    >
+      <div class="time-limit-sale-text">
+        不在可售卖时间
+        <text
+          class="cuIcon-question"
+          @click.stop="showTimeLimitSaleTooltip"
+        ></text>
+      </div>
+    </div>
     <div class="img-wrapper">
       <div class="placeholder" v-if="showPlaceHolder || !dish.thumbImage"></div>
       <img
@@ -25,13 +53,14 @@
       </div>
       <div class="price" @click.stop="navigateTo('MARKETING/BUY_FANPIAO')">
         <div class="origin">{{ fenToYuan(dish.price) }}</div>
-        <div class="fanpiao">
+        <div class="fanpiao" v-if="dish.status !== 'NOT_IN_TIME_LIMIT_SALE'">
           <span class="text">{{ fenToYuan(minFanpiaoPrice) }}</span>
           <span class="icon">饭票价</span>
         </div>
       </div>
     </div>
     <DishOperation
+      v-show="dish.status !== 'NOT_IN_TIME_LIMIT_SALE'"
       :dishId="dish.id"
       :isSku="dish.isSku"
       @add="add"
@@ -47,7 +76,7 @@ import { ref, onMounted, watch, unref, computed } from "vue";
 import { useDish, useSkuDish, useDishDetail } from "@hooks/menuHooks";
 import { getDishInfoById, fenToYuan } from "@utils";
 import { useNavigate } from "@hooks/commonHooks";
-import { useFanpiaoInfo } from "@hooks/merchantHooks";
+import { useFanpiaoInfo, useMerchantInfo } from "@hooks/merchantHooks";
 export default {
   components: {
     DishOperation,
@@ -61,6 +90,7 @@ export default {
   setup({ dish }) {
     let showPlaceHolder = ref(true);
 
+    let { merchantInfo } = useMerchantInfo();
     let { addDish, reduceDish, dishCountMap } = useDish();
     let { setCurSkuDish, toggleShowSkuModal } = useSkuDish();
     let { maxDiscountFanpiao, minDiscountFanpiao } = useFanpiaoInfo();
@@ -84,6 +114,7 @@ export default {
       dishCountMap,
       navigateTo,
       minDiscountFanpiao,
+      merchantInfo,
       imgLoaded(e) {
         showPlaceHolder.value = false;
       },
@@ -105,6 +136,17 @@ export default {
         setCurDishDetail(dish);
         toggleShowDishDetailModal(true);
       },
+      showTimeLimitSaleTooltip() {
+        let limitTimeStr = dish.saleTimeStr;
+        uni.showModal({
+          icon: "none",
+          title: "限时段菜品",
+          content: `售卖时间 ${limitTimeStr}`,
+          showCancel: false,
+          confirmText: "我知道了",
+          confirmColor: "#F25643",
+        });
+      },
     };
   },
 };
@@ -115,6 +157,28 @@ export default {
   display: flex;
   margin-bottom: 24px;
   position: relative;
+  .sell-out-placeholder,
+  .time-limit-placeholder {
+    .fill-box();
+    background: white;
+    opacity: 0.6;
+    z-index: 20;
+    .img-wrappper {
+      .flex-simple(center,center);
+      .box-size(86px,86px);
+    }
+    .img {
+      .box-size(60px,60px);
+    }
+    .time-limit-sale-text {
+      .pos-br-absolute(0,0);
+      .normal-font(14px,#999);
+      .cuIcon-question {
+        margin: 0 5px;
+        color: #999;
+      }
+    }
+  }
   .img-wrapper {
     .box-size(86px,86px,#eee);
     position: relative;

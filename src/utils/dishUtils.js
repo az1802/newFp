@@ -70,6 +70,7 @@ export function handleDishList(dishes, dishBaseSellCountMap = {}) {
     scrollTop += CATEGORY_TITLE_HEIGHT;
 
     categoryItem.dishList.forEach(dishItem => {
+      // dishItem.status = 'NOT_IN_TIME_LIMIT_SALE';
       dishItem.isSku = isSkuDish(dishItem)
       dishItem.soldNumber += (dishBaseSellCountMap[dishItem.id]?.soldNumber || 0)
       _processDishAttr(dishItem)
