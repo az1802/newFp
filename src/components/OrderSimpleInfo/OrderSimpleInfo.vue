@@ -263,7 +263,7 @@ export default {
     .content {
       flex: 1;
       .order-scroll-view {
-        .box-size(100%,54px);
+        .box-size(100%,84px);
         .dish-item {
           .img {
             .box-size(60px,60px);

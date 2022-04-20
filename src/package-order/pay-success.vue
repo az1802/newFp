@@ -3,6 +3,7 @@
     <NavigationBar title="订单详情" @customBack="navBack" />
     <OrderStatusInfo :orderInfo="orderDetail" />
     <OrderDishInfo
+      :merchantName="orderDetail.storeName"
       :dishList="orderDetail.dishList"
       :discountPrice="orderDiscountPrice"
       :totalPrce="orderTotalPrice"
@@ -17,7 +18,8 @@ import OrderStatusInfo from "./OrderStatusInfo/OrderStatusInfo.vue";
 import OrderDishInfo from "./OrderDishInfo/OrderDishInfo.vue";
 import OrderInfoList from "./OrderInfoList/OrderInfoList.vue";
 import { navigateBack, navigateTo } from "@utils";
-let orderId = "";
+let orderId = "",
+  redPacketValue = "";
 export default {
   components: {
     OrderStatusInfo,
@@ -26,12 +28,21 @@ export default {
   },
   onLoad(opts) {
     orderId = opts.orderId;
+    redPacketValue = opts.redPacketValue;
   },
   setup() {
     let { orderDetail, getOrderDetailById } = useOrderDetail();
 
-    onBeforeMount(() => {
+    onBeforeMount(async () => {
       getOrderDetailById(orderId);
+      if (redPacketValue) {
+        //  弹出红包弹窗
+        console.log(
+          "%credPacketValue: ",
+          "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
+          redPacketValue
+        );
+      }
     });
     let orderDiscountPrice = computed(() => {
       return unref(orderDetail).billFee - unref(orderDetail).paidFee;

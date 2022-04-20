@@ -2,7 +2,9 @@
   <div class="header" v-if="show">
     <div class="title" v-if="titleText !== undefined">{{ titleText }}</div>
     <div class="code" v-if="codeText !== undefined">{{ codeText }}</div>
-    <div class="text" v-if="tooltipText !== undefined">感谢您对本店的支持</div>
+    <div class="text" v-if="tooltipText !== undefined">
+      感谢您对本店的支持,期待您的再次光临
+    </div>
     <div v-if="orderInfo.mealType == 'TAKE_OUT'">
       <div class="takeout-wrapper">
         <div class="left-wrapper">

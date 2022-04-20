@@ -35,6 +35,9 @@ export default {
 
   },
   mutations: {
+    setUserId(state, userId) {
+      state.userId = userId;
+    },
     setUserInfo(state, userInfo) {
       for (let key in userInfo) {
         state.userInfo[key] = userInfo[key]

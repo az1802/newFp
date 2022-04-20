@@ -12,8 +12,10 @@ import API from "@api";
 
 export function useUserInfo() {
   let { userInfo, userId, userWallet } = useState("user", ['userInfo', "userId", "userWallet"])
-  const { setUserInfo, setStats, setUserWallet } = useMutations("user", ["setUserInfo", "setUserWallet"]);
-  userId.value = userId.value || uni.getStorageSync("userId");
+  const { setUserInfo, setStats, setUserWallet, setUserId } = useMutations("user", ["setUserInfo", "setUserWallet", 'setUserId']);
+  if (uni.getStorageSync('userId')) {
+    setUserId(userId);
+  }
   async function requestUserInfo() {
     let userId = uni.getStorageSync("userId");
     if (!userId) {

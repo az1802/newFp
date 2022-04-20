@@ -7,7 +7,7 @@
 -->
 <template>
   <div class="menu-bottom-container">
-    <div class="discount-tooltip">
+    <div class="discount-tooltip" v-if="selectedDishesTotalQuantity">
       <div class="text">
         使用饭票支付,本单可再减
         <div class="price">{{ priceTooltipText }}元</div>

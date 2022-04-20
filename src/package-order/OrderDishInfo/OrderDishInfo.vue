@@ -8,7 +8,7 @@
 <template>
   <div class="order-list-container">
     <div class="info">
-      <span class="name">{{ merchantInfo.name }}</span>
+      <span class="name">{{ merchantName }}</span>
       <span class="count" v-if="dishList.length"
         >共{{ dishList.length }}件</span
       >
@@ -41,6 +41,10 @@ export default {
     CouponReduce,
   },
   props: {
+    merchantName: {
+      type: [String],
+      default: "",
+    },
     dishList: {
       type: [Array],
       default: [],

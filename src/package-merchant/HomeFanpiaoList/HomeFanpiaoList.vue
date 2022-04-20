@@ -247,16 +247,13 @@ export default {
           .company-price {
             font-weight: bold;
             line-height: 16px;
-            company-price();
-          }
 
-          .no-discount-pirce {
-            font-size: 10px;
-            margin-left: 2px;
-            color: #999999;
-            text-decoration: line-through;
-            font-weight: bold;
-            company-price(#999999);
+            &:before {
+              content: '¥';
+              display: inline-block;
+              font-size: 11px;
+              color: #F25643;
+            }
           }
         }
       }

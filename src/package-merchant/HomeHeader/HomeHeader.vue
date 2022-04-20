@@ -77,6 +77,7 @@ export default {
   .name {
     .box-size(100%,46.5px,transparent);
     .bold-font(20px,#333);
+    line-height: 1;
     .no-wrap();
     padding: 12px 21px 14.5px 62px;
   }

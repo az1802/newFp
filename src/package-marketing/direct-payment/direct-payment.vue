@@ -154,7 +154,7 @@ export default {
       // 没有券包则只计算推荐的券包
     });
 
-    let minLeastCostCoupon = watch(
+    watch(
       [billFee, selFanpiao, payMethod],
       async ([newBillFee, newSelFanpiao, newPayMethod]) => {
         if (newPayMethod !== "FANPIAO_PAY") {

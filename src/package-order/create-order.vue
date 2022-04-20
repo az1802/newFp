@@ -12,6 +12,7 @@
       <TableInfo />
       <div style="height: 8px"></div>
       <OrderDishInfo
+        :merchantName="merchantInfo.name"
         :dishList="selectedDishes"
         :totalPrce="selectedDishesTotalPrice"
         :discountPrice="orderDiscountPrice"
@@ -133,6 +134,7 @@ export default {
       return res;
     });
     return {
+      merchantInfo,
       selectedDishes,
       selectedDishesTotalPrice,
       orderDiscountPrice,

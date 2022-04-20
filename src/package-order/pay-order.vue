@@ -197,11 +197,8 @@ export default {
       await sleep(2000);
       // 跳转到支付成功野蛮
       navigateTo("ORDER/PAY_SUCCESS", {
-        from: "payOrder",
         orderId: tempOrderInfo.orderId,
-        transactionId: res?.transactionId || "",
-        payMethod: unref(payMethod),
-        redPacketValue: res?.redPacketValue || 0,
+        redPacketValue: tempOrderInfo.redPacketValue,
       });
     }
     return {
