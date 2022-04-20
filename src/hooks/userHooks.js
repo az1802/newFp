@@ -36,7 +36,6 @@ export function useUserInfo() {
 
   async function requestUserWallet() {
     let res = await API.User.getUserWallet();
-    console.log('%cres: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', res);
     setUserWallet(res)
   }
 

@@ -122,7 +122,7 @@
 <script>
 import { useFanpiaoInfo } from "@hooks/merchantHooks";
 import { ref, computed, unref } from "vue";
-import { navigateTo } from "@utils";
+import { navigateTo, showToast, sleep } from "@utils";
 export default {
   props: {
     enableMarketing: {
@@ -176,15 +176,34 @@ export default {
     }
 
     function toggleFanpiaoPayMethod() {
-      emit(
-        "update:payMethod",
-        props.payMethod == "FANPIAO_PAY" ? "WECHAT_PAY" : "FANPIAO_PAY"
-      );
-      let { selFanpiao, recommendFanpiaoList } = props;
-      if (!selFanpiao.id) {
+      let {
+        enableMarketing,
+        billFee,
+        fanpiaoBalancePaidFee,
+        fanpiaoBalance,
+        selFanpiao,
+        recommendFanpiaoList,
+        payMethod,
+      } = props;
+      if (
+        !enableMarketing &&
+        billFee > fanpiaoBalancePaidFee &&
+        fanpiaoBalance
+      ) {
+        //饭票存在余额不存在营销时提示余额不足
+        showToast("饭票余额不足,请重新输入金额");
+        return;
+      }
+
+      let newPayMethod =
+        payMethod == "FANPIAO_PAY" ? "WECHAT_PAY" : "FANPIAO_PAY";
+      emit("update:payMethod", newPayMethod);
+
+      if (!selFanpiao.id && recommendFanpiaoList.length > 0) {
         //默认选择第一个
-        recommendFanpiaoList[0] &&
-          emit("update:selFanpiao", recommendFanpiaoList[0]);
+        emit("update:selFanpiao", recommendFanpiaoList[0]);
+      } else if (selFanpiao.id && billFee > fanpiaoBalancePaidFee) {
+        emit("update:selFanpiao", {});
       }
     }
     return {
@@ -231,10 +250,12 @@ export default {
     }
     .tag {
       .box-size(43px,13px);
+      .line-center(13px);
       .pos-tl-absolute(0,0);
       .normal-font(8px,#FFE1AD);
       background: linear-gradient(180deg, #f25643 0%, #eb7b3a 100%);
       border-radius: 4px 0px 4px 0px;
+      text-align: center;
     }
     .text-box {
       text-align: left;
@@ -343,6 +364,7 @@ export default {
     .line-center(12px);
     margin-top: 8px;
     text-align: right;
+    margin-bottom: 26px;
   }
 }
 </style>

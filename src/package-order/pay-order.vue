@@ -192,7 +192,11 @@ export default {
       tempOrderInfo.billFee = unref(billFee);
       tempOrderInfo.paidFee = unref(paidFee);
       tempOrderInfo.orderFanpiaoPayInfo = { ...unref(orderFanpiaoPayInfo) };
-      let res = payOrder(unref(payMethod), tempOrderInfo, unref(userWallet));
+      let res = await payOrder(
+        unref(payMethod),
+        tempOrderInfo,
+        unref(userWallet)
+      );
       res && resetSelDishes([]);
       await sleep(2000);
       // 跳转到支付成功野蛮

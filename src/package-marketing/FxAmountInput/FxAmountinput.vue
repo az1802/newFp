@@ -79,7 +79,7 @@
           <div class="hint-text" v-if="fanpiaoMoney">
             预估饭票余额￥{{ fanpiaoMoney / 100 }}
           </div>
-          <div class="hint-text" v-if="selCoupon.id">
+          <div class="hint-text" v-if="showCouponReducest && selCoupon.id">
             优惠￥{{ selCoupon.reduceCost / 100 }}
           </div>
           <div class="hint-text" v-if="buyCouponInfo && buyCouponInfo.id">
@@ -222,6 +222,10 @@ export default {
     selCoupon: {
       default: {},
       type: Object,
+    },
+    showCouponReducest: {
+      default: false,
+      type: Boolean,
     },
     buyCouponInfo: {
       default: {},

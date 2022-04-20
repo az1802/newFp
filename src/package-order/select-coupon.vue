@@ -113,14 +113,17 @@ export default {
 
     let selCouponInfo;
     if ((from = "directPay")) {
+      let { id = "", reduceCost = 0 } = unref(selCoupon) || {};
       selCouponInfo = ref({
-        id: unref(selCoupon)?.id || "",
-        reduceCost: unref(selCoupon)?.reduceCost || "",
+        id,
+        reduceCost,
       });
     } else {
+      let { selCouponId = "", selCouponReduceCost = "" } =
+        unref(orderInfo) || {};
       selCouponInfo = ref({
-        id: unref(orderInfo)?.selCouponId || "",
-        reduceCost: unref(orderInfo)?.selCouponReduceCost || "",
+        id: selCouponId,
+        reduceCost: selCouponReduceCost,
       });
     }
 
@@ -135,22 +138,22 @@ export default {
     function selectCoupon() {
       let selInfo = unref(selCouponInfo);
 
-      if (!selInfo) {
-        if (from == "directPay") {
-          setSelCoupon({});
+      if (from == "directPay") {
+        if (!selInfo) {
           toogleAutoSelCoupon(false);
+          setSelCoupon({});
         } else {
-          setOrderInfo({
-            selCouponReduceCost: 0, //使用券包的价格
-            selCouponId: "", //使用券包的id
-          });
-        }
-      } else {
-        if (from == "directPay") {
           toogleAutoSelCoupon(true);
           setSelCoupon({
             id: selInfo.id,
             reduceCost: selInfo.reduceCost,
+          });
+        }
+      } else {
+        if (!selInfo) {
+          setOrderInfo({
+            selCouponReduceCost: 0, //使用券包的价格
+            selCouponId: "", //使用券包的id
           });
         } else {
           setOrderInfo({
@@ -161,6 +164,7 @@ export default {
       }
       navigateBack();
     }
+
     return {
       selCouponInfo,
       avaiableMerchantCoupons,

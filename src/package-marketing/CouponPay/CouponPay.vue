@@ -1,8 +1,15 @@
 <template>
-  <div class="coupon-pay-wrapper" v-if="billFee != 0">
+  <div
+    class="coupon-pay-wrapper"
+    v-if="
+      billFee != 0 &&
+      (userMerchantCoupons.length > 0 ||
+        (couponList.length > 0 && enableMarketing))
+    "
+  >
     <div
       v-if="
-        userMerchantCoupons?.length > 0 ||
+        userMerchantCoupons.length > 0 ||
         (enableMarketing &&
           minMerchantLeastCostCoupon &&
           userMerchantCoupons.length == 0)
@@ -20,24 +27,23 @@
       <div class="coupon-info">
         <div
           class="tooltip-wrapper"
+          @click="goToSelectCoupon"
           v-if="minLeastCostCoupon && billFee >= minLeastCostCoupon.leastCost"
         >
-          <div
-            class="price-text"
-            v-if="!(!selCoupon.id && payMethod == 'COUPON_PAY')"
-          >
-            -¥{{ minLeastCostCoupon.reduceCost / 100 }}
+          <div class="tooltip-text">
+            <div class="price-text" v-if="selCoupon.id">
+              -¥{{ minLeastCostCoupon.reduceCost / 100 }}
+            </div>
+            {{
+              !selCoupon.id
+                ? "有" + userMerchantCoupons.length + "张可用券"
+                : "（已选择最佳优惠）"
+            }}
           </div>
-          {{
-            !selCoupon.id && payMethod == "COUPON_PAY"
-              ? "（未选择优惠券）"
-              : "（已选择最佳优惠）"
-          }}
           <img
             src="https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/package-static/package-payment/directPayment/arrow-right.png"
             alt=""
             class="arrow-icon"
-            @click="goToSelectCoupon"
           />
         </div>
 
@@ -45,13 +51,15 @@
           class="tooltip-wrapper"
           v-if="minLeastCostCoupon && billFee < minLeastCostCoupon.leastCost"
         >
-          再消费
-          <div class="price-text">
-            ¥{{ (billFee - minLeastCostCoupon.leastCost) / 100 }}
-          </div>
-          ,立减
-          <div class="price-text">
-            ¥{{ minLeastCostCoupon.reduceCost / 100 }}
+          <div class="tooltip-text">
+            再消费
+            <div class="price-text">
+              ¥{{ (billFee - minLeastCostCoupon.leastCost) / 100 }}
+            </div>
+            ，立减
+            <div class="price-text">
+              ¥{{ minLeastCostCoupon.reduceCost / 100 }}
+            </div>
           </div>
           <img
             src="https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/package-static/package-payment/directPayment/arrow-right.png"
@@ -61,15 +69,46 @@
         </div>
 
         <div
-          class="tooltip-wrapper"
+          class="tooltip-wrapper buy-coupon"
           v-if="
-            !minLeastCostCoupon && minMerchantLeastCostCoupon && enableMarketing
+            !minLeastCostCoupon &&
+            minMerchantLeastCostCoupon &&
+            enableMarketing &&
+            minMerchantLeastCostCoupon.availableFee <= billFee
           "
         >
-          <div class="price-text">
-            -¥{{ minMerchantLeastCostCoupon.couponCost / 100 }}
+          <div class="tooltip-text">
+            <div class="price-text">
+              -¥{{ minMerchantLeastCostCoupon.couponCost / 100 }}
+            </div>
+            （本单可减{{ minMerchantLeastCostCoupon.couponCost / 100 }}元）
           </div>
-          （已选择最佳优惠）
+          <img
+            src="https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/package-static/package-payment/directPayment/arrow-right.png"
+            alt=""
+            class="arrow-icon"
+          />
+        </div>
+
+        <div
+          class="tooltip-wrapper buy-coupon"
+          v-if="
+            !minLeastCostCoupon &&
+            minMerchantLeastCostCoupon &&
+            enableMarketing &&
+            minMerchantLeastCostCoupon.availableFee > billFee
+          "
+        >
+          <div class="tooltip-text">
+            再消费
+            <div class="price-text">
+              ¥{{ (minMerchantLeastCostCoupon.availableFee - billFee) / 100 }}
+            </div>
+            ,立减
+            <div class="price-text">
+              ¥{{ minMerchantLeastCostCoupon.couponCost / 100 }}
+            </div>
+          </div>
 
           <img
             src="https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/package-static/package-payment/directPayment/arrow-right.png"
@@ -105,6 +144,9 @@
       class="buy-coupon-info"
     >
       <div class="coupon-detail-wrapper">
+        <div class="available-tag">
+          满{{ minMerchantLeastCostCoupon.availableFee / 100 }}可用
+        </div>
         <div class="left">
           <div class="count-and-price">
             <div class="reduce-cost-price">
@@ -153,9 +195,7 @@
               v-if="!isAgreeRules"
             />
           </div>
-          <div class="text" click="navigateTo('OTHER/COUPON_ACCORD_TEXT')">
-            阅读并同意《付费券包协议》
-          </div>
+          <div class="text" click="viewRules">阅读并同意《付费券包协议》</div>
         </div>
       </div>
     </div>
@@ -195,10 +235,6 @@ export default {
       type: String,
       default: "",
     },
-    isBuyCoupon: {
-      type: Boolean,
-      default: false,
-    },
     isAgreeRules: {
       type: Boolean,
       default: false,
@@ -228,7 +264,6 @@ export default {
       }
       return res;
     });
-
     let minMerchantLeastCostCoupon = computed(() => {
       let res = null;
       if (
@@ -248,7 +283,6 @@ export default {
     });
 
     watch([billFee, payMethod], ([newBillFee, newPayMethod]) => {
-      console.log(unref(selCoupon));
       if (
         newPayMethod == "COUPON_PAY" &&
         unref(minLeastCostCoupon) &&
@@ -256,10 +290,10 @@ export default {
         !unref(selCoupon).id &&
         unref(autoSelCoupon)
       ) {
-        setSelCoupon(toRaw(unref(minLeastCostCoupon)));
+        // setSelCoupon(toRaw(unref(minLeastCostCoupon)));
         // emit("update:selCoupon", toRaw(unref(minLeastCostCoupon)));
       } else {
-        setSelCoupon({});
+        // setSelCoupon({});
         // emit("update:selCoupon", {});
       }
 
@@ -272,16 +306,36 @@ export default {
           "update:buyCouponInfo",
           toRaw(unref(minMerchantLeastCostCoupon)) || {}
         );
-        emit("update:isBuyCoupon", true);
       } else {
         emit("update:buyCouponInfo", {});
-        emit("update:isBuyCoupon", false);
+      }
+
+      if (
+        (unref(minMerchantLeastCostCoupon) &&
+          newBillFee < unref(minMerchantLeastCostCoupon).availableFee) ||
+        (unref(minLeastCostCoupon) &&
+          newBillFee < unref(minLeastCostCoupon).leastCost)
+      ) {
+        // 此处不能自动切换为微信支付会影响饭票余额支付的选择
+        newPayMethod != "FANPIAO_PAY" && emit("update:payMethod", "WECHAT_PAY");
       }
     });
     function togglePayMethod() {
-      let newPayMethod =
-        unref(payMethod) == "COUPON_PAY" ? "WECHAT_PAY" : "COUPON_PAY";
-      emit("update:payMethod", newPayMethod);
+      let pm = unref(payMethod);
+      if (
+        (unref(minMerchantLeastCostCoupon) &&
+          unref(billFee) < unref(minMerchantLeastCostCoupon).availableFee) ||
+        (unref(minLeastCostCoupon) &&
+          unref(billFee) < unref(minLeastCostCoupon).leastCost)
+      ) {
+        //  券包营销开启,未达门槛时不能切换为券包支付
+        return;
+      }
+
+      emit(
+        "update:payMethod",
+        pm == "COUPON_PAY" ? "WECHAT_PAY" : "COUPON_PAY"
+      );
     }
 
     function toggleAgreeRules() {
@@ -340,9 +394,14 @@ export default {
       padding: 0 16px;
       background: linear-gradient(180deg, #ffc87b 0%, #fff1d5 100%);
       border-radius: 14px;
-      .normal-font(14px,rgba(27, 27, 33, 0.8));
-      .price-text {
-        .normal-font(14px,rgba(242, 86, 67, 1));
+      height: 24px;
+      min-width: 141px;
+      .tooltip-text {
+        .flex-simple(space-between,center);
+        .normal-font(14px,rgba(27, 27, 33, 0.8));
+        .price-text {
+          .bold-font(14px,rgba(242, 86, 67, 1));
+        }
       }
       .arrow-icon {
         .box-size(8px,11px,transparent);
@@ -364,6 +423,15 @@ export default {
     padding: 0 5.01% 0 16.84%;
     background: url("https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/package-static/package-payment/directPayment/coupon-background.png")
       0 0/100% 100% no-repeat;
+    .available-tag {
+      .box-size(70px,16px);
+      .line-center(16px);
+      .normal-font(12px,rgba(121, 74, 7, 1));
+      .pos-tr-absolute(0,0);
+      background: linear-gradient(180deg, #ffc87b 0%, #fff1d5 100%);
+      border-radius: 0px 12px 0px 30px;
+      text-align: center;
+    }
     .left {
       .flex-simple(flex-start,center);
       flex-direction: column;
@@ -411,6 +479,8 @@ export default {
         .text {
           display: inline-block;
           text-decoration: line-through;
+          font-family: "PingFangSC-Light";
+          color: white;
         }
       }
     }
@@ -426,6 +496,7 @@ export default {
     .view-rules {
       .flex-simple(flex-start,center);
       .normal-font(10px,rgba(0, 0, 0, 0.6));
+      margin-right: 16px;
       .radio-wrapper {
         .flex-simple(flex-start,center);
         margin-right: 4px;

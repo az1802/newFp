@@ -20,6 +20,11 @@
         "
         :fanpiaoMoney="fanpiaoPayAndFanpiaoBalance"
         :selCoupon="selCoupon"
+        :showCouponReducest="
+          payMethod == 'COUPON_PAY' &&
+          selCoupon &&
+          selCoupon.leastCost <= billFee
+        "
         :buyCouponInfo="buyCouponInfo"
       />
       <FanpiaoPay
@@ -30,12 +35,12 @@
         :recommendFanpiaoList="recommendFanpiaoList"
         :needBuyFanpiao="needBuyFanpiao"
         :fanpiaoBalance="userMerchantFanpiaoBalance"
+        :fanpiaoBalancePaidFee="fanpiaoBalancePaidFee"
       />
       <CouponPay
         :billFee="billFee"
         v-model:payMethod="payMethod"
         v-model:selCoupon="selCoupon"
-        v-model:isBuyCoupon="isBuyCoupon"
         v-model:buyCouponInfo="buyCouponInfo"
         :enableMarketing="merchantInfo.enableNumberPlatePayWithCouponPackage"
         :userMerchantCoupons="userMerchantCoupons"
@@ -80,7 +85,7 @@ export default {
     const { fanpiaoList, requestFanpiaoList } = useFanpiaoInfo();
     const { couponList, requestCouponList } = useCouponInfo();
     const { directPay } = useDirectPay();
-    const { selCoupon } = useDirectPaySelCoupon();
+    const { selCoupon, setSelCoupon } = useDirectPaySelCoupon();
     const {
       userMerchantFanpiaoBalance,
       requestUserMerchantFanpiaoBalance,
@@ -100,7 +105,6 @@ export default {
       fanpiaoActuallyPaid = ref(0),
       needBuyCoupon = ref(false),
       buyCouponInfo = ref({}),
-      isBuyCoupon = ref(false),
       isAgreeRules = ref(true);
 
     onBeforeMount(async () => {
@@ -109,7 +113,9 @@ export default {
       // 请求商户的饭票余额和用户券包
       requestUserMerchantFanpiaoBalance(merchantId);
       requestFanpiaoBalancePaidFee(merchantId);
-      requestUserMerchantCoupons(merchantId);
+      requestUserMerchantCoupons(merchantId).then((coupons) => {
+        setSelCoupon(coupons[0] || {});
+      });
 
       if (res.enableNumberPlatePayWithFanpiao) {
         requestFanpiaoList(merchantId);
@@ -144,14 +150,10 @@ export default {
       } else {
         recommendFanpiaoList.value = [];
         needBuyFanpiao.value = false;
-        (selFanpiao.value = {}), (fanpiaoActuallyPaid.value = 0);
+        selFanpiao.value = {};
+        fanpiaoActuallyPaid.value = 0;
         fanpiaoPayAndFanpiaoBalance.value = 0;
       }
-
-      // 有券包只计算合适的券包
-      if (unref(userMerchantCoupons).length > 0) {
-      }
-      // 没有券包则只计算推荐的券包
     });
 
     watch(
@@ -194,7 +196,7 @@ export default {
         //考虑使用券包的情况
         return unref(billFee) || 0;
       } else if (unref(payMethod) == "COUPON_PAY") {
-        if (unref(isBuyCoupon)) {
+        if (unref(buyCouponInfo)?.id) {
           let { price = 0, couponCost = 0 } = unref(buyCouponInfo);
           return (unref(billFee) || 0) - couponCost + price;
         } else if (unref(selCoupon)?.id) {
@@ -252,13 +254,14 @@ export default {
           let { id, reduceCost = 0 } = unref(selCoupon);
           params.couponId = id;
           params.paidFee = unref(billFee) - reduceCost;
-        } else if (unref(isBuyCoupon) && unref(buyCouponInfo)?.id) {
+        } else if (unref(buyCouponInfo)?.id) {
           if (!unref(isAgreeRules)) {
             showToast("请阅读并同意《付费券包协议》");
             return;
           }
           let { id, couponCost = 0, price = 0 } = unref(buyCouponInfo);
           params.couponPackageId = id;
+          params.billFee = unref(billFee) + price;
           params.paidFee = unref(billFee) - couponCost + price;
           params.transactionType = "DIRECT_PAY_WITH_COUPON_PACKAGE_PURCHASE";
         }
@@ -285,10 +288,10 @@ export default {
       fanpiaoPayAndFanpiaoBalance,
       fanpiaoActuallyPaid,
       userMerchantCoupons,
-      isBuyCoupon,
       selCoupon,
       isAgreeRules,
       buyCouponInfo,
+      fanpiaoBalancePaidFee,
     };
   },
 };
