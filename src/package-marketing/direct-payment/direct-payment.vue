@@ -43,6 +43,7 @@
         v-model:selCoupon="selCoupon"
         v-model:buyCouponInfo="buyCouponInfo"
         :enableMarketing="merchantInfo.enableNumberPlatePayWithCouponPackage"
+        :enableFanpiaoMarketing="merchantInfo.enableNumberPlatePayWithFanpiao"
         :userMerchantCoupons="userMerchantCoupons"
         :couponList="couponList"
         v-model:isAgreeRules="isAgreeRules"
@@ -143,9 +144,13 @@ export default {
         );
         needBuyFanpiao.value = true;
         recommendFanpiaoList.value = calcRes;
-        if (calcRes.findIndex((item) => item.id == selFanpiao.id) !== -1) {
-          //当金额变化导致之前选择推荐饭票不符合时自动推荐第一张饭票
-          selFanpiao.value = recommendFanpiaoList.value[0] || {};
+        if (unref(selFanpiao).id) {
+          if (
+            calcRes.findIndex((item) => item.id == unref(selFanpiao).id) === -1
+          ) {
+            //当金额变化导致之前选择推荐饭票不符合时自动推荐第一张饭票
+            selFanpiao.value = recommendFanpiaoList.value[0] || {};
+          }
         }
       } else {
         recommendFanpiaoList.value = [];
@@ -191,6 +196,12 @@ export default {
       }
     );
 
+    watch(payMethod, (newPayMethod) => {
+      if (newPayMethod != "FANPIAO_PAY") {
+        needBuyFanpiao.value = false;
+        selFanpiao.value = {};
+      }
+    });
     const actuallyPaid = computed(() => {
       if (unref(payMethod) == "WECHAT_PAY") {
         //考虑使用券包的情况

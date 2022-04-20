@@ -1,6 +1,7 @@
 <template>
   <div
     class="coupon-pay-wrapper"
+    :class="[enableFanpiaoMarketing ? 'border-top-1px' : '']"
     v-if="
       billFee != 0 &&
       (userMerchantCoupons.length > 0 ||
@@ -37,7 +38,7 @@
             {{
               !selCoupon.id
                 ? "有" + userMerchantCoupons.length + "张可用券"
-                : "（已选择最佳优惠）"
+                : "(已选择最佳优惠)"
             }}
           </div>
           <img
@@ -83,11 +84,11 @@
             </div>
             （本单可减{{ minMerchantLeastCostCoupon.couponCost / 100 }}元）
           </div>
-          <img
+          <!-- <img
             src="https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/package-static/package-payment/directPayment/arrow-right.png"
             alt=""
             class="arrow-icon"
-          />
+          /> -->
         </div>
 
         <div
@@ -110,11 +111,11 @@
             </div>
           </div>
 
-          <img
+          <!-- <img
             src="https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/package-static/package-payment/directPayment/arrow-right.png"
             alt=""
             class="arrow-icon"
-          />
+          /> -->
         </div>
 
         <div class="checked" @click="togglePayMethod">
@@ -212,6 +213,10 @@ export default {
       default: "",
     },
     enableMarketing: {
+      type: Boolean,
+      default: false,
+    },
+    enableFanpiaoMarketing: {
       type: Boolean,
       default: false,
     },
@@ -368,9 +373,11 @@ export default {
 <style lang="less" scoped>
 @import "@design/index.less";
 .coupon-pay-wrapper {
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
   padding: 16px 0;
   margin-top: 16px;
+  &.border-top-1px {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
 }
 .coupon-info-wrapper {
   .flex-simple(space-between,center);
@@ -395,7 +402,6 @@ export default {
       background: linear-gradient(180deg, #ffc87b 0%, #fff1d5 100%);
       border-radius: 14px;
       height: 24px;
-      min-width: 141px;
       .tooltip-text {
         .flex-simple(space-between,center);
         .normal-font(14px,rgba(27, 27, 33, 0.8));
@@ -448,7 +454,7 @@ export default {
           }
         }
         .mul-icon {
-          .box-size(9px,9px);
+          .box-size(9px,9px,transparent);
           margin: 0 6px;
         }
         .coupon-number {

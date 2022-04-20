@@ -6,9 +6,6 @@ import { useState, useGetters, useMutations } from "@hooks/storeHooks.js";
 export function useDirectPaySelCoupon() {
   const { selCoupon, autoSelCoupon } = useState("directpay", ["selCoupon", "autoSelCoupon"]);
   const { setSelCoupon, toogleAutoSelCoupon } = useMutations("directpay", ["setSelCoupon", "toogleAutoSelCoupon"]);
-  console.log('%csetSelCoupon: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', setSelCoupon);
-
-
 
   return {
     selCoupon,

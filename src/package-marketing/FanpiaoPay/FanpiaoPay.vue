@@ -168,11 +168,19 @@ export default {
     });
 
     function changeSelFanpiao(fanpiaoItem) {
+      let { fanpiaoBalance, recommendFanpiaoList, selFanpiao } = props;
+      if (
+        !fanpiaoBalance &&
+        recommendFanpiaoList.length > 0 &&
+        selFanpiao.id == fanpiaoItem.id
+      ) {
+        emit("update:payMethod", "WECHAT_PAY");
+        emit("update:selFanpiao", {});
+        return;
+      }
+
       emit("update:payMethod", "FANPIAO_PAY");
-      emit(
-        "update:selFanpiao",
-        props.selFanpiao.id == fanpiaoItem.id ? {} : fanpiaoItem
-      );
+      emit("update:selFanpiao", fanpiaoItem);
     }
 
     function toggleFanpiaoPayMethod() {
@@ -308,9 +316,12 @@ export default {
         .tag,
         .left .discount,
         .left .discount .val,
-        .left .sell-count,
+        .left .sell-count {
+          color: rgba(255, 255, 255, 0.8);
+        }
         .sell-price .text {
           color: rgba(255, 255, 255, 0.8);
+          .price-symbol(10px,rgba(255, 255, 255, 0.8));
         }
       }
       &:nth-child(even) {
