@@ -69,7 +69,7 @@
       <div class="summary">
         <div class="time">
           {{
-            formatTme(
+            formatTime(
               orderInfo.createTime || orderInfo.paidTime,
               "yyyy/MM/dd hh:mm"
             )
@@ -115,7 +115,7 @@
 <script>
 import { computed, ref, unref, toRaw } from "vue";
 import { useNavigate } from "@hooks/commonHooks";
-import { copyInfo, formatTme } from "@utils";
+import { copyInfo, formatTime } from "@utils";
 import { DEFAULT_DISH_IMG } from "@utils/constants";
 
 export default {
@@ -196,7 +196,7 @@ export default {
       }
     });
     return {
-      formatTme,
+      formatTime,
       orderId,
       statusText,
       mealType,
@@ -260,19 +260,25 @@ export default {
   .content-wrapper {
     .box-size(100%,80px);
     .flex-simple(space-between,center);
+    margin-top: 12px;
     .content {
       flex: 1;
       .order-scroll-view {
         .box-size(100%,84px);
         .dish-item {
+          width: 66px;
+          margin-right: 8px;
+          display: inline-block;
           .img {
             .box-size(60px,60px);
             border-radius: 4px;
             overflow: hidden;
           }
           .name {
+            .box-size(100%,20px);
             .line-center(20px);
             .no-wrap();
+            .normal-font(14px,#333);
           }
         }
         .coupon-item,

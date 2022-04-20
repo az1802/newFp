@@ -10,7 +10,9 @@
     <div class="content-wrapper">
       <div class="content common-card">
         <p class="title">余额（元）</p>
-        <p class="money">{{ userWallet.redPacketBalance / 100 }}</p>
+        <p class="money">
+          {{ parseFloat(userWallet.redPacketBalance / 100).toFixed(2) }}
+        </p>
         <p class="desc">金额超过20可提现</p>
         <button
           hover-class="none"

@@ -18,7 +18,7 @@
             mode="scaleToFill"
           />
           <p v-if="item.alreadyOpen" class="money">
-            {{ item.redPacketValue }}
+            {{ parseFloat(item.redPacketValue).toFixed(2) }}
           </p>
         </div>
         <div class="detail-wrapper">
@@ -42,6 +42,7 @@
 import API from "@api";
 import { onBeforeMount, ref } from "vue";
 import { useSystemInfo } from "@hooks/commonHooks";
+import { formatTime } from "@utils";
 export default {
   setup() {
     let list = ref([]);
@@ -51,7 +52,29 @@ export default {
     };
     async function _getRedPaperList() {
       let res = await API.User.getRedPaperList();
-      list.value = res || [];
+      let redPacket = res || [];
+      redPacket.forEach((item) => {
+        item.createTimeText = formatTime(item.createTime, "yyyy/MM/dd hh:mm");
+        switch (item.issueScene) {
+          case "NEW_MEMBER":
+            item.issueSceneText = "新会员红包";
+            item.buttonText = "立即领取";
+            break;
+          case "SCAN_CODE_ORDER":
+            item.issueSceneText = "下单返现红包";
+            item.buttonText = "立即领取";
+            break;
+          case "INVITE_SHARE_INVITOR":
+            item.issueSceneText = "邀请奖励红包";
+            item.buttonText = "立即领取";
+            break;
+          default:
+            item.issueSceneText = "";
+            item.buttonText = "立即领取";
+            break;
+        }
+      });
+      list.value = redPacket;
     }
     onBeforeMount(async () => {
       uni.showLoading();
@@ -140,7 +163,7 @@ export default {
       .merchant-wrapper {
         display: flex;
         align-items: center;
-        margin-top: 16px;
+        margin-top: 10px;
 
         .logo {
           width: 25px;

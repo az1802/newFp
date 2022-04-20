@@ -129,7 +129,12 @@ export function useOrderRecord() {
 }
 
 export function useOrderDetail() {
-  const orderDetail = ref({});
+  const orderDetail = ref({
+    storeName: "",
+    dishList: [],
+    billFee: 0,
+    paidFee: 0,
+  });
 
   async function getOrderDetailById(orderId) {
     if (!orderId) { return };

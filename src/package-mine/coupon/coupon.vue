@@ -20,7 +20,7 @@
         :class="{ active: index === curTabIndex }"
         @click="switchTab(index)"
       >
-        {{ item.text }}({{ curTabIndex == 0 ? cashCoupons.length : 0 }})
+        {{ item.text }}({{ index == 0 ? cashCoupons.length : 0 }})
       </div>
       <div
         class="line-wrapper"
@@ -29,19 +29,26 @@
         <div class="line"></div>
       </div>
     </div>
-    <div v-if="coupons && coupons.length">
+    <scroll-view v-if="coupons && coupons.length" class="scrollview">
       <div
         class="coupon-wrapper"
         v-for="(coupon, index) in coupons"
         :key="index"
       >
-        <CouponItem :coupon="coupon" />
+        <CouponItemNew :coupon="coupon" />
       </div>
-    </div>
+      <div
+        class="viewExpiredCoupon"
+        @click.stop="navigateTo('MINE/EXPIRED_COUPON')"
+      >
+        查看过期券和已使用券>>
+      </div>
+    </scroll-view>
     <div v-if="coupons && !coupons.length">
       <EmptyStatus type="coupon" :content="emptyContent" />
     </div>
     <div
+      v-if="coupons && !coupons.length"
       class="viewExpiredCoupon"
       @click.stop="navigateTo('MINE/EXPIRED_COUPON')"
     >
@@ -59,7 +66,7 @@ import {
   requestSubscribeMessageAsync,
   addSubCountAsync,
 } from "@utils/wechat.js";
-import CouponItem from "./CouponItem.vue";
+// import CouponItem from "./CouponItem.vue";
 
 import API from "@api";
 const TAB_ARR = [
@@ -75,7 +82,7 @@ const TAB_ARR = [
 const PAGE = 1;
 const SIZE = 50;
 export default {
-  components: { CouponItem },
+  components: {},
   setup() {
     let expiredRemind = ref(false),
       cashCoupons = ref([]),
@@ -112,8 +119,8 @@ export default {
         state: "ACCEPTED",
       };
       let res = await API.User.getUserOwnCouponList(acceptData);
-      if (res.errcode == 0) {
-        let cashCouponsRes = res.data || [];
+      if (res) {
+        let cashCouponsRes = res || [];
         cashCouponsRes = cashCouponsRes.filter((couponItem) => {
           return (
             new Date(parseFloat(couponItem.expiredTime * 1000)) > new Date()
@@ -217,6 +224,11 @@ export default {
         }
       }
     }
+  }
+
+  .scrollview {
+    padding-top: 70px;
+    height: calc(100vh - 170px);
   }
 
   .coupon-wrapper {

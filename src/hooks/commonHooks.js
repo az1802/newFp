@@ -6,7 +6,7 @@
  * @FilePath: /new-fanpiao-uniapp/src/utils/hooks/commonHooks.js
  */
 import { computed, ref, reactive } from 'vue'
-import { getDishInfoById, navigateTo, navigateBack, formatTme } from "@utils";
+import { getDishInfoById, navigateTo, navigateBack, formatTime } from "@utils";
 import { getDishCatalogScene, getMerchantInfo, getMerchantDishCategory } from "@api/merchant"
 import { useState, useGetters, useMutations } from "@hooks/storeHooks";
 

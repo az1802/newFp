@@ -72,8 +72,8 @@ export default {
       default: "relative",
     },
     customBack: {
-      type: Function,
-      default: () => {},
+      type: [Function, null],
+      default: null,
     },
   },
   setup(props, { emit }) {

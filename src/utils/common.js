@@ -135,3 +135,17 @@ export const payMethodMap = {
   'FANPIAO_PAY': "时来饭票",
   'TIAN_QUE_PAY': "微信支付",
 }
+
+
+export async function makePhoneCall(phone) {
+  return new Promise((resolve, reject) => {
+    uni.makePhoneCall({
+      phoneNumber: phone,
+      success() { resolve(true) },
+      fail() {
+        showToast("唤起电话失败")
+        reject(false)
+      }
+    })
+  })
+}

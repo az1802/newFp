@@ -45,7 +45,7 @@
   </div>
 </template>
 <script>
-import { formatTme } from "@utils";
+import { formatTime } from "@utils";
 import { onBeforeMount, ref } from "vue";
 import API from "@api";
 // import API from "@api";
@@ -64,7 +64,7 @@ export default {
       });
       if (res) {
         res.fanpiaoUsageDetail.forEach((item) => {
-          item.paidTimeText = formatTme(item.paidTime, "yyyy/MM/dd hh:mm");
+          item.paidTimeText = formatTime(item.paidTime, "yyyy/MM/dd hh:mm");
 
           if (item.transactionType == "ORDERING_REFUND") {
             item.transactionTypeText = "退款";
@@ -80,7 +80,7 @@ export default {
             (item.transactionType == "ORDERING_REFUND" ? "+" : "-") +
             parseFloat(item.paidFee / 100);
         });
-        res.buyTimeText = formatTme(res.buyTime, "yyyy/MM/dd hh:mm");
+        res.buyTimeText = formatTime(res.buyTime, "yyyy/MM/dd hh:mm");
       }
       fanpiaoInfo.value = res;
       fanpiaoUsageDetail.value = res.fanpiaoUsageDetail;

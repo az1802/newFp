@@ -196,7 +196,7 @@ export default {
     }
   }
   .tab-container {
-    .box-size(calc(100vw - 24px),calc(100vh - 150px),transparent);
+    .box-size(calc(100vw - 24px),calc(100vh - 130px),transparent);
     margin: 0 auto;
     .tab-container-scroll-view {
       .box-size(100%,100%,transparent);

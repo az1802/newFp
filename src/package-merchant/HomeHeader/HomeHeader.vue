@@ -28,6 +28,7 @@
           src="https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/common/icon-phone_b.png"
           alt="电话"
           class="img"
+          @click="makePhoneCall(merchantInfo.phone)"
         />
         <p class="text">电话</p>
       </div>
@@ -36,6 +37,7 @@
   </div>
 </template>
 <script>
+import { makePhoneCall } from "@utils";
 export default {
   props: {
     merchantInfo: {
@@ -48,9 +50,10 @@ export default {
     },
   },
   components: {},
-  setup() {
+  setup(props) {
+    const { merchantInfo } = props;
     return {
-      makePhoneCall() {},
+      makePhoneCall,
     };
   },
 };
@@ -58,7 +61,7 @@ export default {
 <style lang="less" scoped>
 @import "@design/index.less";
 .base-info {
-  .box-size(100%,100px,transparent);
+  .box-size(100%,86.5px,transparent);
   position: relative;
   padding-left: 12px;
   border-radius: 8pt 8pt 0 0;

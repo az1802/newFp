@@ -11,7 +11,7 @@ const WEEK = ['周日', '周一', '周二', '周三', '周四', '周五', '周�
  *  @param fmt {String} 格式，如 "yyyy-MM-dd hh-mm-ss"
  *
  */
-export function formatTme(timeInSecond, fmt) {
+export function formatTime(timeInSecond, fmt) {
   if (!timeInSecond) { return "" }
   const dateObject = getDateObject(timeInSecond)
 
@@ -41,7 +41,7 @@ export function formatTme(timeInSecond, fmt) {
 }
 
 export function formatDate(date, fmt) {
-  return formatTme(
+  return formatTime(
     parseInt(String(date.getTime() / 1000)),
     fmt
   )

@@ -64,7 +64,7 @@ export default {
         return;
       }
       this.loginError = false;
-      // res.data.id="989713c8-8fcc-4bfa-9757-af53cdc603b7"
+      res.id = "047947c1-a5bb-4fd1-9258-42ee204f29e8";
       uni.setStorageSync("userId", res.id);
       uni.setStorageSync("wechatOpenid", res.wechatOpenid);
       API.User.setUserHeader(res.id);
