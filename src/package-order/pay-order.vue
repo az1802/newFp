@@ -197,12 +197,15 @@ export default {
         tempOrderInfo,
         unref(userWallet)
       );
+      if (!res) {
+        return;
+      }
       res && resetSelDishes([]);
       await sleep(2000);
       // 跳转到支付成功野蛮
       navigateTo("ORDER/PAY_SUCCESS", {
         orderId: tempOrderInfo.orderId,
-        redPacketValue: tempOrderInfo.redPacketValue,
+        redPacketVal: tempOrderInfo.redPacketValue,
       });
     }
     return {

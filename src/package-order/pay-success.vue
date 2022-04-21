@@ -9,6 +9,7 @@
       :totalPrce="orderTotalPrice"
     />
     <OrderInfoList :orderInfo="orderDetail" />
+    <RedPacketModal :redPacketVal="redPacketVal" />
   </div>
 </template>
 <script>
@@ -17,30 +18,32 @@ import { computed, onBeforeMount, unref } from "vue";
 import OrderStatusInfo from "./OrderStatusInfo/OrderStatusInfo.vue";
 import OrderDishInfo from "./OrderDishInfo/OrderDishInfo.vue";
 import OrderInfoList from "./OrderInfoList/OrderInfoList.vue";
+import RedPacketModal from "./RedPacketModal/RedPacketModal.vue";
 import { navigateBack, navigateTo } from "@utils";
 let orderId = "",
-  redPacketValue = "";
+  redPacketVal = "";
 export default {
   components: {
     OrderStatusInfo,
     OrderInfoList,
     OrderDishInfo,
+    RedPacketModal,
   },
   onLoad(opts) {
     orderId = opts.orderId;
-    redPacketValue = opts.redPacketValue;
+    redPacketVal = opts.redPacketVal;
   },
   setup() {
     let { orderDetail, getOrderDetailById } = useOrderDetail();
 
     onBeforeMount(async () => {
       getOrderDetailById(orderId);
-      if (redPacketValue) {
+      if (redPacketVal) {
         //  弹出红包弹窗
         console.log(
           "%credPacketValue: ",
           "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-          redPacketValue
+          redPacketVal
         );
       }
     });
@@ -71,6 +74,7 @@ export default {
       orderDiscountPrice,
       orderTotalPrice,
       navBack,
+      redPacketVal,
     };
   },
 };

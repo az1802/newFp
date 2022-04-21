@@ -2,7 +2,7 @@
   <div class="info-list-wrapper" v-if="show">
     <div class="title">订单信息</div>
     <div class="info-list">
-      <div class="info-item" v-for="keyItem in orderKeyList" :key="keyItem">
+      <div class="info-item" v-for="keyItem in orderKeyList" :key="keyItem.id">
         <div class="label">{{ keyItem.label }}</div>
         <div class="value">{{ orderInfo[keyItem.key] }}</div>
       </div>

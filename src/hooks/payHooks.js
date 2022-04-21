@@ -283,6 +283,12 @@ export function useDirectPay(payMethod, params) {
     let payRes = false;
     let res = await API.Order.pay(params);
     console.log('%cres: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', res);
+    if (res.errcode != 0) {
+      showToast(res.errmsg);
+      return false;
+    }
+
+
     if (params.payMethod == "WECHAT_PAY") {
       payRes = await wechatPay(res.signData);
     } else if (params.payMethod == "FANPIAO_PAY") {
