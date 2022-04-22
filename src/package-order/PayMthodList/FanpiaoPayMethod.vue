@@ -36,11 +36,16 @@
       >
         <div class="fanpiao-list">
           <FanpiaoItem
-            v-for="fanpiaoItem in orderFanpiaoPayInfo.recommendFanpiaoList"
+            v-for="(
+              fanpiaoItem, index
+            ) in orderFanpiaoPayInfo.recommendFanpiaoList"
             :key="fanpiaoItem.id"
             :fanpiaoInfo="fanpiaoItem"
             :active="orderFanpiaoPayInfo.selFanpiaoId == fanpiaoItem.id"
             @select="changeSelFanpiao"
+            :isSuperFanpiao="
+              index == orderFanpiaoPayInfo.recommendFanpiaoList.length - 1
+            "
           />
         </div>
       </scroll-view>
@@ -73,21 +78,10 @@ export default {
     function changeSelFanpiao(fanpiao) {
       let { recommendFanpiaoList, selFanpiaoInfo } = unref(orderFanpiaoPayInfo);
       let { fanpiaoBalance } = unref(userWallet);
-      console.log(
-        "recommendFanpiaoList, selFanpiaoInfo: ",
-        recommendFanpiaoList,
-        selFanpiaoInfo,
-        fanpiao,
-        fanpiaoBalance
-      );
+      console.log(recommendFanpiaoList.length, fanpiao.id, selFanpiaoInfo.id);
 
-      if (
-        !fanpiaoBalance &&
-        recommendFanpiaoList.length > 0 &&
-        selFanpiaoInfo.id == fanpiao.id
-      ) {
+      if (recommendFanpiaoList.length > 0 && selFanpiaoInfo.id == fanpiao.id) {
         //推荐饭票时支持饭票反选
-        setPayMethod("WECHAT_PAY");
         setOrderFanpiaoPayInfo({
           selFanpiaoId: "",
           selFanpiaoInfo: {},
@@ -173,7 +167,7 @@ export default {
         }
         .tooltip {
           .line-center(18px);
-          .bold-font(12px,#ff4029);
+          .normal-font(12px,#ff4029);
         }
       }
     }

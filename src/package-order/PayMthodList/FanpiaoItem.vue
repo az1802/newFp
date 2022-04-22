@@ -2,7 +2,7 @@
   <div
     class="fanpiao-item"
     :class="[active ? 'active' : '']"
-    @click="emit('select', fanpiaoInfo)"
+    @click.stop="emit('select', fanpiaoInfo)"
   >
     <div class="discount-info">
       买单享<span class="discount-number">{{
@@ -67,8 +67,7 @@ export default {
     flex: 1;
     .flex-center();
     .bold-font(18px, #f25643);
-
-    .price-symbol();
+    .price-symbol(18px,#f25643,bold);
   }
   .tooltip,
   .super-tag {
@@ -90,11 +89,14 @@ export default {
   }
   &.active {
     background-image: url("https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/package-static/package-order/fanpiao-item-bg-active.png");
-    .price,
     .discount-info,
     .tooltip,
     .discount-number {
       color: white;
+    }
+    .price {
+      color: white;
+      .price-symbol(18px,white,bold);
     }
     .tooltip {
       background: linear-gradient(180deg, #f25643 0%, #eb7b3a 100%);

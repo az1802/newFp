@@ -12,7 +12,13 @@
       <!-- 会员支付和饭票支付才显示折扣价  其余都显示原价 -->
       <div
         class="show-discount-price"
-        v-if="payMethod == 'MEMBER_PAY' || payMethod == 'FANPIAO_PAY'"
+        v-if="
+          payMethod == 'MEMBER_PAY' ||
+          (payMethod == 'FANPIAO_PAY' &&
+            (orderFanpiaoPayInfo.fanpiaoRemainPaidFee <= 0 ||
+              (orderFanpiaoPayInfo.fanpiaoRemainPaidFee > 0 &&
+                orderFanpiaoPayInfo.selFanpiaoId)))
+        "
       >
         <div class="pay-price">{{ fenToYuan(paidFee) }}</div>
         <div class="origin-price">{{ fenToYuan(billFee) }}</div>
@@ -60,13 +66,10 @@ export default {
     const { setOrderFanpiaoPayInfo, finalFanpiaoPaidFee, orderFanpiaoPayInfo } =
       useFanpiaoPayInfo();
     const { orderRechargeInfo, setOrderRechargeInfo } = useOrderRechargeInfo();
-
     const { requestFanpiaoList, fanpiaoList } = useFanpiaoInfo();
     const { userInfo } = useUserInfo();
-
     const { userWallet, requestUserWallet, requestFanpiaoPaidFee } =
       useUserMerchantWallet();
-
     const { requestMerchantRecharges, rechargeConfigs } = useRechargeInfo();
     const { payMethod } = usePayMethod();
 
@@ -96,7 +99,6 @@ export default {
     async function genRecommendRechargeList() {
       let { memberCardBalance } = unref(userWallet),
         recommendRechargeList = [];
-      console.log(unref(rechargeConfigs), memberCardBalance);
 
       let { billFee } = unref(orderInfo);
       if (memberCardBalance < billFee) {
@@ -135,12 +137,12 @@ export default {
 
     // 根据支付金额来进行显示
     const paidFee = computed(() => {
+      console.log("计算  paidFee", unref(orderInfo));
       if (
         unref(payMethod) == "WECHAT_PAY" ||
         unref(payMethod) == "ALIPAY" ||
         unref(payMethod) == "WALLET"
       ) {
-        console.log(unref(orderInfo));
         return unref(orderInfo).paidFee;
       } else if (unref(payMethod) == "SHILAI_MEMBER_CARD_PAY") {
         let { selCouponReduceCost, paidFee } = unref(orderInfo);
@@ -188,6 +190,8 @@ export default {
 
     async function payOrderInfo() {
       let tempOrderInfo = { ...unref(orderInfo) };
+      console.log("tempOrderInfo: ", tempOrderInfo, unref(orderFanpiaoPayInfo));
+      return;
       tempOrderInfo.merchantId = unref(merchantInfo).merchantId;
       tempOrderInfo.billFee = unref(billFee);
       tempOrderInfo.paidFee = unref(paidFee);

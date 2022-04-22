@@ -108,11 +108,15 @@ export default {
   height: 44px;
   background: white;
   position: relative;
+  z-index: 1000;
   .arrow {
-    .pos-tl-absolute(unset,10px);
+    .pos-tl-absolute(unset,4px);
+    padding: 6px;
+    z-index: 1000;
   }
   .order-icon {
     .pos-tl-absolute(unset,40px);
+    z-index: 1000;
     .box-size(100%,40px);
     .flex-simple(flex-start,center);
     .img {

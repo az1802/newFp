@@ -143,7 +143,7 @@ export async function makePhoneCall(phone) {
       phoneNumber: phone,
       success() { resolve(true) },
       fail() {
-        showToast("唤起电话失败")
+        // showToast("唤起电话失败")
         reject(false)
       }
     })

@@ -143,6 +143,7 @@ export default {
   .pos-bl-absolute(32px,0px);
   position: fixed;
   padding: 0 15px 10px 15px;
+  z-index: 100;
   .left {
     flex: 1;
     .buy-coupon-price {

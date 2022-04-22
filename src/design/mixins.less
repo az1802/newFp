@@ -112,12 +112,13 @@
 }
 
 
-.price-symbol(@fontSize:12px,@color:#f25643){
+.price-symbol(@fontSize:12px,@color:#f25643,@fontWeight:normal){
   &:before{
     content:"¥";
     display: inline-block;
     font-size:@fontSize;
     color:@color;
+    font-weight: @fontWeight;
   }
 }
 

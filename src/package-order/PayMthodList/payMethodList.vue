@@ -7,7 +7,7 @@
 -->
 <template>
   <div class="pay-method-container">
-    <FanpiaoPay />
+    <FanpiaoPayMethod />
 
     <div class="other-pay">
       <div
@@ -103,13 +103,13 @@
 </template>
 <script>
 import { ref, onBeforeMount, computed } from "vue";
-import FanpiaoPay from "./FanpiaoPay";
+import FanpiaoPayMethod from "./FanpiaoPayMethod";
 import { useOrder, useOrderRechargeInfo } from "@hooks/orderHooks";
 import { useUserMerchantWallet, useUserInfo } from "@hooks/userHooks";
 import { useRechargeInfo } from "@hooks/merchantHooks";
 export default {
   components: {
-    FanpiaoPay,
+    FanpiaoPayMethod,
   },
   setup() {
     let { setPayMethod, payMethod } = useOrder();
@@ -139,8 +139,7 @@ export default {
 <style lang="less" scoped>
 @import "@design/index.less";
 .pay-method-container {
-  .box-size(calc(100% - 24px),unset);
-  padding: 0 12px;
+  .box-size(calc(100% - 30px),unset);
   margin: 0 auto;
   .other-pay {
     background-color: #fff;

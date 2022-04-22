@@ -29,7 +29,7 @@
         <div class="line"></div>
       </div>
     </div>
-    <scroll-view v-if="coupons && coupons.length" class="scrollview">
+    <scroll-view v-if="coupons && coupons.length" class="scrollview" scroll-y>
       <div
         class="coupon-wrapper"
         v-for="(coupon, index) in coupons"

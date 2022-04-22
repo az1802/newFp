@@ -19,21 +19,23 @@
       </div>
     </div>
 
-    <div v-if="coupons && coupons.length">
-      <div
-        class="coupon-wrapper"
-        v-for="(coupon, index) in coupons"
-        :key="index"
-      >
-        <UsedCouponInfo
-          :coupon="coupon"
-          :disabled="TAB_ARR[curTabIndex].state"
-        />
+    <scroll-view class="scroll-view" scroll-y>
+      <div v-if="coupons && coupons.length">
+        <div
+          class="coupon-wrapper"
+          v-for="(coupon, index) in coupons"
+          :key="index"
+        >
+          <UsedCouponInfo
+            :coupon="coupon"
+            :disabled="TAB_ARR[curTabIndex].state"
+          />
+        </div>
       </div>
-    </div>
-    <div v-if="coupons && !coupons.length">
-      <!-- <EmptyStatus type="coupon" :content="emptyContent" /> -->
-    </div>
+      <div v-if="coupons && !coupons.length">
+        <!-- <EmptyStatus type="coupon" :content="emptyContent" /> -->
+      </div>
+    </scroll-view>
   </div>
 </template>
 <script>
@@ -74,8 +76,8 @@ export default {
 
     let coupons = computed(() => {
       return unref(curTabIndex) == 0
-        ? unref(usedCouponList)
-        : unref(expiredCouponList);
+        ? unref(expiredCouponList)
+        : unref(usedCouponList);
     });
 
     onBeforeMount(async () => {
@@ -122,14 +124,12 @@ export default {
   background: #F8F8F8;
 
   .tab-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     width: 100%;
-    height: 40px;
-    box-sizing: border-box;
-    background: white;
-    position: relative;
+    display: flex;
+    padding: 21px 0 11px 0;
+    position: fixed;
+    z-index: 1000;
+    background-color: white;
 
     .tab {
       flex: 1;
@@ -163,6 +163,11 @@ export default {
         border-radius: 3px;
       }
     }
+  }
+
+  .scroll-view {
+    padding-top: 70px;
+    height: calc(100vh - 170px);
   }
 
   .coupon-wrapper {

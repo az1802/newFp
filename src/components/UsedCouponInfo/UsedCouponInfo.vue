@@ -253,6 +253,7 @@ export default {
       padding-left: 10px;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
 
       .coupon-type {
         border: 1px solid #cccccc;
@@ -275,7 +276,8 @@ export default {
         font-weight: bolder;
         height: 24px;
         line-height: 24px;
-        margin: 6px 0 4px 0;
+        margin: 4px 0 4px 0;
+        flex-shrink: 0;
       }
 
       .time {
