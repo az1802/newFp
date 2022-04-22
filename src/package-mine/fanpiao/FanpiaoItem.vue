@@ -25,7 +25,7 @@
       </div>
     </div>
     <div class="operation">
-      <div class="buy-time">购买日期 : {{ fanpiao.buyTimeText }}</div>
+      <div class="buy-time">购买日期 : {{ buyTimeText }}</div>
       <div class="btn-group">
         <div
           class="refund-btn"
@@ -57,9 +57,10 @@
 </template>
 <script>
 import API from "@api";
-import { showToast, showConfirmModal } from "@utils/common";
+import { showToast, showConfirmModal, formatTime } from "@utils";
 import { useRefund } from "@hooks/merchantHooks";
 import { useNavigate } from "@hooks/commonHooks";
+import { computed } from "vue";
 export default {
   name: "fanpiao-item",
   props: {
@@ -74,14 +75,24 @@ export default {
         presentValue: "", //余额
         sellPrice: "",
         totalValue: "",
-        // balanceRefundApply: false,
+        balanceRefundApply: false,
         enableFanpiaoBalanceRefund: false,
       },
     },
   },
-  setup() {
+  setup(props) {
     const { refundFanpiaoApply } = useRefund();
     const { navigateTo } = useNavigate();
+    const buyTimeText = computed(() => {
+      return (
+        (props?.fanpiao?.buyTime &&
+          formatTime(props.fanpiao.buyTime, "yyyy/MM/dd hh:mm")) ||
+        ""
+      );
+    });
+    const balanceRefundApply = computed(() => {
+      return props.fanpiao.balanceRefundApply || false;
+    });
     async function applyRefund(fanpiao) {
       let confirm = await showConfirmModal("是否确定申请饭票退款");
       if (confirm) {
@@ -102,6 +113,8 @@ export default {
     return {
       applyRefund,
       viewFanpiaoDetail,
+      buyTimeText,
+      balanceRefundApply,
     };
   },
 };

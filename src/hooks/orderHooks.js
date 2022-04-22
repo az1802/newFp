@@ -48,43 +48,55 @@ export function useOrder() {
 export function useOrderRecord() {
 
   const orderList = ref([]), fanpiaoList = ref([]), couponList = ref([]), moreOrder = {}, moreFanpiao = {}, moreCoupon = {};
-  let orderParams = {}, fanpiaoParams = {}, couponParams = {};
+  let orderParams = {
+    hasMore: true,
+  }, fanpiaoParams = {
+    hasMore: true,
+  }, couponParams = {
+    hasMore: true,
+  };
 
   async function getOrderList(first = true) {
+    console.log(orderParams)
+    if (!orderParams.hasMore) {
+      return;
+    }
     let res = await API.Order.getOrderList(orderParams) || { orders: [] };
     let { hasMore, latestTime, orders } = res;
     orderList.value = orderList.value.concat(orders);
-    if (hasMore) {
-      orderParams = {
-        hasMore,
-        latestTime
-      }
+    orderParams = {
+      hasMore,
+      latestTime
     }
 
   }
 
   async function getFanpiaoRecordList(first = true) {
+    if (!fanpiaoParams.hasMore) {
+      return;
+    }
     let res = await API.Order.getFanpiaoList(fanpiaoParams) || { fanpiaos: [] };
     let { hasMore, latestTime, fanpiaos } = res;
     fanpiaoList.value = fanpiaoList.value.concat(fanpiaos);
-    if (hasMore) {
-      fanpiaoParams = {
-        hasMore,
-        latestTime
-      }
+    fanpiaoParams = {
+      hasMore,
+      latestTime
     }
 
   }
 
+
   async function getCouponRecordList(first = true) {
+    console.log(couponParams);
+    if (!couponParams.hasMore) {
+      return;
+    }
     let res = await API.Order.getCouponList(couponParams) || { couponPackages: [] };
     let { hasMore, latestTime, couponPackages } = res;
     couponList.value = couponList.value.concat(couponPackages);
-    if (hasMore) {
-      couponParams = {
-        hasMore,
-        latestTime
-      }
+    couponParams = {
+      hasMore,
+      latestTime
     }
 
   }

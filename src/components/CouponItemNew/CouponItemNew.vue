@@ -25,7 +25,7 @@
           ¥<span class="amount">{{ coupon.reduceCost / 100 }}</span>
         </div>
         <div class="coupon-least-cost" :class="{ disabled: disabled }">
-          满{{ coupon.leastCost / 100 }}可用
+          满{{ coupon.leastCost / 100 }}元可用
         </div>
       </div>
     </div>
@@ -134,7 +134,7 @@ export default {
       const dateFormatter = "yyyy-MM-dd";
       if (this.coupon.expiredTime) {
         const expiredDate = new Date(this.coupon.expiredTime * 1000);
-        return `有效期至${formatDate(expiredDate, dateFormatter)}`;
+        return `有效期至:${formatDate(expiredDate, dateFormatter)}`;
       }
 
       if (!this.coupon.dateInfo) {

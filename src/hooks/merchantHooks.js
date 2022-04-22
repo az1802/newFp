@@ -175,6 +175,7 @@ export function useRechargeInfo() {
 
   async function requestMerchantRecharges(merchantId) {
     let rechargeList = await API.Merchant.getRechargeConfigs(merchantId);
+    console.log('rechargeList: ', rechargeList);
     setRechargeConfigs(rechargeList)
   }
 

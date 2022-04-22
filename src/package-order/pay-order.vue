@@ -101,6 +101,8 @@ export default {
         recommendRechargeList = [];
 
       let { billFee } = unref(orderInfo);
+      console.log("memberCardBalance: ", memberCardBalance, billFee);
+
       if (memberCardBalance < billFee) {
         recommendRechargeList = calcRecommendRecharge(
           unref(rechargeConfigs),
@@ -109,7 +111,7 @@ export default {
         );
       }
 
-      setOrderFanpiaoPayInfo({
+      setOrderRechargeInfo({
         recommendRechargeList,
       });
     }
