@@ -55,9 +55,14 @@
           <div class="tooltip-text">
             再消费
             <div class="price-text">
-              ¥{{ (billFee - minLeastCostCoupon.leastCost) / 100 }}
+              ¥{{
+                Number(
+                  (minLeastCostCoupon &&
+                    minLeastCostCoupon.leastCost - billFee) / 100
+                ).toFixed(2)
+              }}
             </div>
-            ，立减
+            ,立减
             <div class="price-text">
               ¥{{ minLeastCostCoupon.reduceCost / 100 }}
             </div>
@@ -103,7 +108,12 @@
           <div class="tooltip-text">
             再消费
             <div class="price-text">
-              ¥{{ (minMerchantLeastCostCoupon.availableFee - billFee) / 100 }}
+              ¥{{
+                Number(
+                  (minMerchantLeastCostCoupon &&
+                    minMerchantLeastCostCoupon.availableFee - billFee) / 100
+                ).toFixed(2)
+              }}
             </div>
             ,立减
             <div class="price-text">
@@ -398,7 +408,7 @@ export default {
     .line-center(24px);
     .tooltip-wrapper {
       .flex-simple(flex-start,center);
-      padding: 0 16px;
+      padding: 0 4px;
       background: linear-gradient(180deg, #ffc87b 0%, #fff1d5 100%);
       border-radius: 14px;
       height: 24px;

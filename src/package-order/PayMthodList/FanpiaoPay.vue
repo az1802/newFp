@@ -71,10 +71,34 @@ export default {
     const { orderFanpiaoPayInfo, setOrderFanpiaoPayInfo } = useFanpiaoPayInfo();
 
     function changeSelFanpiao(fanpiao) {
-      setOrderFanpiaoPayInfo({
-        selFanpiaoId: fanpiao.id,
-        selFanpiaoInfo: fanpiao,
-      });
+      let { recommendFanpiaoList, selFanpiaoInfo } = unref(orderFanpiaoPayInfo);
+      let { fanpiaoBalance } = unref(userWallet);
+      console.log(
+        "recommendFanpiaoList, selFanpiaoInfo: ",
+        recommendFanpiaoList,
+        selFanpiaoInfo,
+        fanpiao,
+        fanpiaoBalance
+      );
+
+      if (
+        !fanpiaoBalance &&
+        recommendFanpiaoList.length > 0 &&
+        selFanpiaoInfo.id == fanpiao.id
+      ) {
+        //推荐饭票时支持饭票反选
+        setPayMethod("WECHAT_PAY");
+        setOrderFanpiaoPayInfo({
+          selFanpiaoId: "",
+          selFanpiaoInfo: {},
+        });
+      } else {
+        setPayMethod("FANPIAO_PAY");
+        setOrderFanpiaoPayInfo({
+          selFanpiaoId: fanpiao.id,
+          selFanpiaoInfo: fanpiao,
+        });
+      }
     }
 
     function setFanpiaoPayMethod() {

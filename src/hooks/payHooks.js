@@ -280,6 +280,8 @@ export function useDirectPay(payMethod, params) {
 
 
   async function directPay(params) {
+    params.billFee = Number(parseFloat(params.billFee || 0).toFixed(0));
+    params.paidFee = Number(parseFloat(params.paidFee || 0).toFixed(0));
     let payRes = false;
     let res = await API.Order.pay(params);
     console.log('%cres: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', res);

@@ -46,6 +46,7 @@
     "@dcloudio/uni-quickapp-webview": "^3.0.0-alpha-3030820220114004",
     "@vueuse/core": "^7.6.2",
     "axios": "^0.25.0",
+    "less": "^4.1.2",
     "lodash": "^4.17.21",
     "vue": "^3.2.27",
     "vue-i18n": "^9.1.9",

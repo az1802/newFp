@@ -74,7 +74,9 @@
               <div class="text">含特惠券包¥{{ buyCouponInfo.price / 100 }}</div>
             </div>
             <div class="icon">￥</div>
-            <div class="money">{{ (actuallyPaid || 0) / 100 }}</div>
+            <div class="money">
+              {{ parseFloat((actuallyPaid || 0) / 100).toFixed(2) }}
+            </div>
           </div>
           <div class="hint-text" v-if="fanpiaoMoney">
             预估饭票余额￥{{ fanpiaoMoney / 100 }}

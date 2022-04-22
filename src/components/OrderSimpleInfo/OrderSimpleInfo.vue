@@ -106,7 +106,7 @@
           </div>
         </div>
         <div class="detail" v-if="orderType == 'DISH'" @click="showDetail">
-          查看详情
+          {{ viewDetailText }}
         </div>
       </div>
     </div>
@@ -195,6 +195,26 @@ export default {
           return "";
       }
     });
+
+    const viewDetailText = computed(() => {
+      let { orderInfo } = props;
+      let { status, mealType } = orderInfo,
+        text = "";
+      if (status === "APPROVED" && mealType == "APPROVED") {
+        text = "去付款";
+      } else if (
+        status === "PAID" &&
+        (mealType == "SELF_PICK_UP" || mealType == "TAKE_AWAY")
+      ) {
+        text = "取餐码";
+      } else if (status === "PAID" && mealType !== "SELF_PICK_UP") {
+        text = "查看详情";
+      } else {
+        text = "查看详情";
+      }
+
+      return text;
+    });
     return {
       formatTime,
       orderId,
@@ -219,6 +239,7 @@ export default {
         emit("openRefundModal", orderInfo);
       },
       DEFAULT_DISH_IMG,
+      viewDetailText,
     };
   },
 };
