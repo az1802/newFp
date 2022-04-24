@@ -56,12 +56,14 @@ export default {
     function navBack() {
       let pages = getCurrentPages(),
         delta = 1;
+      console.log("pages: ", pages);
       let menuPageIndex = pages.findIndex((item) => {
         return item.route == "package-menu/menu";
       });
 
       if (menuPageIndex != -1) {
         delta = pages.length - 1 - menuPageIndex || 1;
+        console.log("delta: ", delta);
       }
 
       navigateBack({

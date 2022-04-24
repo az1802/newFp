@@ -42,11 +42,6 @@ export default {
     },
   },
   setup(props) {
-    console.log(
-      "%cprops: ",
-      "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-      props
-    );
     const isShow = ref(props.redPacketVal ? true : false);
 
     return {

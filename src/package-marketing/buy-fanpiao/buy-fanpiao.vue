@@ -32,7 +32,7 @@
             class="buy-fanpiao-page-item"
             v-for="(fanpiaoItem, index) in fanpiaoList"
             :key="index"
-            @click="buyFanpiao(fanpiaoItem, merchantInfo.merchantId)"
+            @click="buy(fanpiaoItem, merchantInfo.merchantId)"
           >
             <div class="left">
               <div class="left-box">
@@ -102,7 +102,7 @@ export default {
     };
   },
   setup() {
-    let { navigateTo } = useNavigate();
+    let { navigateTo, navigateBack } = useNavigate();
     let { merchantInfo } = useMerchantInfo();
     let {
       fanpiaoList,
@@ -144,6 +144,12 @@ export default {
       }, 500);
     });
 
+    async function buy(fanpiaoItem, merchantId) {
+      let payRes = await buyFanpiao(fanpiaoItem, merchantId);
+      payRes && (getApp().globalData.hasBuyFanpiao = true);
+      navigateBack();
+    }
+
     return {
       animating,
       merchantInfo,
@@ -152,6 +158,7 @@ export default {
       fanpiaoList,
       buyFanpiao,
       navigateTo,
+      buy,
     };
   },
 };

@@ -81,7 +81,8 @@ export default {
     let { navigateBack, navigateTo } = useNavigate();
 
     function back() {
-      console.log(props);
+      console.log("props.customBack: ", props.customBack);
+
       if (props.customBack) {
         emit("customBack");
       } else {

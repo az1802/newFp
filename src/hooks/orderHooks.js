@@ -58,7 +58,6 @@ export function useOrderRecord() {
   };
 
   async function getOrderList(first = true) {
-    console.log(orderParams)
     if (!orderParams.hasMore) {
       return;
     }
@@ -88,7 +87,6 @@ export function useOrderRecord() {
 
 
   async function getCouponRecordList(first = true) {
-    console.log(couponParams);
     if (!couponParams.hasMore) {
       return;
     }

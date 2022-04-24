@@ -274,7 +274,6 @@ export default {
         let msg = {};
         try {
           msg = JSON.parse(data.data);
-          console.log(msg);
         } catch (err) {
           msg = {};
         }
@@ -543,7 +542,6 @@ export default {
       this.getUserFanpiaoList();
     },
     async showMerchantFanpiaoList(fanpiaoItem) {
-      
       let merchantId = fanpiaoItem.merchantId;
       navigateTo("MARKETING/FANPIAO_QRCODE", {
         merchantId,

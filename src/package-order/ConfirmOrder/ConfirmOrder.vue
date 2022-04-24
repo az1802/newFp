@@ -6,38 +6,71 @@
  * @FilePath: /new-fanpiao-uniapp/src/package-order/ConfirmOrder/ConfirmOrder.vue
 -->
 <template>
-  <div class="confirm-order-container">
-    <div class="left">
-      <div v-if="orderInfo.isBuyCouponPackage" class="buy-coupon-price">
-        <div class="price-info">
-          <div class="price-calc">
-            <div class="order-pay-price">
-              {{
-                (selectedDishesFinalTotalPrice - recommendedCoupon.couponCost) /
-                100
-              }}
-            </div>
-            +
-            <div class="coupon-price">{{ recommendedCoupon.price / 100 }}</div>
+  <div class="container-wrapper">
+    <div class="buy-fanpiao-tooltip" v-if="tooltipType == 'noBuyFanpiao'">
+      <div class="left">
+        <div class="text">本单可享饭票价</div>
+        <div class="price">{{ minFanpiaoPrice }}</div>
+      </div>
+      <div class="right">
+        <div @click="navigateTo('MARKETING/BUY_FANPIAO')">
+          <div class="text-box">
+            <div class="text">抢饭票</div>
+            <img
+              src="@assets/arrow-white-right2.png"
+              class="arrow-white-right"
+            />
           </div>
-          券包
-        </div>
-        <div class="coupon-text">
-          (本单已省¥{{ recommendedCoupon.couponCost / 100 }}元)
+          <TimeCounter
+            customStartText=" "
+            :isShowHour="false"
+            :isNoBg="true"
+            :show-day="false"
+            mode="fanpiao-new"
+          />
         </div>
       </div>
-      <div v-else class="price">
-        {{
-          fenToYuan(
-            selectedDishesFinalTotalPrice - orderInfo.selCouponReduceCost
-          )
-        }}
+    </div>
+    <div class="use-fanpiao-tooltip" v-if="tooltipType == 'hasBuyFanpiao'">
+      支付时选择饭票支付，即可享饭票价。
+    </div>
+    <div class="confirm-order-container">
+      <div class="left">
+        <div v-if="orderInfo.isBuyCouponPackage" class="buy-coupon-price">
+          <div class="price-info">
+            <div class="price-calc">
+              <div class="order-pay-price">
+                {{
+                  (selectedDishesFinalTotalPrice -
+                    recommendedCoupon.couponCost) /
+                  100
+                }}
+              </div>
+              +
+              <div class="coupon-price">
+                {{ recommendedCoupon.price / 100 }}
+              </div>
+            </div>
+            券包
+          </div>
+          <div class="coupon-text">
+            (本单已省¥{{ recommendedCoupon.couponCost / 100 }}元)
+          </div>
+        </div>
+        <div v-else class="price">
+          {{
+            fenToYuan(
+              selectedDishesFinalTotalPrice - orderInfo.selCouponReduceCost
+            )
+          }}
+        </div>
+      </div>
+      <div class="right">
+        <div class="continue-order" @click="navigateBack">继续点菜</div>
+        <div class="confirm-order" @click="confirmOrder">确认下单</div>
       </div>
     </div>
-    <div class="right">
-      <div class="continue-order" @click="navigateBack">继续点菜</div>
-      <div class="confirm-order" @click="confirmOrder">确认下单</div>
-    </div>
+    <div style="height: 32px; background: white"></div>
   </div>
 </template>
 <script>
@@ -45,11 +78,18 @@ import { useNavigate } from "@hooks/commonHooks";
 import { useOrder } from "@hooks/orderHooks";
 import { useDish } from "@hooks/menuHooks";
 import { useRecommendedCoupon, usePay } from "@hooks/payHooks";
+import { useFanpiaoInfo } from "@hooks/merchantHooks";
 import { fenToYuan, showToast } from "@utils";
 
-import { ref, unref } from "vue";
+import { ref, unref, computed } from "vue";
 export default {
   components: {},
+  props: {
+    tooltipType: {
+      type: [String, Boolean],
+      default: "",
+    },
+  },
   setup() {
     const {
       selectedDishesTotalPrice,
@@ -61,6 +101,7 @@ export default {
 
     const { navigateBack, navigateTo } = useNavigate();
     const { createOrder, setOrderInfo, orderInfo } = useOrder();
+    const { maxDiscountFanpiao } = useFanpiaoInfo();
     // const totalPrice = computed(() => {});
     async function buyCouponAndPay() {
       let { isAgreeCouponAccord, selCouponId } = unref(orderInfo);
@@ -122,8 +163,15 @@ export default {
       navigateTo("ORDER/PAY_ORDER");
     }
 
+    const minFanpiaoPrice = computed(() => {
+      let { discount = 0 } = unref(maxDiscountFanpiao);
+      let { billFee } = unref(orderInfo);
+      return Number(((100 - discount) * (billFee || 0)) / 10000).toFixed(2);
+    });
+
     return {
       navigateBack,
+      navigateTo,
       createOrder,
       confirmOrder,
       selectedDishesTotalPrice,
@@ -131,20 +179,75 @@ export default {
       fenToYuan,
       orderInfo,
       recommendedCoupon,
+      minFanpiaoPrice,
     };
   },
 };
 </script>
 <style lang="less" scoped>
 @import "@design/index.less";
+.container-wrapper {
+  .pos-bl-absolute(0px,0px);
+  position: fixed;
+  z-index: 100;
+  background: transparent;
+}
+.buy-fanpiao-tooltip {
+  .box-size(calc(100vw - 24px),50px,transparent);
+  .flex-simple(space-between,center);
+  margin: 0 12px;
+  padding: 0 12px 0 6px;
+  z-index: 99;
+  background-image: url(https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/package-static/package-merchant/create-order/fanpiaojia-lable-bg_02.svg);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  position: relative;
+  .left {
+    .flex-simple(flex-start,center);
+    .pos-tl-absolute(13px,10%);
+    .text {
+      .normal-font(14px,#777);
+    }
+    .price {
+      .bold-font(20px,#F25643);
+      .price-symbol(14px,#F25643,normal);
+    }
+  }
+  .right {
+    .pos-tr-absolute(6px,15px);
+    .flex-simple(center,center);
+    background: #fff7e2;
+    padding: 4px 10px;
+    border-radius: 8px;
+    .text-box {
+      .flex-simple(center,center);
+      .line-center(14px);
+      width: 100%;
+      margin-bottom: 2px;
+    }
+    .text {
+      .bold-font(14px,#F25643);
+    }
+    .arrow-white-right {
+      .box-size(6px,9px,transparent);
+      margin-left: 2px;
+    }
+  }
+}
+
+.use-fanpiao-tooltip {
+  .box-size(calc(100vw - 24px),50px,#ffe9d2);
+  .line-center(32px);
+  .normal-font(14px,#eb4b3a);
+  margin: 0 12px 8px 12px;
+  text-align: center;
+}
 .confirm-order-container {
   .box-size(100vw,70px);
   .flex-between();
   align-items: center;
-  .pos-bl-absolute(32px,0px);
-  position: fixed;
   padding: 0 15px 10px 15px;
-  z-index: 100;
+  border-top: 1px solid rgb(224, 224, 224);
   .left {
     flex: 1;
     .buy-coupon-price {

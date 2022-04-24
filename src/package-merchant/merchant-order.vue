@@ -8,7 +8,7 @@
 
 <template>
   <div class="page">
-    <NavigationBar title="订单" :showArrow="false" />
+    <NavigationBar title="订单" />
     <div class="tab-wrapper">
       <div
         v-for="(item, index) in tabs"
@@ -92,7 +92,6 @@ export default {
     });
 
     async function requestMoreOrder() {
-      console.log(1);
       if (unref(curTabIndex) == 0) {
         getOrderRecordList(false);
       } else if (unref(curTabIndex) == 1) {

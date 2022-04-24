@@ -22,7 +22,13 @@
       <OrderRemarks />
       <div style="height: 100px"></div>
     </scroll-view>
-    <ConfirmOrder />
+    <ConfirmOrder
+      :tooltipType="
+        !merchantInfo.disableBuyFanpiao &&
+        merchantInfo.enableFanpiao &&
+        (hasBuyFanpiao ? 'hasBuyFanpiao' : 'noBuyFanpiao')
+      "
+    />
     <RecommendationModal
       ref="recommendationModal"
       :recommendedDishes="autoRecommendedDishes"
@@ -54,6 +60,9 @@ export default {
     RecommendationModal,
   },
   onLoad() {},
+  onShow() {
+    this.hasBuyFanpiao = getApp().globalData.hasBuyFanpiao || false;
+  },
   setup() {
     let {
       selectedDishes,
@@ -141,6 +150,11 @@ export default {
       orderDiscountPrice,
       recommendationModal,
       autoRecommendedDishes,
+    };
+  },
+  data() {
+    return {
+      hasBuyFanpiao: false,
     };
   },
 };

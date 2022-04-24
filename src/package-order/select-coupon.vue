@@ -91,10 +91,10 @@ export default {
 
     const { navigateBack } = useNavigate();
 
-    const { selectedDishesFinalTotalPrice } = useDish();
+    const { selectedDishesTotalPrice } = useDish();
 
     const avaiableMerchantCoupons = computed(() => {
-      let payFee = billFee ? billFee : unref(selectedDishesFinalTotalPrice);
+      let payFee = billFee ? billFee : unref(selectedDishesTotalPrice);
       return unref(userMerchantCoupons).filter((couponItem) => {
         if (couponItem?.leastCost <= payFee && couponItem.state == "ACCEPTED") {
           return true;
@@ -102,7 +102,7 @@ export default {
       });
     });
     const disabledCoupons = computed(() => {
-      let payFee = billFee ? billFee : unref(selectedDishesFinalTotalPrice);
+      let payFee = billFee ? billFee : unref(selectedDishesTotalPrice);
       return unref(userMerchantCoupons).filter((couponItem) => {
         if (couponItem?.leastCost <= payFee && couponItem.state == "ACCEPTED") {
         } else {
@@ -112,7 +112,7 @@ export default {
     });
 
     let selCouponInfo;
-    if ((from = "directPay")) {
+    if (from == "directPay") {
       let { id = "", reduceCost = 0 } = unref(selCoupon) || {};
       selCouponInfo = ref({
         id,
@@ -121,6 +121,7 @@ export default {
     } else {
       let { selCouponId = "", selCouponReduceCost = "" } =
         unref(orderInfo) || {};
+      console.log("unref(orderInfo): ", unref(orderInfo));
       selCouponInfo = ref({
         id: selCouponId,
         reduceCost: selCouponReduceCost,

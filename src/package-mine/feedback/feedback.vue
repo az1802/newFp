@@ -61,11 +61,6 @@ export default {
         userinfo: this.userInfo,
       };
       let res = await API.User.feedback(data);
-      console.log(
-        "%cres: ",
-        "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-        res
-      );
       await showToast(res ? "提交成功" : "提交失败");
       await sleep(1500);
       navigateBack();

@@ -7,18 +7,35 @@
 -->
 <template>
   <div class="menu-bottom-container">
-    <div class="discount-tooltip" v-if="selectedDishesTotalQuantity">
+    <div
+      class="discount-tooltip"
+      v-if="selectedDishesTotalQuantity && !userMerchantCoupons.length"
+    >
       <div class="text">
         使用饭票支付,本单可再减
         <div class="price">{{ priceTooltipText }}元</div>
       </div>
-      <!-- <div class="text">
-        再买
-        <div class="price">2元</div>
-        ,可再减
-        <div class="price">1元</div>
-      </div> -->
     </div>
+    <div
+      class="discount-tooltip"
+      v-if="
+        selectedDishesTotalQuantity &&
+        userMerchantCoupons.length &&
+        availableUseCoupon.leastCost > selectedDishesTotalPrice
+      "
+    >
+      <div class="text">
+        再买
+        <div class="price">
+          {{
+            (availableUseCoupon.leastCost - selectedDishesTotalPrice) / 100
+          }}元
+        </div>
+        ,可减
+        <div class="price">{{ availableUseCoupon.reduceCost / 100 }}元</div>
+      </div>
+    </div>
+
     <div class="cart-wrapper">
       <div class="cart-info">
         <div class="cart-icon" @click="toggleShowCartModal(!showCartModal)">
@@ -27,7 +44,18 @@
             {{ selectedDishesTotalQuantity }}
           </div>
         </div>
-        <div class="total-price">¥{{ fenToYuan(totalPrice) }}</div>
+        <div class="total-price-wrapper">
+          <div class="price" v-if="canUsedCoupon">
+            <div class="finaly-price">
+              ¥{{ fenToYuan(totalPrice - availableUseCoupon.reduceCost) }}
+            </div>
+            <div class="origin-price">¥{{ fenToYuan(totalPrice) }}</div>
+          </div>
+          <div class="price" v-else>¥{{ fenToYuan(totalPrice) }}</div>
+          <div class="use-coupon-tooltip" v-if="canUsedCoupon">
+            本单可使用优惠券
+          </div>
+        </div>
       </div>
       <div
         class="text-wrapper"
@@ -44,8 +72,10 @@ import { useCart, useDish, useScanModal } from "@hooks/menuHooks";
 import { useNavigate } from "@hooks/commonHooks";
 import { useFanpiaoInfo } from "@hooks/merchantHooks";
 import { useOrder } from "@hooks/orderHooks";
+import { useUserMerchantCoupon } from "@hooks/userHooks";
 import { unref, computed } from "vue";
 import { fenToYuan, showToast } from "@utils";
+
 export default {
   setup() {
     const { showCartModal, toggleShowCartModal } = useCart();
@@ -59,9 +89,10 @@ export default {
     } = useDish();
     const { maxDiscountFanpiao, minDiscountFanpiao } = useFanpiaoInfo();
     const { orderInfo, setOrderInfo } = useOrder();
-    let { navigateTo } = useNavigate();
+    const { navigateTo } = useNavigate();
+    const { userMerchantCoupons } = useUserMerchantCoupon();
     function createOrder() {
-      console.log(unref(orderInfo));
+      console.log("下单信息", unref(orderInfo));
       if (!unref(orderInfo).tableId) {
         toggleShowScanModal(true);
         return;
@@ -76,7 +107,7 @@ export default {
       navigateTo("ORDER/CREATE_ORDER");
     }
 
-    let priceTooltipText = computed(() => {
+    const priceTooltipText = computed(() => {
       let max = Number(
         (unref(selectedDishesTotalPrice) / 100) *
           ((unref(maxDiscountFanpiao).discount || 0) / 100)
@@ -90,6 +121,21 @@ export default {
       return max != min ? `${min}-${max}` : `${max}`;
     });
 
+    const availableUseCoupon = computed(() => {
+      let res = null;
+      unref(userMerchantCoupons).forEach((item) => {
+        if (item.leastCost < res || res === null) {
+          res = item;
+        }
+      });
+      return res;
+    });
+    const canUsedCoupon = computed(() => {
+      return (
+        unref(availableUseCoupon) &&
+        unref(availableUseCoupon).leastCost <= unref(selectedDishesTotalPrice)
+      );
+    });
     const totalPrice = computed(() => {
       return (
         unref(selectedDishesTotalPrice) - unref(selectedDishesDiscountPrice)
@@ -104,7 +150,11 @@ export default {
       totalPrice,
       fenToYuan,
       createOrder,
+      selectedDishesTotalPrice,
       priceTooltipText,
+      userMerchantCoupons,
+      availableUseCoupon,
+      canUsedCoupon,
     };
   },
 };
@@ -159,9 +209,25 @@ export default {
           .pos-tr-absolute(-4px,-8px);
         }
       }
-      .total-price {
-        .bold-font(18px,white);
+      .total-price-wrapper {
+        .flex-simple(flex-start,flex-start);
+        flex-direction: column;
         margin-left: 12px;
+        .price {
+          .bold-font(18px,white);
+          .flex-simple(flex-start,flex-end);
+          .finaly-price {
+            .bold-font(18px,white);
+          }
+          .origin-price {
+            .normal-font(14px,#666);
+            text-decoration: line-through;
+            margin-left: 6px;
+          }
+        }
+        .use-coupon-tooltip {
+          .normal-font(12px,white);
+        }
       }
     }
     .text-wrapper {

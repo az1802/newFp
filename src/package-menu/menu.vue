@@ -7,7 +7,7 @@
 -->
 <template>
   <div class="container">
-    <NavigationBar title="" showOrderIcon/>
+    <NavigationBar title="" showOrderIcon />
     <MenuHeader />
     <div class="menu-wrapper" :style="menuWrapperStyle">
       <MenuList :dishList="dishList" />
@@ -55,6 +55,7 @@ import {
   useUserCoupon,
   useUserMerchantFanpiaoBalance,
   useUserInfo,
+  useUserMerchantCoupon,
 } from "@hooks/userHooks";
 import { useDish, useScanModal, useOptionModal } from "@hooks/menuHooks";
 import { useOrder } from "@hooks/orderHooks";
@@ -104,6 +105,7 @@ export default {
     const { orderInfo, setOrderInfo } = useOrder();
     const { showScanModal } = useScanModal();
     const { showOptionModal, toggleShowOptionModal } = useOptionModal();
+    const { requestUserMerchantCoupons } = useUserMerchantCoupon();
 
     async function _handleMerchantConfig() {
       let { splashMode, disableBuyFanpiao } = unref(merchantInfo);
@@ -179,6 +181,7 @@ export default {
         requestCouponList(merchantId);
         requestUserMerchantFanpiaoBalance(merchantId); //获取饭票余额
         getUserMerchantInfo(merchantId); //获取该用户是否是商户的会员
+        requestUserMerchantCoupons(merchantId);
       }
     }
 

@@ -9,9 +9,7 @@ import { zip } from 'lodash';
 
 async function getTransactionId(args) {
   let res = await API.Order.pay(args);
-  console.log('%cres: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', res);
   if (!res?.transactionId) {
-    console.log(res.errmsg)
     if (res.errmsg) {
       await showToast(res.errmsg, "none", 2000);
       await sleep(2000)
@@ -323,18 +321,13 @@ export function useDirectPay(payMethod, params) {
     params.paidFee = Number(parseFloat(params.paidFee || 0).toFixed(0));
     let payRes = false;
     let res = await API.Order.pay(params);
-    console.log('%cres: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', res);
     if (res.errcode != 0) {
       showToast(res.errmsg);
       return false;
     }
-
-
     if (params.payMethod == "WECHAT_PAY") {
       payRes = await wechatPay(res.signData);
     } else if (params.payMethod == "FANPIAO_PAY") {
-
-      console.log(res)
       if (res.errcode != 0) {
         showToast(res.errmsg);
         return false;

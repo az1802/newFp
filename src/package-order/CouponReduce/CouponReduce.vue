@@ -74,7 +74,10 @@ export default {
 
     function goToSelectCoupon() {
       let merchantId = uni.getStorageSync("merchantId");
-      navigateTo("ORDER/SELECT_COUPON", { merchantId });
+      navigateTo("ORDER/SELECT_COUPON", {
+        merchantId,
+        from: "createOrder",
+      });
     }
     return {
       navigateTo,
@@ -82,6 +85,7 @@ export default {
       orderInfo,
       recommendedCoupon,
       userAvailableMerchantCoupon,
+      goToSelectCoupon,
     };
   },
 };

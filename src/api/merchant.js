@@ -108,7 +108,6 @@ export async function getQrcodeInfo(scene) {
   return res;
 }
 export async function getOrderRecordList(merchantId, params) {
-  console.log('%cmerchantId: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', merchantId);
   let url = `${URLS.USER_ORDER_LIST}/${merchantId}`;
   let res = await http.get(url, { params })
   return res;

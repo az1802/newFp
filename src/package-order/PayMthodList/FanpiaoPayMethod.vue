@@ -99,7 +99,6 @@ export default {
     function changeSelFanpiao(fanpiao) {
       let { recommendFanpiaoList, selFanpiaoInfo } = unref(orderFanpiaoPayInfo);
       let { fanpiaoBalance } = unref(userWallet);
-      console.log(recommendFanpiaoList.length, fanpiao.id, selFanpiaoInfo.id);
 
       if (recommendFanpiaoList.length > 0 && selFanpiaoInfo.id == fanpiao.id) {
         //推荐饭票时支持饭票反选

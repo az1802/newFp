@@ -147,11 +147,7 @@ export default {
     const { orderRechargeInfo, setOrderRechargeInfo } = useOrderRechargeInfo();
 
     function changeRecharge(rechargeItem) {
-      console.log(
-        "%crechargeItem: ",
-        "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-        rechargeItem
-      );
+
       let { selRechargeId } = unref(orderRechargeInfo);
       if (selRechargeId == rechargeItem.id) {
         setOrderRechargeInfo({
