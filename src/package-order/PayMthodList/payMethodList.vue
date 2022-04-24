@@ -7,7 +7,7 @@
 -->
 <template>
   <div class="pay-method-container">
-    <FanpiaoPayMethod />
+    <FanpiaoPayMethod :billFee="billFee" />
 
     <div class="other-pay">
       <div
@@ -25,12 +25,23 @@
                 会员储值(余额:{{ userWallet.memberCardBalance / 100 }})
               </div>
               <!-- <div class="tooltip">17688479248 切换</div> -->
-              <div class="tooltip get-phone">绑定手机号</div>
+              <div class="tooltip get-phone" @click.stop="stop" v-if="!phone">
+                绑定手机号<GetPhoneButton
+                  class="get-phone-btn"
+                  @success="getPhoneSuccess"
+                />
+              </div>
             </div>
           </div>
           <CustomImgRadio :checked="payMethod == 'SHILAI_MEMBER_CARD_PAY'" />
         </div>
-        <scroll-view class="recharge-list-wrapper">
+        <scroll-view
+          class="recharge-list-wrapper"
+          v-if="
+            orderRechargeInfo.recommendRechargeList.length > 0 &&
+            payMethod == 'SHILAI_MEMBER_CARD_PAY'
+          "
+        >
           <div class="recharge-list">
             <div
               class="recharge-item"
@@ -103,20 +114,37 @@
   </div>
 </template>
 <script>
-import { ref, onBeforeMount, computed } from "vue";
+import { ref, onBeforeMount, computed, unref } from "vue";
 import FanpiaoPayMethod from "./FanpiaoPayMethod";
 import { useOrder, useOrderRechargeInfo } from "@hooks/orderHooks";
-import { useUserMerchantWallet, useUserInfo } from "@hooks/userHooks";
+import {
+  useUserMerchantWallet,
+  useUserInfo,
+  useUserMerchantMemberBalance,
+  useUserPhone,
+} from "@hooks/userHooks";
 import { useRechargeInfo } from "@hooks/merchantHooks";
+import { stop, sleep } from "@utils";
 export default {
+  props: {
+    merchantId: {
+      type: String,
+      default: "",
+    },
+    billFee: {
+      type: [String, Number],
+      default: 0,
+    },
+  },
   components: {
     FanpiaoPayMethod,
   },
-  setup() {
+  setup(props) {
     let { setPayMethod, payMethod } = useOrder();
     const { userInfo } = useUserInfo();
-    const { userWallet } = useUserMerchantWallet();
-    const { orderRechargeInfo } = useOrderRechargeInfo();
+    const { phone } = useUserPhone();
+    const { userWallet, requestUserWallet } = useUserMerchantWallet();
+    const { orderRechargeInfo, setOrderRechargeInfo } = useOrderRechargeInfo();
 
     function changeRecharge(rechargeItem) {
       console.log(
@@ -124,6 +152,18 @@ export default {
         "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
         rechargeItem
       );
+      let { selRechargeId } = unref(orderRechargeInfo);
+      if (selRechargeId == rechargeItem.id) {
+        setOrderRechargeInfo({
+          selRechargeId: "",
+          selRechargeInfo: {},
+        });
+      } else {
+        setOrderRechargeInfo({
+          selRechargeId: rechargeItem.id,
+          selRechargeInfo: rechargeItem,
+        });
+      }
     }
 
     return {
@@ -133,6 +173,18 @@ export default {
       userInfo,
       orderRechargeInfo,
       changeRecharge,
+      stop,
+      phone,
+      async getPhoneSuccess(phone) {
+        console.log("绑定手机号成功", phone);
+        // TODO 更新用户手机号并重新获取余额
+        if (phone) {
+          sleep(1000);
+          await requestUserWallet(props.merchantId);
+        } else {
+          showToast("绑定手机号失败,请重新操作");
+        }
+      },
     };
   },
 };
@@ -142,6 +194,7 @@ export default {
 .pay-method-container {
   .box-size(calc(100% - 30px),unset);
   margin: 0 auto;
+  padding-bottom: 150px;
   .other-pay {
     background-color: #fff;
     border-radius: 8px;
@@ -153,9 +206,9 @@ export default {
       .box-size(calc(100% - 24px),56px);
       .flex-simple(space-between,center);
       margin: 0 auto;
-      border-bottom: 1px solid #e0e0e0;
-      &:last-child {
-        border-bottom-width: 0px;
+      border-top: 1px solid #e0e0e0;
+      &:first-child {
+        border-top-width: 0px;
       }
       .left {
         .flex-simple(flex-start,center);
@@ -176,17 +229,20 @@ export default {
       .right {
       }
       &.member-stored-pay {
-        border-bottom-width: 0px;
+        border-top-width: 0px;
         height: 56px;
         align-items: center;
+      }
+      &.member-balance {
+        flex-basis: 56px;
       }
     }
     .member-stored-pay {
       .box-size(100%,unset);
-      .flex-simple(flex-start,flex-start);
+      .flex-simple(center,flex-start);
       flex-direction: column;
       min-height: 82px;
-      border-bottom: 1px solid #e0e0e0;
+      // border-top: 1px solid #e0e0e0;
       .recharge-list-wrapper {
         max-height: 150px;
         .recharge-list {
@@ -203,6 +259,25 @@ export default {
             border-radius: 4px;
             padding: 12px 0px 12px 12px;
             .price-text {
+              .bold-font(18px,#333);
+              .line-center(18px);
+            }
+            .discount-info {
+              .normal-font(14px,#666);
+              .line-center(21px);
+              .amount {
+                .normal-font(14px,#f25643);
+                display: inline-block;
+              }
+            }
+            &.active {
+              background-color: #f25643;
+              border: 1px solid #f25643;
+              .price-text,
+              .discount-info,
+              .discount-info .amount {
+                color: white;
+              }
             }
           }
         }
@@ -214,5 +289,20 @@ export default {
     .wechat-pay {
     }
   }
+}
+.get-phone {
+  .box-size(70px,20px,#E6E6E6);
+  .normal-font(12px,#666);
+  .line-center(20px);
+  flex-basis: unset;
+  padding-top: 0.5px;
+  display: inline-block;
+  text-align: center;
+  border-radius: 3px;
+  position: relative;
+}
+.get-phone-btn {
+  .fill-box();
+  background: transparent;
 }
 </style>

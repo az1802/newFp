@@ -14,9 +14,8 @@ export default {
       orderId: "",//订单id
       remark: "",//订单备注
       billFee: 10000,//账单金额
-      paidFee: 10000,//支付金额 饭票支付金额为动态的更新
       packageFee: 0,//打包费
-      discountAmount: 0, //菜品折扣已优惠的价格
+      discountAmountPrice: 0, //菜品折扣已优惠的价格
       phoneMemberDiscount: 11,//会员折扣
       groupDiningEventId: "", //TODO 保留字段
       appointmentTime: "", //TODO 保留字段
@@ -48,7 +47,7 @@ export default {
     orderRechargeInfo: {
       recommendRechargeList: [],
       selRechargeId: "",
-      selRechargeIfo: {},
+      selRechargeInfo: {},
     }
   },
   getters: {
@@ -58,6 +57,7 @@ export default {
         fanpiaoRemainPaidFee,
         selFanpiaoId,
         selFanpiaoInfo } = state.orderFanpiaoPayInfo
+      console.log('state.orderFanpiaoPayInfo: ', state.orderFanpiaoPayInfo);
       if (payMethod == "FANPIAO_PAY") {
         if (fanpiaoRemainPaidFee > 0 && selFanpiaoId) { //根据选择的饭票进行最终扣除饭票价格的计算
           return fanpiaoPaidFee + (fanpiaoRemainPaidFee * (1 - (selFanpiaoInfo?.discount || 0) / 100));

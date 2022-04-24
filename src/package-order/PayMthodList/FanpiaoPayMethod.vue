@@ -20,12 +20,18 @@
             饭票(余额:{{ userWallet.fanpiaoBalance / 100 }})
           </div>
           <div
-            v-if="orderFanpiaoPayInfo.recommendFanpiaoList.length > 0"
-            class="tooltip"
+            v-if="
+              orderFanpiaoPayInfo.recommendFanpiaoList.length > 0 &&
+              payMethod == 'FANPIAO_PAY'
+            "
+            class="tooltip buy-fanpiao"
           >
             饭票余额不足，购买下列饭票即享优惠
           </div>
-          <div v-else class="tooltip">饭票支付，本单立省0.35-0.75元</div>
+          <div v-else class="tooltip">
+            饭票支付，本单立省
+            <div class="red">{{ fanpiaoPayTooltipText }}</div>
+          </div>
         </div>
         <CustomImgRadio :checked="payMethod == 'FANPIAO_PAY'" />
       </div>
@@ -62,19 +68,34 @@ import { useOrder, usePayMethod, useFanpiaoPayInfo } from "@hooks/orderHooks";
 import { useNavigate } from "@hooks/commonHooks";
 import { useFanpiaoInfo } from "@hooks/merchantHooks";
 import { useUserMerchantWallet } from "@hooks/userHooks";
-import { onBeforeMount, ref, unref, computed } from "vue";
-import { calcRecommendFanpiao } from "@utils";
+import { onBeforeMount, ref, unref, computed, watch } from "vue";
+import { calcRecommendFanpiao, calcFanpiaoDiscountPrice } from "@utils";
 
 export default {
   components: {
     FanpiaoItem,
+  },
+  props: {
+    billFee: {
+      type: [String, Number],
+      default: 0,
+    },
   },
   setup(props) {
     let { setPayMethod, payMethod } = usePayMethod();
     let { navigateTo } = useNavigate();
     const { userWallet } = useUserMerchantWallet();
     const { orderFanpiaoPayInfo, setOrderFanpiaoPayInfo } = useFanpiaoPayInfo();
+    const { maxDiscountFanpiao, minDiscountFanpiao } = useFanpiaoInfo();
 
+    watch(payMethod, (nval) => {
+      if (nval != "FANPIAO_PAY") {
+        setOrderFanpiaoPayInfo({
+          selFanpiaoId: "",
+          selFanpiaoInfo: {},
+        });
+      }
+    });
     function changeSelFanpiao(fanpiao) {
       let { recommendFanpiaoList, selFanpiaoInfo } = unref(orderFanpiaoPayInfo);
       let { fanpiaoBalance } = unref(userWallet);
@@ -108,6 +129,26 @@ export default {
       }
     }
 
+    const fanpiaoPayTooltipText = computed(() => {
+      let { recommendFanpiaoList } = unref(orderFanpiaoPayInfo);
+      let { maxFanpiaoDiscount, minFanpiaoDiscount } = calcFanpiaoDiscountPrice(
+        unref(recommendFanpiaoList),
+        props.billFee || 0
+      );
+      if (maxFanpiaoDiscount < minFanpiaoDiscount) {
+        return "";
+      }
+      let minDiscountPrice = Number(
+        ((minFanpiaoDiscount || 0) * (props.billFee || 0)) / 10000
+      ).toFixed(2);
+      let maxDiscountPrice = Number(
+        ((maxFanpiaoDiscount || 0) * (props.billFee || 0)) / 10000
+      ).toFixed(2);
+      return minDiscountPrice != maxDiscountPrice
+        ? `${minDiscountPrice}-${maxDiscountPrice}元`
+        : `${minDiscountPrice}元`;
+    });
+
     return {
       setPayMethod,
       payMethod,
@@ -116,6 +157,7 @@ export default {
       changeSelFanpiao,
       orderFanpiaoPayInfo,
       setFanpiaoPayMethod,
+      fanpiaoPayTooltipText,
     };
   },
 };
@@ -167,7 +209,14 @@ export default {
         }
         .tooltip {
           .line-center(18px);
-          .normal-font(12px,#ff4029);
+          .normal-font(12px,#333);
+          .red {
+            .normal-font(12px,#ff4029);
+            display: inline-block;
+          }
+          &.buy-fanpiao {
+            .normal-font(12px,#ff4029);
+          }
         }
       }
     }

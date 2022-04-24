@@ -8,7 +8,9 @@
 import { maxBy, minBy } from "lodash";
 export default {
   state: {
-    merchantInfo: {}, //商户信息
+    merchantInfo: {
+      merchantId: "8ec573585d9645229fb01713e30a2a6d"
+    }, //商户信息
     fanpiaoList: [], //饭票目录
     couponList: [], //券包目录
     fanpiaoUserAvaterList: [], //券包购买头像

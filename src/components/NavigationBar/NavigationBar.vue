@@ -108,7 +108,7 @@ export default {
   height: 44px;
   background: white;
   position: relative;
-  z-index: 1000;
+  z-index: 10;
   .arrow {
     .pos-tl-absolute(unset,4px);
     padding: 6px;

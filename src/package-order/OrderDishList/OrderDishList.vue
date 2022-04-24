@@ -17,7 +17,9 @@
       </div>
       <div class="right">
         <div class="price">
-          {{ fenToYuan(dishItem.totalFee || calcSkuDishPrice(dishItem)) }}
+          {{
+            fenToYuan(dishItem.totalFee || calcSkuDishPrice(dishItem, "origin"))
+          }}
         </div>
         <div class="quantity">{{ dishItem.quantity }}</div>
       </div>

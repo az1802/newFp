@@ -230,7 +230,7 @@ export default {
   .box-size(100%,500px);
   .pos-bl-absolute();
   border-radius: 10px 10px 0 0;
-  padding: 20px 12px 30px 12px;
+  padding: 20px 0px 30px 0px;
   &.higher {
     height: max(70%, 700px);
     .other-info {
@@ -240,6 +240,8 @@ export default {
   .dish-info {
     display: flex;
     margin-bottom: 20px;
+    padding:0 12px;
+    box-sizing:border-box;
     .img {
       .box-size(80px,80px,#eee);
       border-radius: 3px;

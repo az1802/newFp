@@ -27,19 +27,24 @@
 import { getAliPhoneNumber, getWechatPhone } from "@utils";
 import { useUserPhone } from "@hooks/userHooks";
 export default {
-  setup() {
+  setup(props, { emit }) {
     const { setPhone } = useUserPhone();
     return {
       async getPhone(e) {
-        let phoneRes = {};
+        let phoneRes = false;
         for (let i = 0; i < 3; i++) {
           phoneRes = await getWechatPhone(e);
+          if (phoneRes) {
+            setPhone(phoneRes || "");
+            break;
+          }
         }
-        setPhone(phoneRes?.phone || "");
+        emit("success", phoneRes);
       },
       async getAliPhone() {
         let phoneRes = await getAliPhoneNumber();
         setPhone(phoneRes?.mobile || "");
+        emit("success", phoneRes?.mobile);
       },
       getAliPhoneError() {
         console.log("err---", e);

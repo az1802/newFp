@@ -9,7 +9,7 @@
         :key="index"
         @click="switchTab(index)"
       >
-        {{ item.text }}({{ couponsCount[item.state] }})
+        {{ item.text }}({{ couponsCount[item.state] || 0 }})
       </p>
       <div
         class="line-wrapper"

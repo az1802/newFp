@@ -99,6 +99,8 @@ export default {
 <style lang="less" scoped>
 @import "@design/index.less";
 .condiment-list-container {
+  box-sizing:border-box;
+  padding:0 12px;
   .title {
     .normal-font(12px,#999);
     .line-center(18px);

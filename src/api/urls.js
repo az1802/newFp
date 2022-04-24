@@ -9,7 +9,7 @@ export default {
   // 获取商家详情
   GET_MERCHANT_INFO: "/merchant",
   GET_MERCHANT_DISH_CATEGORY: "/merchant/dish_catalog",
-  DISH_SOLD_NUMBER: "/dish/sold-number/", //获取菜品基本的销售数量
+  DISH_SOLD_NUMBER: "/dish/sold-number", //获取菜品基本的销售数量
   GET_FANPIAO_CATEGORIES: "/fanpiao/fanpiao_categories",
   GET_COUPON_PACKAGE: "/merchant/coupon_package_v2",
   MERCHANT_FANPIAO_BUY_RECORD: "/fanpiao/recently/buy", //饭票购买记录

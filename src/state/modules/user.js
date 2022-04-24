@@ -9,10 +9,10 @@ export default {
   state: {
     userId: "",//用户id
     userWallet: {
-      fanpiaoBalance: "",//饭票余额
-      redPacketBalance: "", //红包余额
-      memberCardBalance: "", //储值余额
-      fanpiaoPaidFee: "",//饭票可以抵扣的现金金额
+      fanpiaoBalance: 0,//饭票余额
+      redPacketBalance: 0, //红包余额
+      memberCardBalance: 0, //储值余额
+      fanpiaoPaidFee: 0,//饭票可以抵扣的现金金额
     },
     phone: "",//手机号码
     userCoupons: [],//用户券包
@@ -40,6 +40,9 @@ export default {
     },
     setUserInfo(state, userInfo) {
       for (let key in userInfo) {
+        if (key == 'phone' && userInfo[key]) {
+          state.phone = userInfo[key];
+        }
         state.userInfo[key] = userInfo[key]
       }
     },
@@ -51,6 +54,7 @@ export default {
     },
     setPhone(state, phone) {
       state.phone = phone;
+      state.userInfo.phone = phone;
     },
     setUserAddressList(state, userAddressList) {
       state.userAddressList = userAddressList;

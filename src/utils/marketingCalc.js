@@ -1,10 +1,9 @@
 export function calcRecommendCoupon(couponList = [], billFee) {
 
-  let res = {};
+  let res = {}, availableFee = 0;
   for (let i = 0; i < couponList.length; i++) {
     if (couponList[i]?.availableFee <= billFee) {
-      res = couponList[i];
-      break;
+      res = couponList[i]; //推荐最接近使用门款的券包
     }
   }
   return res;
@@ -38,6 +37,7 @@ export function calcUserAvailableMerchantCoupon(userMerchantCoupons, billFee) {
 
 
 export function calcRecommendRecharge(merchantRechargeList, billFee, balance) {
+  console.log('merchantRechargeList, billFee, balance: ', merchantRechargeList, billFee, balance);
   let res = [];
 
   if (billFee > balance) {
@@ -48,4 +48,23 @@ export function calcRecommendRecharge(merchantRechargeList, billFee, balance) {
 
 
   return res
+}
+
+
+export function calcFanpiaoDiscountPrice(fanpiaoList, billFee) {
+  let maxFanpiaoDiscount = 0, minFanpiaoDiscount = 100;
+  fanpiaoList.forEach(({ discount }) => {
+
+    if (maxFanpiaoDiscount < discount) {
+      maxFanpiaoDiscount = discount
+    }
+    if (minFanpiaoDiscount > discount) {
+      minFanpiaoDiscount = discount
+    }
+  })
+
+  return {
+    maxFanpiaoDiscount,
+    minFanpiaoDiscount
+  }
 }

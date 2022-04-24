@@ -28,7 +28,9 @@
       </div>
       <div v-else class="price">
         {{
-          fenToYuan(selectedDishesTotalPrice - orderInfo.selCouponReduceCost)
+          fenToYuan(
+            selectedDishesFinalTotalPrice - orderInfo.selCouponReduceCost
+          )
         }}
       </div>
     </div>
@@ -59,7 +61,7 @@ export default {
 
     const { navigateBack, navigateTo } = useNavigate();
     const { createOrder, setOrderInfo, orderInfo } = useOrder();
-
+    // const totalPrice = computed(() => {});
     async function buyCouponAndPay() {
       let { isAgreeCouponAccord, selCouponId } = unref(orderInfo);
       if (!isAgreeCouponAccord) {
@@ -73,12 +75,12 @@ export default {
       }
       let data = {
         billFee:
-          unref(selectedDishesFinalTotalPrice) +
+          unref(selectedDishesTotalPrice) +
           (unref(recommendedCoupon)?.price || 0),
         couponPackageId: unref(recommendedCoupon).id,
         isInvoice: false,
         merchantId: uni.getStorageSync("merchantId"),
-        noDiscountBillFee: unref(selectedDishesDiscountPrice),
+        noDiscountBillFee: 0,
         orderId,
         paidFee:
           unref(selectedDishesFinalTotalPrice) +
@@ -106,16 +108,15 @@ export default {
       }
 
       let orderId = await createOrder();
-      let discountAmount = unref(selectedDishesDiscountPrice), //菜品折扣的优化
+      let discountAmountPrice = unref(selectedDishesDiscountPrice), //菜品折扣的优化
         billFee = unref(selectedDishesTotalPrice); //菜品原价总额
 
       setOrderInfo({
         orderId,
-        discountAmount,
+        discountAmountPrice,
         billFee,
-        paidFee: billFee - discountAmount,
-        couponPrice: "",
-        couponId: "",
+        couponPrice: 0,
+        couponId: 0,
       });
 
       navigateTo("ORDER/PAY_ORDER");

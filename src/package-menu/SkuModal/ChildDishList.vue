@@ -30,6 +30,10 @@
           class="child-dish-item"
           v-for="dishItem in groupItem.childDishes"
           :key="dishItem.id"
+          :class="[
+            dishItem.status == 'NOT_IN_TIME_LIMIT_SALE' ? 'time-limit-out' : '',
+            dishItem.status == 'SOLD_OUT' ? 'sold-out' : '',
+          ]"
         >
           <div class="name">
             {{ dishItem.name }}
@@ -212,6 +216,7 @@ export default {
     .flex-simple(flex-start,center);
     .box-size(100%,21px);
     margin-bottom: 4px;
+    padding: 0 12px;
     .group-name {
       .normal-font(12px,#999);
     }
@@ -234,7 +239,23 @@ export default {
     .child-dish-item {
       .flex-simple(space-between,center);
       .line-center(36px);
-
+      position: relative;
+      padding: 0 12px;
+      &.time-limit-out,
+      &.sold-out {
+        background: #f8f8f8;
+        .name {
+          color: #999;
+          font-weight: bold;
+          .price-tag {
+            border: 1px solid #999;
+            color: #999;
+          }
+        }
+        .operation .status {
+          color: #999;
+        }
+      }
       .name {
         .bold-font(14px,#333);
         .price-tag {
@@ -252,6 +273,8 @@ export default {
         position: relative;
         min-width: 120px;
         .status {
+          background: transparent;
+          color: #666;
         }
         .fixed-operation {
           .flex-simple(flex-end,center);

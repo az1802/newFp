@@ -31,7 +31,19 @@
                 {{ genDishDescribeText(dish) }}
               </div>
             </div>
-            <div class="price">{{ fenToYuan(calcSkuDishPrice(dish)) }}</div>
+            <div class="price">
+              <div class="current-price">
+                {{ fenToYuan(calcSkuDishPrice(dish)) }}
+              </div>
+              <div
+                class="origin-price"
+                v-if="
+                  dish.discountPrice && !merchantInfo.disableShowDiscountPrice
+                "
+              >
+                {{ fenToYuan(calcSkuDishPrice(dish, "origin")) }}
+              </div>
+            </div>
           </div>
           <QuantityOperation
             v-if="dish.quantity"
@@ -48,13 +60,14 @@
 <script>
 import { noop, fenToYuan } from "@utils";
 import { useCart, useDish, useSkuDish } from "@hooks/menuHooks";
+import { useMerchantInfo } from "@hooks/merchantHooks";
 export default {
   setup() {
     const { showCartModal, toggleShowCartModal, addCartDish, reduceCartDish } =
       useCart();
     const { selectedDishes, addDish, reduceDish, resetSelDishes } = useDish();
     const { genDishDescribeText, calcSkuDishPrice } = useSkuDish();
-
+    const { merchantInfo } = useMerchantInfo();
     return {
       toggleShowCartModal,
       showCartModal,
@@ -66,6 +79,7 @@ export default {
       genDishDescribeText,
       resetSelDishes,
       calcSkuDishPrice,
+      merchantInfo,
     };
   },
 };
@@ -116,8 +130,19 @@ export default {
           }
         }
         .price {
-          .bold-font(17px,#f25643);
           .price-symbol();
+          .flex-simple(felx-start,flex-end);
+          .current-price {
+            .bold-font(16px,#f25643);
+            .price-symbol(12px,#f25643);
+          }
+          .origin-price {
+            .normal-font(11px,#999);
+            .price-symbol(11px,999);
+            text-decoration: line-through;
+            margin-left: 4px;
+            white-space: nowrap;
+          }
         }
       }
       .cart-dish-operation {

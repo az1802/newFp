@@ -23,7 +23,7 @@
         已优惠<span class="num">{{ fenToYuan(discountPrice) }}</span>
       </div>
       <div class="total-price">
-        小计<span class="num">{{ fenToYuan(totalPrce - discountPrice) }}</span>
+        小计<span class="num">{{ fenToYuan(totalPrice - discountPrice) }}</span>
       </div>
     </div>
   </div>
@@ -53,7 +53,7 @@ export default {
       type: [String, Number],
       default: "",
     },
-    totalPrce: {
+    totalPrice: {
       type: [String, Number],
       default: "",
     },

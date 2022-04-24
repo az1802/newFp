@@ -27,9 +27,7 @@
             {{ selectedDishesTotalQuantity }}
           </div>
         </div>
-        <div class="total-price">
-          ¥{{ fenToYuan(selectedDishesTotalPrice) }}
-        </div>
+        <div class="total-price">¥{{ fenToYuan(totalPrice) }}</div>
       </div>
       <div
         class="text-wrapper"
@@ -57,6 +55,7 @@ export default {
       selectedDishes,
       selectedDishesTotalQuantity,
       selectedDishesTotalPrice,
+      selectedDishesDiscountPrice,
     } = useDish();
     const { maxDiscountFanpiao, minDiscountFanpiao } = useFanpiaoInfo();
     const { orderInfo, setOrderInfo } = useOrder();
@@ -91,12 +90,18 @@ export default {
       return max != min ? `${min}-${max}` : `${max}`;
     });
 
+    const totalPrice = computed(() => {
+      return (
+        unref(selectedDishesTotalPrice) - unref(selectedDishesDiscountPrice)
+      );
+    });
+
     return {
       toggleShowCartModal,
       showCartModal,
       selectedDishes,
       selectedDishesTotalQuantity,
-      selectedDishesTotalPrice,
+      totalPrice,
       fenToYuan,
       createOrder,
       priceTooltipText,

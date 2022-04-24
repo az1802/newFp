@@ -15,7 +15,8 @@ export function useOrder() {
   const { merchantInfo } = useState('merchant', ["merchantInfo"])
   const { orderInfo, payMethod } = useState("order", ["orderInfo", "payMethod"])
   const { selectedDishes } = useState("menu", ["selectedDishes"])
-  const { setPayMethod, setOrderInfo } = useMutations("order", ["setPayMethod", "setOrderInfo"])
+  const { setPayMethod, setOrderInfo } = useMutations("order", ["setPayMethod", "setOrderInfo"]);
+  const { phone } = useState('user', ['phone']);
   async function createOrder() {
     let orderInfoTemp = unref(orderInfo);
     let orderArgs = {
@@ -27,9 +28,9 @@ export function useOrder() {
       remark: orderInfoTemp.remark,
       peopleCount: Number(orderInfoTemp.peopleCount || 1),
       groupDiningEventId: orderInfoTemp.groupDiningEventId,
-      phone: "17688479248",
+      phone: unref(phone),
       appointmentTime: orderInfoTemp.takeawayTime || '',
-      discountAmount: 0,
+      discountAmountPrice: 0,
     }
     let res = await API.Order.createOrder(unref(merchantInfo).merchantId, orderArgs);;
     return res?.orderId;

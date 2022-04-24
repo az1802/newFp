@@ -14,7 +14,7 @@
       <OrderDishInfo
         :merchantName="merchantInfo.name"
         :dishList="selectedDishes"
-        :totalPrce="selectedDishesTotalPrice"
+        :totalPrice="selectedDishesTotalPrice"
         :discountPrice="orderDiscountPrice"
       />
       <div style="height: 18px"></div>
@@ -133,6 +133,7 @@ export default {
       }
       return res;
     });
+
     return {
       merchantInfo,
       selectedDishes,

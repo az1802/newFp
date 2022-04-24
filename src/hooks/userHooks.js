@@ -210,28 +210,26 @@ export function useUserMerchantWallet() {
   let { setUserWallet } = useMutations('user', ["setUserWallet"]);
 
   async function requestUserWallet(merchantId) {
-    API.User.getUserMemberBalance(merchantId).then(({ balance }) => {
-      setUserWallet({
-        "memberCardBalance": balance || 0,
-      })
-    });
 
-    API.User.getUserFanpiaoBalance(merchantId).then(({ balance }) => {
-      setUserWallet({
-        fanpiaoBalance: balance || 0
-      })
-    });
-    API.User.getUserWallet().then(({ balance }) => {
-      setUserWallet({
-        redPacketBalance: balance || 0
-      })
-    });
+    let memberBalanceRes = await API.User.getUserMemberBalance(merchantId);
+    setUserWallet({
+      "memberCardBalance": memberBalanceRes.balance || 0,
+    })
+    let fanpiaoBalanceRes = await API.User.getUserFanpiaoBalance(merchantId);
+    setUserWallet({
+      "fanpiaoBalance": fanpiaoBalanceRes.balance || 0,
+    })
+    let userWalletRes = await API.User.getUserWallet();
+    setUserWallet({
+      "redPacketBalance": userWalletRes.balance || 0,
+    })
 
     let res = await API.User.getUserFanpiaoPaidFee({
       merchantId,
       billFee: 10000 * 100,
       noDiscountFee: 0
     })
+
     setUserWallet({
       fanpiaoPaidFee: res?.paidFee || 0
     })
@@ -253,6 +251,22 @@ export function useUserMerchantWallet() {
     requestFanpiaoPaidFee
   }
 }
+
+export function useUserMerchantMemberBalance() {
+  let { setUserWallet } = useMutations('user', ["setUserWallet"]);
+  async function requestUserMerchantMemberBalance(merchantId) {
+    API.User.getUserWallet().then(({ memberCardBalance }) => {
+      memberCardBalance && setUserWallet({
+        memberCardBalance: memberCardBalance || 0
+      })
+    });
+  }
+  return {
+    requestUserMerchantMemberBalance
+  }
+
+}
+
 
 
 

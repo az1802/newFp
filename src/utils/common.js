@@ -16,6 +16,10 @@ export async function sleep(time) {
 export function noop() {
 
 }
+export function stop(e) {
+
+  return false;
+}
 
 export async function showToast(msg = '', icon = 'none', duration = 1500) {
   if (!msg) return;

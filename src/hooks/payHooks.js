@@ -5,11 +5,17 @@ import { useUserLogin, useUserInfo } from '@hooks/userHooks'
 import { useDish } from '@hooks/menuHooks';
 import API from "@api";
 import { wechatPay, aliPay, showToast, sleep } from '@utils';
+import { zip } from 'lodash';
 
 async function getTransactionId(args) {
   let res = await API.Order.pay(args);
   console.log('%cres: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', res);
   if (!res?.transactionId) {
+    console.log(res.errmsg)
+    if (res.errmsg) {
+      await showToast(res.errmsg, "none", 2000);
+      await sleep(2000)
+    }
     return false;
   }
   return res;
@@ -61,8 +67,22 @@ export function usePayOrder() {
     return payRes;
   }
 
+  async function buyRechargeAndPay(rechargeInfo, orderInfo) { //只支持微信支付
+    let payMethod = 'WECHAT_PAY';
+    let data = {
+      rechargeCategoryId: rechargeInfo.id,
+      billFee: rechargeInfo.amount,
+      paidFee: rechargeInfo.sellPrice,
+      merchantId: orderInfo.merchantId,
+      transactionType: 'SHILAI_MEMBER_CARD_RECHARGE',
+      payMethod: payMethod // 'WALLET' //
+    };
+    let payRes = await commonPay(data);
+    return payRes;
+  }
+
   async function payOrder(payMethod, orderInfo, userWallet) {
-    console.log('%cpayMethod, orderInfo: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', payMethod, orderInfo);
+    console.log('%cpayMethod, orderInfo: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', payMethod, orderInfo, userWallet);
     let params = {
       merchantId: orderInfo.merchantId,
       orderId: orderInfo.orderId,
@@ -78,7 +98,7 @@ export function usePayOrder() {
     // TODO 外卖菜品打包费
 
     //使用券包
-    if (orderInfo.couponId && payMethod !== 'FANPIAO_PAY' && payMethod !== 'SHILAI_MEMBER_CARD_PAY') {
+    if (orderInfo.selCouponId && payMethod !== 'FANPIAO_PAY' && payMethod !== 'SHILAI_MEMBER_CARD_PAY') {
       params.couponId = orderInfo.selCouponId
     }
 
@@ -97,16 +117,35 @@ export function usePayOrder() {
       } else { //饭票直接支付
         params.paidFee = fanpiaoPaidFee
       }
-    } else if (payMethod === 'SHILAI_MEMBER_CARD_PAY' && orderInfo.billFee > userWallet.memberCardBalance) {
-      // TODO 购买储值并支付
-      showToast('储值余额不足');
-      return
+    } else if (payMethod === 'SHILAI_MEMBER_CARD_PAY') {
+      params.transactionType = "SELF_DISH_ORDER_PAYMENT";
+      let { selRechargeInfo } = orderInfo.orderRechargeInfo
+      if (orderInfo.billFee <= userWallet.memberCardBalance) {//直接使用储值支付
+
+      } else {
+        if (selRechargeInfo && selRechargeInfo.id) {
+          let res = await buyRechargeAndPay(selRechargeInfo, orderInfo);
+          showToast(res ? "购买成功" : "购买失败,请稍后重试");
+        } else {
+          showToast('储值余额不足');
+        }
+        return;
+      }
     } else if (payMethod === "WALLET" && orderInfo.billFee > userWallet.redPacketBalance) {
       showToast('红包余额不足');
       return;
+    } else if (payMethod === "MEMBER_PAY") {
+      params.paidFee = Number(Number(orderInfo.billFee * parseFloat((100 - (orderInfo.phoneMemberDiscount || 0)) / 100)).toFixed(0));
+      params.transactionType = "SELF_DISH_ORDER_PAYMENT";
+      params.payMethod = "WECHAT_PAY"
+      // #ifdef MP-ALIPAY
+      params.payMethod = 'ALIPAY'
+      // #endif
+      params.isPhoneMemberPay = true
+    } else {
+      params.transactionType = "SELF_DISH_ORDER_PAYMENT";
     }
 
-    params.transactionType = "SELF_DISH_ORDER_PAYMENT";
 
     let res = await commonPay(params);
     // TODO 清除本地缓存菜品

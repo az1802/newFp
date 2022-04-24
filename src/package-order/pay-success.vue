@@ -6,7 +6,7 @@
       :merchantName="orderDetail.storeName"
       :dishList="orderDetail.dishList"
       :discountPrice="orderDiscountPrice"
-      :totalPrce="orderTotalPrice"
+      :totalPrice="orderTotalPrice"
     />
     <OrderInfoList :orderInfo="orderDetail" />
     <RedPacketModal :redPacketVal="redPacketVal" />

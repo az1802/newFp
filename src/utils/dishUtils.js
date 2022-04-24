@@ -124,10 +124,13 @@ export function genDishDescribeText(dish) {
   return [...childDishesText, ...attrTexts, ...condimentTexts].join(",")
 }
 
-export function calcSkuDishPrice(dish) {
-  let { supplyCondiments = [], attrs = [], childDishes = [], price, quantity = 0 } = dish;
+export function calcSkuDishPrice(dish, type = "discount") {
+  let { supplyCondiments = [], attrs = [], childDishes = [], price, quantity = 0, discountPrice } = dish;
   let attrPrice = attrs.reduce((sum, { reprice }) => sum += reprice, 0);
   let condimentPrice = supplyCondiments.reduce((sum, { marketPrice, quantity = 0 }) => sum += marketPrice * quantity, 0);
   let childDishesPrice = childDishes.reduce((sum, { price = 0, addPrice = 0, quantity = 0 }) => sum += quantity * (addPrice + price), 0)
-  return (price + attrPrice + condimentPrice + childDishesPrice) * quantity;
+  if (type == "origin") {
+    discountPrice = 0
+  }
+  return ((price - discountPrice) + attrPrice + condimentPrice + childDishesPrice) * quantity;
 }

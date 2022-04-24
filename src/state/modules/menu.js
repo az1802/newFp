@@ -77,7 +77,7 @@ export default {
     },
     selectedDishesTotalPrice(state) { //菜品的原价总价
       return state.selectedDishes.reduce((sum, dishItem) => {
-        return sum += calcSkuDishPrice(dishItem)
+        return sum += calcSkuDishPrice(dishItem, 'origin')
       }, 0)
     },
     selectedDishesDiscountPrice(state) { //菜品的折扣价部分
@@ -98,7 +98,7 @@ export default {
     },
     selectedDishesFinalTotalPrice(state) { //菜品最终的总价
       return state.selectedDishes.reduce((sum, dishItem) => {
-        return sum += (calcSkuDishPrice(dishItem) - (dishItem.discountPrice * dishItem.quantity))
+        return sum += calcSkuDishPrice(dishItem)
       }, 0)
     },
     maxFanpiaoDiscount() {

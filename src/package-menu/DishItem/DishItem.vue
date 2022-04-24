@@ -49,10 +49,20 @@
       <div class="name">
         <!-- {{ dish.name }} -->
         <div class="text">{{ dish.name }}</div>
-        <div class="sold-num">月售{{ dish.soldNumber + 20 }}份</div>
+        <div class="sold-num" v-if="!merchantInfo.disableShowSoldNumber">
+          月售{{ dish.soldNumber + 20 }}份
+        </div>
       </div>
       <div class="price" @click.stop="navigateTo('MARKETING/BUY_FANPIAO')">
-        <div class="origin">{{ fenToYuan(dish.price) }}</div>
+        <div class="origin">
+          <div class="current-price">{{ fenToYuan(currentPrice) }}</div>
+          <div
+            class="origin-price"
+            v-if="dish.discountPrice && !merchantInfo.disableShowDiscountPrice"
+          >
+            {{ fenToYuan(dish.price) }}
+          </div>
+        </div>
         <div class="fanpiao" v-if="dish.status !== 'NOT_IN_TIME_LIMIT_SALE'">
           <span class="text">{{ fenToYuan(minFanpiaoPrice) }}</span>
           <span class="icon">饭票价</span>
@@ -109,12 +119,19 @@ export default {
       return dish.price;
     });
 
+    let currentPrice = computed(() => {
+      let { disableShowDiscountPrice } = unref(merchantInfo);
+      let { price, discountPrice } = dish;
+      return !disableShowDiscountPrice ? price - discountPrice : price;
+    });
+
     return {
       showPlaceHolder,
       dishCountMap,
       navigateTo,
       minDiscountFanpiao,
       merchantInfo,
+      currentPrice,
       imgLoaded(e) {
         showPlaceHolder.value = false;
       },
@@ -210,9 +227,19 @@ export default {
     }
     .price {
       .origin {
-        .bold-font(16px,#f25643);
-        .price-symbol(12px);
-        .line-center(16px);
+        height: 22px;
+        .flex-simple(felx-start,flex-end);
+        .current-price {
+          .bold-font(16px,#f25643);
+          .price-symbol(12px,#f25643);
+        }
+        .origin-price {
+          .normal-font(11px,#999);
+          .price-symbol(11px,999);
+          text-decoration: line-through;
+          margin-left: 6px;
+          white-space: nowrap;
+        }
       }
       .fanpiao {
         .line-center(15px);

@@ -18,7 +18,7 @@
             mode="scaleToFill"
           />
           <p v-if="item.alreadyOpen" class="money">
-            {{ parseFloat(item.redPacketValue).toFixed(2) }}
+            {{ parseFloat((item.redPacketValue || 0) / 100).toFixed(2) }}
           </p>
         </div>
         <div class="detail-wrapper">
