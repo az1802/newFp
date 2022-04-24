@@ -14,7 +14,7 @@
         <div
           class="show-discount-price"
           v-if="
-            billFee ||
+            showBillFee ||
             (payMethod == 'FANPIAO_PAY' &&
               (orderFanpiaoPayInfo.fanpiaoRemainPaidFee <= 0 ||
                 (orderFanpiaoPayInfo.fanpiaoRemainPaidFee > 0 &&
@@ -22,13 +22,16 @@
           "
         >
           <div class="pay-price">{{ fenToYuan(paidFee) }}</div>
-          <div class="origin-price">{{ fenToYuan(billFee) }}</div>
+          <div class="origin-price">{{ fenToYuan(orderInfo.billFee) }}</div>
         </div>
         <div v-else class="show-origin-price">
           <div class="origin-price">{{ fenToYuan(paidFee) }}</div>
         </div>
       </div>
-      <PayMthodList :merchantId="merchantInfo.merchantId" :billFee="billFee" />
+      <PayMthodList
+        :merchantId="merchantInfo.merchantId"
+        :billFee="orderInfo.billFee"
+      />
     </scroll-view>
     <div class="bottom">
       <div class="tooltip" v-if="payMethod !== 'FANPIAO_PAY'">
@@ -135,13 +138,13 @@ export default {
       genRecommendRechargeList();
     });
 
-    const billFee = computed(() => {
+    const showBillFee = computed(() => {
       let { billFee } = unref(orderInfo),
         pm = unref(payMethod);
-      if (pm !== "SHILAI_MEMBER_CARD_PAY") {
-        return billFee;
+      if (pm !== "SHILAI_MEMBER_CARD_PAY" && pm !== "FANPIAO_PAY") {
+        return true;
       } else {
-        return null;
+        return false;
       }
     });
 
@@ -273,7 +276,7 @@ export default {
     return {
       merchantInfo,
       orderInfo,
-      billFee,
+      showBillFee,
       paidFee,
       fenToYuan,
       payOrderInfo,

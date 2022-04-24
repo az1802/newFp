@@ -135,6 +135,11 @@ export default {
         unref(recommendFanpiaoList),
         props.billFee || 0
       );
+      console.log(
+        "maxFanpiaoDiscount, minFanpiaoDiscount : ",
+        maxFanpiaoDiscount,
+        minFanpiaoDiscount
+      );
       if (maxFanpiaoDiscount < minFanpiaoDiscount) {
         return "";
       }
