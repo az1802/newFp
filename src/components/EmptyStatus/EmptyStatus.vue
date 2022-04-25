@@ -22,6 +22,13 @@
       />
       <div class="text">{{ content }}</div>
     </div>
+    <div v-if="type === 'dish'" class="content coupon">
+      <img
+        src="https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/common/none-tooltip_02.png"
+        alt=""
+      />
+      <div class="text">{{ content }}</div>
+    </div>
     <p v-if="type === 'order'" class="content">暂无订单</p>
     <p v-if="type === 'private'" class="content">{{ content }}</p>
     <p v-if="type === 'feedStats'" class="content">暂无投喂</p>

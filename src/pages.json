@@ -34,6 +34,11 @@
         "style": {
           "disableScroll": true
         }
+      }, {
+        "path": "search-dish",
+        "style": {
+          "disableScroll": true
+        }
       }]
     },
     {

@@ -22,6 +22,7 @@ export default {
   "MENU": {
     "MENU": `${MENU}/menu`,
     "LOGIN": `${MENU}/login`,
+    "SEARCH_DISH": `${MENU}/search-dish`,
   },
   "MERCHANT": {
     "HOME": `${MERCHANT}/home`,

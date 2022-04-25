@@ -151,6 +151,7 @@ export function useOrderDetail() {
     if (!orderId) { return };
     let orderInfoRes = await API.Order.getOrderDetailById(orderId) || {};
     orderDetail.value = orderInfoRes;
+    return orderInfoRes;
   }
 
   return {

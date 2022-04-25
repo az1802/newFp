@@ -5,7 +5,7 @@
  * @LastEditTime: 2022-02-18 18:18:54
  * @FilePath: /new-fanpiao-uniapp/src/utils/hooks/menuHooks.js
  */
-import { computed, ref, reactive, toRaw, unref } from 'vue'
+import { computed, ref, reactive, toRaw, unref, watch } from 'vue'
 import { useState, useGetters, useMutations } from "@hooks/storeHooks.js";
 import { setStorage, genDishDescribeText, calcSkuDishPrice } from "@utils"
 
@@ -134,4 +134,30 @@ export function useOptionModal() {
     showOptionModal,
     toggleShowOptionModal
   }
-} 
+}
+
+
+export function useSearchDish() {
+  let searchStr = ref(""), searchDishList = ref([]);
+  let allDishes = getApp().globalData.allDishes || [];
+
+  watch(searchStr, (nval) => {
+    let res = [];
+    if (!String(nval).trim()) {
+      res = [];
+    } else {
+      res = allDishes.filter(item => {
+        return item.name.indexOf(unref(searchStr)) != -1;
+      })
+    }
+    searchDishList.value = res;
+
+  })
+
+
+
+  return {
+    searchStr,
+    searchDishList,
+  }
+}

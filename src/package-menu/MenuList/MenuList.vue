@@ -49,6 +49,22 @@
         />
       </div>
     </scroll-view>
+    <div class="fixed-category-title">
+      <div class="text">
+        {{
+          dishList[categoryActiveIndex] &&
+          dishList[categoryActiveIndex].category.name
+        }}
+      </div>
+      <div class="search-box" @click="navigateTo('MENU/SEARCH_DISH')">
+        <img
+          src="https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/common/icon-search_01.png"
+          alt=""
+          class="img"
+        />
+        <div class="text">搜索</div>
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -57,6 +73,7 @@ import CategoryItem from "../CategoryItem/CategoryItem.vue";
 import DishItem from "../DishItem/DishItem.vue";
 import { useDebounceFn, useThrottleFn } from "@vueuse/core";
 import { useSystemInfo, useNavigate } from "@hooks/commonHooks";
+import { navigateTo } from "@utils";
 import { ref } from "vue";
 export default {
   components: {
@@ -98,6 +115,7 @@ export default {
       dishScroll,
       changeCategory,
       menuWrapperStyle,
+      navigateTo,
     };
   },
 };
@@ -107,6 +125,29 @@ export default {
 .list-wrapper {
   .box-size();
   display: flex;
+  position: relative;
+  .fixed-category-title {
+    .box-size(calc(100% - 80px),50px);
+    .pos-tr-absolute(0,0);
+    .flex-simple(space-between,center);
+    padding: 0 12px;
+    .text {
+      .normal-font(14px,#333);
+    }
+    .search-box {
+      .box-size(72px,32px,#F8F8F8);
+      .flex-simple(center,center);
+      border-radius: 16px;
+      z-index: 10;
+      .img {
+        .box-size(20px,20px);
+        margin-left: 4px;
+      }
+      .text {
+        .normal-font(14px,#666);
+      }
+    }
+  }
   .category-container {
     .box-size(80px,100%);
     flex-basis: 80px;

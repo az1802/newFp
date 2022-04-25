@@ -14,6 +14,8 @@ export default {
     systemInfo: {},
     dishesMap: {},
     hasBuyFanpiao: false,
+    allDishes: [],
+
     // dishSrollTops: [],
     // categoryScrollTops: [],
   },

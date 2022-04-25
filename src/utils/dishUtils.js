@@ -30,13 +30,13 @@ function _processDishAttr(dish) {
 
 export function handleDishList(dishes, dishBaseSellCountMap = {}) {
 
-  let dishesMap = {}, dishNameMap = {}, attrDishMap = {}, hotDishes = [];
+  let dishesMap = {}, dishNameMap = {}, attrDishMap = {}, hotDishes = [], allDishes = [];
   let dishSrollTops = [], categoryScrollTops = [], scrollTop = 0;
 
   // 
   dishes.forEach((categoryItem, index) => {
     categoryItem.dishList.forEach((dish) => {
-      dishesMap[dish.id] = dish
+
       dish.name in dishNameMap ? dishNameMap[dish.name].push(dish) : dishNameMap[dish.name] = [dish];
 
       // 将菜品的规格属性组移动到第一位
@@ -71,6 +71,8 @@ export function handleDishList(dishes, dishBaseSellCountMap = {}) {
 
     categoryItem.dishList.forEach(dishItem => {
       // dishItem.status = 'NOT_IN_TIME_LIMIT_SALE';
+      dishesMap[dishItem.id] = dishItem;
+      allDishes.push(dishItem);
       dishItem.isSku = isSkuDish(dishItem)
       dishItem.soldNumber += (dishBaseSellCountMap[dishItem.id]?.soldNumber || 0)
       _processDishAttr(dishItem)
@@ -107,6 +109,7 @@ export function handleDishList(dishes, dishBaseSellCountMap = {}) {
 
 
   getApp().globalData.dishMap = dishesMap;
+  getApp().globalData.allDishes = allDishes;
   getApp().globalData.dishSrollTops = dishSrollTops;
   getApp().globalData.categoryScrollTops = categoryScrollTops;
 

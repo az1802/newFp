@@ -7,13 +7,14 @@
 -->
 <template >
   <div class="create-order-container">
-    <NavigationBar title="订单" />
+    <div class="a"></div>
+    <NavigationBar title="" />
     <scroll-view class="page-content" scroll-y>
       <TableInfo />
       <div style="height: 8px"></div>
       <OrderDishInfo
         :merchantName="merchantInfo.name"
-        :dishList="selectedDishes"
+        :dishList="orderDishList"
         :totalPrice="selectedDishesTotalPrice"
         :discountPrice="orderDiscountPrice"
       />
@@ -45,11 +46,17 @@ import RecommendationModal from "./RecommendationModal/RecommendationModal.vue";
 import { getStorage } from "@utils";
 
 import { useDish } from "@hooks/menuHooks";
-import { useMerchantInfo, useRecommendationDish } from "@hooks/merchantHooks";
-import { useOrder } from "@hooks/orderHooks";
+import {
+  useMerchantInfo,
+  useRecommendationDish,
+  useFanpiaoInfo,
+  useCouponInfo,
+} from "@hooks/merchantHooks";
+import { useOrder, useOrderDetail } from "@hooks/orderHooks";
 import { useRecommendedCoupon } from "@hooks/payHooks";
 import { useUserMerchantCoupon } from "@hooks/userHooks";
 import { onBeforeMount, ref, computed, unref, watch } from "vue";
+let orderId;
 export default {
   components: {
     TableInfo,
@@ -59,7 +66,9 @@ export default {
     OrderRemarks,
     RecommendationModal,
   },
-  onLoad() {},
+  onLoad(opts) {
+    orderId = opts.orderId;
+  },
   onShow() {
     this.hasBuyFanpiao = getApp().globalData.hasBuyFanpiao || false;
   },
@@ -71,17 +80,51 @@ export default {
       resetSelDishes,
     } = useDish();
     let { recommendedDishes, requestRecommendDishes } = useRecommendationDish();
-    let { merchantInfo } = useMerchantInfo();
+    let { merchantInfo, requestMerchantInfo } = useMerchantInfo();
     let { orderInfo, setOrderInfo } = useOrder();
     let { recommendedCoupon, userAvailableMerchantCoupon } =
       useRecommendedCoupon();
     let { requestUserMerchantCoupons } = useUserMerchantCoupon();
     let recommendationModal = ref("");
+    const { orderDetail, getOrderDetailById } = useOrderDetail();
+    const { requestFanpiaoList } = useFanpiaoInfo();
+    const { requestCouponList } = useCouponInfo();
+
+    async function getOrderInfo(orderId) {
+      let orderInfo = await getOrderDetailById(orderId);
+      // todo  设置订单相关的信息同步到本地
+      setOrderInfo({
+        currentType: "ADD",
+        orderId: orderId, //订单id
+        remark: orderInfo.remark, //订单备注
+        billFee: orderInfo.orderInfo, //账单金额
+        packageFee: 0, //打包费
+        discountAmountPrice: 0, //菜品折扣已优惠的价格
+        phoneMemberDiscount: 0, //会员折扣
+        groupDiningEventId: "", //TODO 保留字段
+        appointmentTime: "", //TODO 保留字段
+        mealType: "EAT_IN", //就餐模式
+        peopleCount: orderInfo.peopleCount, //就餐人数
+        tableId: orderInfo.tableId, //桌台id
+        tableName: orderInfo.tableName, //桌台名称
+      });
+      return res;
+    }
 
     onBeforeMount(async () => {
-      let merchanrtId = unref(merchantInfo).merchantId;
-      requestRecommendDishes(merchanrtId); //请求推荐菜品
-      let userCoupons = (await requestUserMerchantCoupons(merchanrtId)) || []; //请求用户已有的商户券包
+      let merchantId;
+      if (orderId) {
+        // 获取订单相关信息 并且获取商户相关资源
+        let orderInfo = await getOrderInfo(orderId);
+        merchantId = orderInfo.merchantId;
+        await requestMerchantInfo(merchantId);
+        requestFanpiaoList(merchantId);
+        requestCouponList(merchantId);
+      } else {
+        merchantId = unref(merchantInfo).merchantId;
+      }
+      requestRecommendDishes(merchantId); //请求推荐菜品
+      let userCoupons = (await requestUserMerchantCoupons(merchantId)) || []; //请求用户已有的商户券包
       // 默认设置用户可使用的券包
       let maxReduceCostCoupon = "";
       userCoupons.forEach((item) => {
@@ -93,7 +136,6 @@ export default {
           maxReduceCostCoupon = item;
         }
       });
-
       if (maxReduceCostCoupon) {
         setOrderInfo({
           selCouponId: maxReduceCostCoupon.id,
@@ -133,6 +175,11 @@ export default {
       }
     });
 
+    const orderTotalPrice = computed(() => {
+      if (orderId) {
+      }
+    });
+
     const orderDiscountPrice = computed(() => {
       let res = unref(selectedDishesDiscountPrice) || 0;
       if (unref(orderInfo).isBuyCouponPackage) {
@@ -143,9 +190,16 @@ export default {
       return res;
     });
 
+    const orderDishList = computed(() => {
+      console.log("unref(orderDetail).dishList: ", unref(orderDetail).dishList);
+
+      return orderId ? unref(orderDetail).dishList : unref(selectedDishes);
+    });
+
     return {
       merchantInfo,
       selectedDishes,
+      orderDishList,
       selectedDishesTotalPrice,
       orderDiscountPrice,
       recommendationModal,

@@ -45,6 +45,7 @@ export function useMerchantInfo() {
     })
     let dishBaseSellCountMap = await API.Merchant.getDishSoldNumber(merchantId);
     let dishListRes = handleDishList(dishesRes.dishes, dishBaseSellCountMap);
+
     return dishListRes;
   }
   return {
