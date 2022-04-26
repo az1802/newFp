@@ -16,6 +16,7 @@ export default {
     hasBuyFanpiao: false,
     allDishes: [],
     hasJumpedToCreateOrder: false,
+    resetUserMerchantInfo: false,
 
     // dishSrollTops: [],
     // categoryScrollTops: [],

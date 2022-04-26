@@ -73,7 +73,7 @@ export default {
   setup() {
     let readyPay = false;
     const { resetSelDishes } = useDish();
-    const { orderInfo } = useOrder();
+    const { orderInfo, resetOrder } = useOrder();
     const { payOrder } = usePayOrder();
     const { merchantInfo } = useMerchantInfo();
     const { setOrderFanpiaoPayInfo, finalFanpiaoPaidFee, orderFanpiaoPayInfo } =
@@ -234,6 +234,7 @@ export default {
       }
       setPayMethod("WECHAT_PAY");
       resetSelDishes([]);
+      resetOrder();
       await sleep(2000);
       // 跳转到支付成功野蛮
       navigateTo("ORDER/PAY_SUCCESS", {

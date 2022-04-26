@@ -106,6 +106,7 @@ export default {
         margin-right: 10px;
         border-radius: 3px;
         .normal-font(11px,#e3513f);
+        text-align: center;
       }
     }
   }

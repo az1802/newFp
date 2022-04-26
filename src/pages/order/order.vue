@@ -46,7 +46,7 @@
 import { useTabs, useSystemInfo } from "@hooks/commonHooks";
 import { useOrderRecord } from "@hooks/orderHooks";
 import { computed, unref, onBeforeMount, ref, toRefs } from "vue";
-
+import { showToast } from "@utils";
 const TAB_ARR = [
   {
     text: "点餐",

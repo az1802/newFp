@@ -89,6 +89,14 @@ export default {
     }
     opts = options;
   },
+  async onShow() {
+    // 当支付成功返回的时候需要重新请求用户相关的信息
+    let resetUserMerchantInfo = getApp().globalData.resetUserMerchantInfo;
+    if (resetUserMerchantInfo) {
+      getApp().globalData.resetUserMerchantInfo = false;
+      await this.resetUserMerchantInfo();
+    }
+  },
   setup(props, context) {
     let dishList = reactive([]);
     let userInfo = reactive({});
@@ -200,7 +208,7 @@ export default {
         // 请求资源
         requestFanpiaoList(merchantId);
         requestCouponList(merchantId);
-        requestUserMerchantCoupons(merchantId);
+        await requestUserMerchantCoupons(merchantId);
         await requestUserMerchantFanpiaoBalance(merchantId); //获取饭票余额
         await getUserMerchantInfo(merchantId); //获取该用户是否是商户的会员
       }
@@ -233,6 +241,14 @@ export default {
       _handleMerchantConfig();
     });
 
+    async function resetUserMerchantInfo() {
+      let { merchantId } = unref(merchantInfo);
+      console.log("重新请求用户和商户相关的信息");
+      await requestUserMerchantCoupons(merchantId);
+      await requestUserMerchantFanpiaoBalance(merchantId); //获取饭票余额
+      await getUserMerchantInfo(merchantId); //获取该用户是否是商户的会员
+    }
+
     return {
       dishList,
       userInfo,
@@ -244,6 +260,7 @@ export default {
       showScanModal,
       showOptionModal,
       orderInfo,
+      resetUserMerchantInfo,
     };
   },
 };

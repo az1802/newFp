@@ -60,11 +60,9 @@ export default {
   },
   setup() {
     let { merchantInfo } = useMerchantInfo();
-    let { genDishDescribeText } = useSkuDish();
 
     return {
       merchantInfo,
-      genDishDescribeText,
       fenToYuan,
     };
   },

@@ -40,6 +40,9 @@ export default {
   setup(props, { emit }) {
     return {
       add() {
+        if (props.disableAdd) {
+          return;
+        }
         emit("add");
       },
       reduce() {
@@ -50,8 +53,7 @@ export default {
       },
     };
   },
-  updated() {
-  },
+  updated() {},
 };
 </script>
 <style lang="less" scoped>

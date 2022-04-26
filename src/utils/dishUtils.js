@@ -123,8 +123,12 @@ export function getDishInfoById(dishId) {
 export function genDishDescribeText(dish) {
   let childDishesText = dish?.childDishes?.map(item => item.name) || [];
   let attrTexts = dish?.attrs?.map((item) => item.name) || [];
-  let condimentTexts = dish?.supplyCondiments?.map(item => `${item.name}*${item.quantity}`) || [];
-  return [...childDishesText, ...attrTexts, ...condimentTexts].join(",")
+  let condimentTexts = dish?.supplyCondiments?.map(item => item.quantity && `${item.name}*${item.quantity}`) || [];
+  let arrTemp = [...childDishesText, ...attrTexts, ...condimentTexts];
+  arrTemp = arrTemp.filter(item => item != null)
+  console.log('arrTemp: ', arrTemp);
+
+  return arrTemp.length > 0 ? arrTemp.join(",") : '';
 }
 
 export function calcSkuDishPrice(dish, type = "discount") {

@@ -334,6 +334,11 @@ export default {
       font-family: 'PingFangSC-Medium';
       font-size: 16px;
       color: #666666;
+      background: white;
+
+      &:after {
+        border: 0px solid white;
+      }
     }
 
     .confirm-btn {

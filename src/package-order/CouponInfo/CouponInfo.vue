@@ -1,5 +1,8 @@
 <template>
-  <div class="coupon-info-wrapper" v-if="recommendedCoupon.id">
+  <div
+    class="coupon-info-wrapper"
+    v-if="recommendedCoupon.id && !userAvailableMerchantCoupon.length"
+  >
     <div class="angle-mark">
       <div class="title">特惠券包，限时抢购</div>
       <img
@@ -104,7 +107,8 @@ export default {
     let { navigateTo } = useNavigate();
     let { merchantInfo } = useMerchantInfo();
     let { orderInfo, setOrderInfo } = useOrder();
-    let { recommendedCoupon } = useRecommendedCoupon();
+    let { recommendedCoupon, userAvailableMerchantCoupon } =
+      useRecommendedCoupon();
 
     // TODO 计算合适的券然后使用
     return {
@@ -126,6 +130,7 @@ export default {
       },
       recommendedCoupon,
       orderInfo,
+      userAvailableMerchantCoupon,
     };
   },
 };

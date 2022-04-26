@@ -173,6 +173,30 @@ export default {
       }
       return true;
     }
+    function checkChildDishGroupCount(dishInfo) {
+      let selChildDishesTemp = unref(selChildDishes);
+      const { childDishGroups } = dishInfo;
+      for (let key in selChildDishesTemp) {
+        let selGrouoDishes = selChildDishesTemp[key];
+        let groupInfoIndex = childDishGroups.findIndex(
+          (item) => item.id == key
+        );
+        console.log("groupInfoIndex: ", groupInfoIndex);
+
+        let { orderMin, orderMax } = childDishGroups[groupInfoIndex];
+        if (
+          selGrouoDishes.length < orderMin ||
+          selGrouoDishes.length > orderMax
+        ) {
+          showToast(
+            `${childDishGroups[groupInfoIndex].groupName}必须选择${orderMin}到${orderMax}个紫菜`
+          );
+          return false;
+        }
+      }
+
+      return true;
+    }
     function selOK() {
       let dishInfo = unref(curSkuDish),
         attrs = [],
@@ -193,6 +217,10 @@ export default {
       }
 
       if (!checkSupplyCondimentsCount()) {
+        return;
+      }
+
+      if (!checkChildDishGroupCount(dishInfo)) {
         return;
       }
 

@@ -44,7 +44,7 @@
         lazy-load
         @load="imgLoaded"
       />
-      <div v-if="1 || showRemainQuantity" class="remain-quantity">
+      <div v-if="showRemainQuantity" class="remain-quantity">
         剩余{{ dish.remainQuantity > 999 ? "999+" : dish.remainQuantity }}份
       </div>
     </div>
@@ -70,7 +70,10 @@
             {{ fenToYuan(dish.price) }}
           </div>
         </div>
-        <div class="fanpiao" v-if="dish.status !== 'NOT_IN_TIME_LIMIT_SALE'">
+        <div
+          class="fanpiao"
+          v-if="dish.status !== 'NOT_IN_TIME_LIMIT_SALE' && dish.hasDiscount"
+        >
           <span class="text">{{ fenToYuan(minFanpiaoPrice) }}</span>
           <span class="icon">饭票价</span>
         </div>

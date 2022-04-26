@@ -74,7 +74,10 @@
             <DishOperation
               v-else
               :disableAdd="
-                dishSelMap[groupItem.id].childTotalCount == groupItem.orderMax
+                dishSelMap[groupItem.id].childTotalCount ==
+                  groupItem.orderMax ||
+                (!groupItem.allowDuplicate &&
+                  dishSelMap[groupItem.id].childCountMap[dishItem.id] >= 1)
               "
               :quantity="dishSelMap[groupItem.id].childCountMap[dishItem.id]"
               @add="addChildDish(groupItem, dishItem)"

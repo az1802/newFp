@@ -35,11 +35,17 @@ export default {
   onLoad(opts) {
     orderId = opts.orderId;
     redPacketVal.value = parseFloat(opts.redPacketVal);
+    // 进入到此页面后,后续回到点餐页面需要重新加载用户相关的商户信息
+    getApp().globalData.resetUserMerchantInfo = true;
   },
   setup() {
     let { orderDetail, getOrderDetailById } = useOrderDetail();
     let redPacketModal = ref("");
     onBeforeMount(async () => {
+      if (!orderId) {
+        console.log("订单错误");
+        return;
+      }
       getOrderDetailById(orderId);
       if (redPacketVal.value) {
         redPacketModal.value.show();

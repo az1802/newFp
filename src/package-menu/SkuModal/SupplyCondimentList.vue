@@ -24,12 +24,13 @@
       <div class="status" v-if="condimentItem.status === 'SOLD_OUT'">
         已售罄
       </div>
-      <QuantityOperation
-        v-else
-        :num="selCondiments[condimentItem.id]"
-        @add="addCondiment(condimentItem)"
-        @reduce="reduceCondiment(condimentItem)"
-      />
+      <div class="quantity-wrapper" v-else>
+        <QuantityOperation
+          :num="selCondiments[condimentItem.id]"
+          @add="addCondiment(condimentItem)"
+          @reduce="reduceCondiment(condimentItem)"
+        />
+      </div>
     </div>
     <div style="height: 12px"></div>
   </div>
@@ -142,6 +143,11 @@ export default {
       .normal-font(14px,#666);
       width: 100px;
       text-align: right;
+    }
+    .quantity-wrapper {
+      width: 100px;
+      display: flex;
+      justify-content: flex-end;
     }
   }
 }

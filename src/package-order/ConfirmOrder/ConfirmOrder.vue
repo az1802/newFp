@@ -98,12 +98,13 @@ export default {
       selectedDishesTotalPrice,
       selectedDishesDiscountPrice,
       selectedDishesFinalTotalPrice,
+      resetSelDishes,
     } = useDish();
     const { recommendedCoupon } = useRecommendedCoupon();
     const { commonPay } = usePay();
 
     const { navigateBack, navigateTo } = useNavigate();
-    const { createOrder, setOrderInfo, orderInfo } = useOrder();
+    const { createOrder, setOrderInfo, orderInfo, resetOrder } = useOrder();
     const { maxDiscountFanpiao } = useFanpiaoInfo();
     const { userMerchantFanpiaoBalance } = useUserMerchantFanpiaoBalance();
     // const totalPrice = computed(() => {});
@@ -153,8 +154,10 @@ export default {
         //   orderId: "c682d06704b445fa9813dab71e5a3770",
         //   redPacketVal: 1,
         // });
+        resetSelDishes([]);
+        resetOrder();
         navigateTo("ORDER/PAY_SUCCESS", {
-          orderId: payRes.id,
+          orderId: orderId,
           redPacketVal: payRes.redPacketValue || 0,
         });
       }

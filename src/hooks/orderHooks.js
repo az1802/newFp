@@ -9,6 +9,36 @@ import { computed, ref, reactive, unref } from 'vue';
 import { getDishInfoById, showToast, formatTime } from "@utils";
 import { useState, useGetters, useMutations } from "@hooks/storeHooks";
 import API from "@api";
+const orderDefaultInfo = {
+  pendingOrderId: "",
+  penddingOrderDishList: [],
+  currentType: "CREATE",
+  orderId: "",//订单id
+  remark: "",//订单备注
+  billFee: 0,//账单金额
+  packageFee: 0,//打包费
+  discountAmountPrice: 0, //菜品折扣已优惠的价格
+  phoneMemberDiscount: 0,//会员折扣
+  groupDiningEventId: "", //TODO 保留字段
+  appointmentTime: "", //TODO 保留字段
+  isTakeAway: false, //是否是外卖
+  takeAwayTime: "", //外卖时间 
+  selectedAddress: {},//选择地址
+  shippingAddressId: "", //配送地址对应id
+  shippingFee: 0, //配送费
+  mealType: "",//就餐模式
+  onlyForPay: false,
+  peopleCount: 1, //就餐人数
+  tableId: "", //桌台id
+  tableName: "", //桌台名称
+  couponPackageId: "",//券包合并支付的id
+  couponPackagePrice: "",//券包合并支付券包的价格
+  isBuyCouponPackage: false, //是否开启券包合并支付
+  selCouponReduceCost: 0, //使用券包的价格
+  selCouponId: "",//使用券包的id
+  isAgreeCouponAccord: true, //是否统一付费券包协议
+  selRechargeInfo: {},
+}
 
 export function useOrder() {
 
@@ -49,6 +79,29 @@ export function useOrder() {
   }
 
 
+  async function resetOrder() {
+    setOrderInfo({
+      pendingOrderId: "",
+      penddingOrderDishList: [],
+      currentType: "CREATE",
+      orderId: "",//订单id
+      remark: "",//订单备注
+      billFee: 0,//账单金额
+      packageFee: 0,//打包费
+      discountAmountPrice: 0, //菜品折扣已优惠的价格
+      groupDiningEventId: "", //TODO 保留字段
+      appointmentTime: "", //TODO 保留字段
+      couponPackageId: "",//券包合并支付的id
+      couponPackagePrice: "",//券包合并支付券包的价格
+      isBuyCouponPackage: false, //是否开启券包合并支付
+      selCouponReduceCost: 0, //使用券包的价格
+      selCouponId: "",//使用券包的id
+      isAgreeCouponAccord: true, //是否统一付费券包协议
+      selRechargeInfo: {},
+    })
+  }
+
+
 
   return {
     payMethod,
@@ -56,7 +109,8 @@ export function useOrder() {
     createOrder,
     setPayMethod,
     setOrderInfo,
-    addOrder
+    addOrder,
+    resetOrder
   }
 }
 
