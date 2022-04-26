@@ -116,6 +116,12 @@ export function useDishDetail() {
   }
 }
 
+export function useResetModal() {
+  const { resetDishModal } = useMutations("menu", ["resetDishModal"])
+  return {
+    resetDishModal
+  }
+}
 
 export function useScanModal() {
   const { showScanModal } = useState('menu', ["showScanModal"]);
@@ -144,7 +150,6 @@ export function useAddOrderModal() {
     toggleShowAddOrderModal
   }
 }
-
 
 export function useSearchDish() {
   let searchStr = ref(""), searchDishList = ref([]);

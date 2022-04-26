@@ -1,7 +1,7 @@
 <template>
   <div
     class="coupon-info-wrapper"
-    v-if="recommendedCoupon.id && !userAvailableMerchantCoupon.length"
+    v-if="recommendedCoupon.id"
   >
     <div class="angle-mark">
       <div class="title">特惠券包，限时抢购</div>
@@ -98,7 +98,7 @@ import { useNavigate } from "@hooks/commonHooks";
 import { useMerchantInfo } from "@hooks/merchantHooks";
 import { useOrder } from "@hooks/orderHooks";
 import { useRecommendedCoupon } from "@hooks/payHooks";
-import { unref } from "vue";
+import { computed, unref } from "vue";
 
 export default {
   components: {},
@@ -109,6 +109,8 @@ export default {
     let { orderInfo, setOrderInfo } = useOrder();
     let { recommendedCoupon, userAvailableMerchantCoupon } =
       useRecommendedCoupon();
+
+
 
     // TODO 计算合适的券然后使用
     return {

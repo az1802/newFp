@@ -298,7 +298,7 @@ export function useRecommendedCoupon() {
   const { selectedDishesFinalTotalPrice } = useGetters('menu', ["selectedDishesFinalTotalPrice"]);
   const { userMerchantCoupons } = useState('user', ["userMerchantCoupons"]);
   const recommendedCoupon = computed(() => {
-    let calcRes = calcRecommendCoupon(toRaw(unref(couponList)), unref(selectedDishesFinalTotalPrice));
+    let calcRes = calcRecommendCoupon(toRaw(unref(couponList)), unref(selectedDishesFinalTotalPrice), unref(userMerchantCoupons));
     return calcRes
   })
   const userAvailableMerchantCoupon = computed(() => {

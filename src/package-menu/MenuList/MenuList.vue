@@ -24,15 +24,13 @@
           :active="index == categoryActiveIndex"
         ></CategoryItem>
       </div>
-      <div style="height: 100px"></div>
+      <div style="height: 200px"></div>
     </scroll-view>
     <scroll-view
       class="foods-container"
-      scroll-y="true"
-      scroll-with-animation="trye"
+      scroll-y
+      scroll-with-animation
       scroll-animation-duration="200"
-      enable-back-to-top="true"
-      scroll-anchoring="true"
       :scroll-into-view="scrollIntoView"
       @scroll="dishScroll"
     >
@@ -76,7 +74,7 @@ import DishItem from "../DishItem/DishItem.vue";
 import { useDebounceFn, useThrottleFn } from "@vueuse/core";
 import { useSystemInfo, useNavigate } from "@hooks/commonHooks";
 import { navigateTo } from "@utils";
-import { ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 export default {
   components: {
     CategoryItem,
@@ -88,7 +86,7 @@ export default {
       default: [],
     },
   },
-  setup() {
+  setup(props) {
     const { statusBarHeight, screenWidth } = useSystemInfo();
     let menuWrapperStyle = ref({
       height: `calc(100vh - 250px - ${screenWidth / 3}px)`,
@@ -98,6 +96,7 @@ export default {
       scrollIntoCategoryView = ref("category-index-0");
 
     let dishScroll = useThrottleFn((e) => {
+      console.log("e: ", e);
       let { categoryScrollTops } = getApp().globalData;
       let { scrollTop } = e.detail;
       let categoryIndex =
@@ -111,6 +110,12 @@ export default {
       categoryActiveIndex.value = index;
       scrollIntoView.value = "category-view-" + index;
     }
+    watch(props.dishList, (nval) => {
+      setTimeout(() => {
+        console.log("重置显示目录");
+        categoryActiveIndex.value = 0;
+      }, 2000);
+    });
 
     return {
       categoryActiveIndex,

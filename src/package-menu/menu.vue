@@ -59,7 +59,12 @@ import {
   useUserInfo,
   useUserMerchantCoupon,
 } from "@hooks/userHooks";
-import { useDish, useScanModal, useOptionModal } from "@hooks/menuHooks";
+import {
+  useDish,
+  useScanModal,
+  useOptionModal,
+  useResetModal,
+} from "@hooks/menuHooks";
 import { useOrder } from "@hooks/orderHooks";
 import { handleQrcodeParams, navigateTo, showToast } from "@utils";
 
@@ -102,6 +107,8 @@ export default {
     let userInfo = reactive({});
     let codeExpiredModal = ref(""),
       splashModal = ref("");
+    const { resetDishModal } = useResetModal();
+
     const { requestMerchantInfo, requestMerchantDishes, merchantInfo } =
       useMerchantInfo();
     const { getUserMerchantInfo } = useUserInfo();
@@ -235,7 +242,7 @@ export default {
     onBeforeMount(async () => {
       // 处理参数
       await prepareMerchantInfo();
-
+      resetDishModal();
       // TODO 处理selectTable以及recentOrderId  强制收取手机号的配置处理
       // 根据商户配置处理不同逻辑
       _handleMerchantConfig();
@@ -261,6 +268,7 @@ export default {
       showOptionModal,
       orderInfo,
       resetUserMerchantInfo,
+      resetDishModal,
     };
   },
 };

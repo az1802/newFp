@@ -126,7 +126,6 @@ export function genDishDescribeText(dish) {
   let condimentTexts = dish?.supplyCondiments?.map(item => item.quantity && `${item.name}*${item.quantity}`) || [];
   let arrTemp = [...childDishesText, ...attrTexts, ...condimentTexts];
   arrTemp = arrTemp.filter(item => item != null)
-  console.log('arrTemp: ', arrTemp);
 
   return arrTemp.length > 0 ? arrTemp.join(",") : '';
 }

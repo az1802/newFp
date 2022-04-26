@@ -1,9 +1,16 @@
-export function calcRecommendCoupon(couponList = [], billFee) {
+export function calcRecommendCoupon(couponList = [], billFee, userMerchantCoupon = []) {
+  console.log('userMerchantCoupon: ', userMerchantCoupon, couponList);
 
   let res = {}, availableFee = 0;
   for (let i = 0; i < couponList.length; i++) {
     if (couponList[i]?.availableFee <= billFee) {
-      res = couponList[i]; //推荐最接近使用门款的券包
+      let { coupons = [] } = couponList[i];
+      let hasSameCouponIndex = userMerchantCoupon.findIndex(item => {
+        return coupons && coupons[0] && item.reduceCost == coupons[0].reduceCost;
+      })
+      if (hasSameCouponIndex == -1) { //且用户没有相同的全包
+        res = couponList[i]; //推荐最接近使用门款的券包
+      }
     }
   }
   return res;

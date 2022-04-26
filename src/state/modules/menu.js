@@ -227,6 +227,15 @@ export default {
     toggleShowAddOrderModal(state, isShow) {
       state.showAddOrderModal = isShow;
     },
+    resetDishModal(state) {
+      console.log("重置菜单页面弹窗");
+      state.showScanModal = false;
+      state.showOptionModal = false;
+      state.showAddOrderModal = false;
+      state.showDishDetailModal = false;
+      state.showChildSkuDishModal = false;
+      state.showOrderStatusModal = false;
+    }
 
   },
   actions: {

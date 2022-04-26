@@ -9,12 +9,10 @@
         mode="widthFix"
       />
     </div>
-
     <form action="">
       <div class="alipay-title">授权登录后即可继续点餐</div>
       <div class="alipay-btn-group">
         <LoginBtn @loginSuccess="loginSuccess" />
-
         <button
           hover-class="none"
           class="alipay-refuse alipay-btn"

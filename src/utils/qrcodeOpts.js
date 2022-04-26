@@ -49,6 +49,8 @@ let mockOpts = {
   // scene:"aae068285dfe46a8afc9452539d7e0c2" // 开发用正式环境
   // merchantId:"611e8d6b48e844a186d5ead5a8340ff0", 
 
+  // package-menu/menu?scene=e162ac24e1a64dd783f8408741c910b1
+
   // merchantId:"611e8d6b48e844a186d5ead5a8340ff0",
   // tableId:"92d52a15242544e9b24ca97240fc510e",
   // tableName:"6B",
@@ -59,9 +61,6 @@ let mockOpts = {
   // tableId: "a1ac2b5cb8e445eb816fed75118e43ec",
   // tableName: "6B",
   // id: "92d52a15242544e9b24ca97240fc510e"
-
-
-
 }
 
 export async function handleQrcodeParams(opts = mockOpts) {
