@@ -108,7 +108,15 @@ export default {
     const { requestUserMerchantCoupons } = useUserMerchantCoupon();
 
     async function _handleMerchantConfig() {
-      let { splashMode, disableBuyFanpiao } = unref(merchantInfo);
+      let { splashMode, disableBuyFanpiao, recentlyOrderId } =
+        unref(merchantInfo);
+      if (recentlyOrderId) {
+        setOrderInfo({
+          pendingOrderId: recentlyOrderId,
+        });
+
+        return;
+      }
       if (
         (splashMode == "FANPIAO" || splashMode == "FANPIAO_SNAP_UP") &&
         !disableBuyFanpiao
@@ -171,6 +179,7 @@ export default {
         let merchantId = parseRes.merchantId;
         //获取菜品
         await requestMerchantInfo(merchantId);
+
         let dishListRes = await requestMerchantDishes(merchantId);
         dishList.push(...dishListRes);
 

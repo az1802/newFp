@@ -18,7 +18,6 @@ const {
   getFanpiaoPlatformRecords
 } = API.Merchant;
 
-let mockMerhantId = '1e543376139b474e97d38d487fa9fbe8';
 
 export function useMerchantInfo() {
   const { setMerchantInfo } = useMutations("merchant", ["setMerchantInfo"]);
@@ -94,6 +93,9 @@ export function useCouponInfo() {
       return;
     }
     let res = await getCouponList(merchantId);
+    if (!res.couponPackages) {
+      return;
+    }
     for (let key in res.couponPackages) {
       res.couponPackages[key].availableFee = parseFloat(key)
       res.couponPackages[key].couponCost = res.couponPackages[key]?.coupons[0]?.reduceCost || 0;
@@ -176,7 +178,7 @@ export function useRechargeInfo() {
 
   async function requestMerchantRecharges(merchantId) {
     let rechargeList = await API.Merchant.getRechargeConfigs(merchantId);
-    setRechargeConfigs(rechargeList)
+    (rechargeList instanceof Array) && setRechargeConfigs(rechargeList)
   }
 
 

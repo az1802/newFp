@@ -31,7 +31,6 @@ export async function navigateTo(path, pageOpts = {}) {
           resolve(true)
         },
         fail(err) {
-          console.log('%cerr: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', err);
           resolve(false)
         }
       })

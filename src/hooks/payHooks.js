@@ -80,7 +80,6 @@ export function usePayOrder() {
   }
 
   async function payOrder(payMethod, orderInfo, userWallet) {
-    console.log('%cpayMethod, orderInfo: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', payMethod, orderInfo, userWallet);
     let params = {
       merchantId: orderInfo.merchantId,
       orderId: orderInfo.orderId,

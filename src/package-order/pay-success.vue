@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <NavigationBar title="订单详情" @customBack="navBack" />
+    <NavigationBar title="订单详情" @customBack="navBack" customBack />
     <OrderStatusInfo :orderInfo="orderDetail" />
     <OrderDishInfo
       :merchantName="orderDetail.storeName"
@@ -56,14 +56,14 @@ export default {
     function navBack() {
       let pages = getCurrentPages(),
         delta = 1;
-      console.log("pages: ", pages);
       let menuPageIndex = pages.findIndex((item) => {
+        console.log("item: ", item);
         return item.route == "package-menu/menu";
       });
+      console.log("menuPageIndex: ", menuPageIndex);
 
       if (menuPageIndex != -1) {
         delta = pages.length - 1 - menuPageIndex || 1;
-        console.log("delta: ", delta);
       }
 
       navigateBack({

@@ -10,6 +10,8 @@ export default {
     payMethod: "WECHAT_PAY",//支付方式
     orderId: "",
     orderInfo: {
+      pendingOrderId: "",
+      penddingOrderDishList: [],
       currentType: "CREATE",
       orderId: "",//订单id
       remark: "",//订单备注

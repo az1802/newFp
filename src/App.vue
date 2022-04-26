@@ -15,6 +15,7 @@ export default {
     dishesMap: {},
     hasBuyFanpiao: false,
     allDishes: [],
+    hasJumpedToCreateOrder: false,
 
     // dishSrollTops: [],
     // categoryScrollTops: [],

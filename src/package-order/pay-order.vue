@@ -150,7 +150,6 @@ export default {
 
     // 根据支付金额来进行显示
     const paidFee = computed(() => {
-      console.log("计算  paidFee", unref(orderInfo), unref(payMethod));
       let {
           billFee,
           selCouponReduceCost,

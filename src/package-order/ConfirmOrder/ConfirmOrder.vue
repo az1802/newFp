@@ -40,11 +40,7 @@
           <div class="price-info">
             <div class="price-calc">
               <div class="order-pay-price">
-                {{
-                  (selectedDishesFinalTotalPrice -
-                    recommendedCoupon.couponCost) /
-                  100
-                }}
+                {{ (orderFinalPrice - recommendedCoupon.couponCost) / 100 }}
               </div>
               +
               <div class="coupon-price">
@@ -58,16 +54,16 @@
           </div>
         </div>
         <div v-else class="price">
-          {{
-            fenToYuan(
-              selectedDishesFinalTotalPrice - orderInfo.selCouponReduceCost
-            )
-          }}
+          {{ fenToYuan(orderFinalPrice - orderInfo.selCouponReduceCost) }}
         </div>
       </div>
-      <div class="right">
+      <div class="right" v-if="!orderInfo.pendingOrderId">
         <div class="continue-order" @click="navigateBack">继续点菜</div>
         <div class="confirm-order" @click="confirmOrder">确认下单</div>
+      </div>
+      <div class="right" v-if="orderInfo.pendingOrderId">
+        <div class="continue-order" @click="navigateBack">加菜</div>
+        <div class="confirm-order" @click="confirmOrder">支付</div>
       </div>
     </div>
     <div style="height: 32px; background: white"></div>
@@ -104,16 +100,25 @@ export default {
     const { maxDiscountFanpiao } = useFanpiaoInfo();
     // const totalPrice = computed(() => {});
     async function buyCouponAndPay() {
-      let { isAgreeCouponAccord, selCouponId } = unref(orderInfo);
+      let { isAgreeCouponAccord, selCouponId, pendingOrderId, paidFee } =
+        unref(orderInfo);
       if (!isAgreeCouponAccord) {
         showToast("请阅读并同意《付费券包协议》");
         return;
       }
 
-      let orderId = await createOrder();
+      let orderId = "";
+      if (pendingOrderId) {
+        orderId = pendingOrderId;
+      } else {
+        orderId = await createOrder();
+      }
+
       if (!orderId) {
         return;
       }
+      let orderPaidFee = 0;
+
       let data = {
         billFee:
           unref(selectedDishesTotalPrice) +
@@ -124,9 +129,9 @@ export default {
         noDiscountBillFee: 0,
         orderId,
         paidFee:
-          unref(selectedDishesFinalTotalPrice) +
+          (pendingOrderId ? paidFee : unref(selectedDishesFinalTotalPrice)) +
           (unref(recommendedCoupon)?.price || 0) -
-          (unref(recommendedCoupon).couponCost || 0),
+          (unref(recommendedCoupon)?.couponCost || 0),
         payMethod: "WECHAT_PAY",
         transactionType: "SELF_DISH_ORDER_PAYMENT",
       };
@@ -140,7 +145,8 @@ export default {
     }
 
     async function confirmOrder() {
-      let { isBuyCouponPackage, isAgreeCouponAccord } = unref(orderInfo);
+      let { isBuyCouponPackage, isAgreeCouponAccord, billFee, pendingOrderId } =
+        unref(orderInfo);
 
       if (isBuyCouponPackage) {
         //券包合并支付
@@ -148,14 +154,27 @@ export default {
         return;
       }
 
-      let orderId = await createOrder();
+      let { paidFee } = unref(orderInfo);
+      let orderId = "";
+      if (pendingOrderId) {
+        orderId = pendingOrderId;
+      } else {
+        orderId = await createOrder();
+      }
+
+      if (!orderId) {
+        return;
+      }
+
       let discountAmountPrice = unref(selectedDishesDiscountPrice), //菜品折扣的优化
-        billFee = unref(selectedDishesTotalPrice); //菜品原价总额
+        orderBillFee = pendingOrderId
+          ? billFee
+          : unref(selectedDishesTotalPrice); //菜品原价总额
 
       setOrderInfo({
         orderId,
         discountAmountPrice,
-        billFee,
+        billFee: orderBillFee,
         couponPrice: 0,
         couponId: 0,
       });
@@ -169,13 +188,17 @@ export default {
       return Number(((100 - discount) * (billFee || 0)) / 10000).toFixed(2);
     });
 
+    const orderFinalPrice = computed(() => {
+      const { pendingOrderId, paidFee } = unref(orderInfo);
+      return pendingOrderId ? paidFee : selectedDishesFinalTotalPrice;
+    });
+
     return {
       navigateBack,
       navigateTo,
       createOrder,
       confirmOrder,
-      selectedDishesTotalPrice,
-      selectedDishesFinalTotalPrice,
+      orderFinalPrice,
       fenToYuan,
       orderInfo,
       recommendedCoupon,

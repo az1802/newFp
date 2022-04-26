@@ -36,9 +36,9 @@
       </div>
     </div>
 
-    <div class="cart-wrapper">
+    <div class="cart-wrapper" @click="toggleShowCartModal(!showCartModal)">
       <div class="cart-info">
-        <div class="cart-icon" @click="toggleShowCartModal(!showCartModal)">
+        <div class="cart-icon">
           <span class="iconfont icon-gouwuchekong"></span>
           <div class="count" v-show="selectedDishesTotalQuantity">
             {{ selectedDishesTotalQuantity }}
@@ -102,6 +102,9 @@ export default {
       if (unref(selectedDishes).length == 0) {
         showToast("请先点菜");
         return;
+      }
+      if (unref(orderInfo).pendingOrderId) {
+        // 添加菜品弹窗
       }
 
       navigateTo("ORDER/CREATE_ORDER");

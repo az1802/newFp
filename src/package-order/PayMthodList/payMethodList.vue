@@ -147,7 +147,6 @@ export default {
     const { orderRechargeInfo, setOrderRechargeInfo } = useOrderRechargeInfo();
 
     function changeRecharge(rechargeItem) {
-
       let { selRechargeId } = unref(orderRechargeInfo);
       if (selRechargeId == rechargeItem.id) {
         setOrderRechargeInfo({
@@ -172,7 +171,6 @@ export default {
       stop,
       phone,
       async getPhoneSuccess(phone) {
-        console.log("绑定手机号成功", phone);
         // TODO 更新用户手机号并重新获取余额
         if (phone) {
           sleep(1000);

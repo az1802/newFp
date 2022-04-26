@@ -36,7 +36,7 @@ export function calcUserAvailableMerchantCoupon(userMerchantCoupons, billFee) {
 }
 
 
-export function calcRecommendRecharge(merchantRechargeList, billFee, balance) {
+export function calcRecommendRecharge(merchantRechargeList = [], billFee, balance) {
   let res = [];
 
   if (billFee > balance) {

@@ -10,17 +10,20 @@
     <!-- <MenuHeaderImg /> -->
     <MenuHeaderInfo />
     <MenuHeaderBanner />
+    <MenuPendingOrder />
   </div>
 </template>
 <script>
 // import MenuHeaderImg from "./MenuHeaderImg.vue";
 import MenuHeaderInfo from "./MenuHeaderInfo.vue";
 import MenuHeaderBanner from "./MenuHeaderBanner.vue";
+import MenuPendingOrder from "./MenuPendingOrder.vue";
 export default {
   components: {
     // MenuHeaderImg,
     MenuHeaderBanner,
     MenuHeaderInfo,
+    MenuPendingOrder,
   },
 };
 </script>

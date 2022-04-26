@@ -168,7 +168,6 @@ export default {
       });
     },
     changeSelectedCoupon(coupon) {
-      // console.log("切换券")
       if (this.showCheck) {
         let selectedCoupon = null;
         if (coupon.id == this.selectedCoupon.id) {

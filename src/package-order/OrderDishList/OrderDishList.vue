@@ -8,20 +8,31 @@
 <template>
   <div class="dish-list">
     <div class="dish-item" v-for="(dishItem, index) in dishList" :key="index">
-      <div class="left">
-        <img class="img" :src="dishItem.image" mode="aspectFill" alt="" />
-        <div class="info">
-          <div class="name">{{ dishItem.name }}</div>
-          <div class="text">{{ genDishDescribeText(dishItem) }}</div>
-        </div>
+      <div
+        class="dining-count"
+        v-if="dishItem.batchNumber && dishItem.batchNumber != -1"
+      >
+        <div class="text">第{{ dishItem.batchNumber }}次</div>
+        <div class="time-text">{{ dishItem.createTimeText }}</div>
       </div>
-      <div class="right">
-        <div class="price">
-          {{
-            fenToYuan(dishItem.totalFee || calcSkuDishPrice(dishItem, "origin"))
-          }}
+      <div class="dish-info">
+        <div class="left">
+          <img class="img" :src="dishItem.image" mode="aspectFill" alt="" />
+          <div class="info">
+            <div class="name">{{ dishItem.name }}</div>
+            <div class="text">{{ genDishDescribeText(dishItem) }}</div>
+          </div>
         </div>
-        <div class="quantity">{{ dishItem.quantity }}</div>
+        <div class="right">
+          <div class="price">
+            {{
+              fenToYuan(
+                dishItem.totalFee || calcSkuDishPrice(dishItem, "origin")
+              )
+            }}
+          </div>
+          <div class="quantity">{{ dishItem.quantity }}</div>
+        </div>
       </div>
     </div>
   </div>
@@ -53,42 +64,54 @@ export default {
   width: 100%;
   height: 100%;
   .dish-item {
-    .flex-between();
-    min-height: 40px;
-    max-height: 100px;
-    margin-bottom: 16px;
-    .left {
-      flex: 1;
-      .flex-simple(flex-start);
-      .img {
-        .box-size(40px,40px,#eee);
-        flex-basis: 40px;
-        margin-right: 8px;
-        border-radius: 2px;
+    .dining-count {
+      .box-size(100%,46px);
+      .flex-simple(space-between,center);
+      .text {
+        .normal-font(14px,#333);
       }
-      .info {
-        .flex-between(column);
-        .name {
-          .bold-font(16px,#333130);
-          .no-wrap();
-        }
-        .text {
-          .normal-font(12px,#999);
-        }
+      .time {
+        .normal-font(14px,#999);
       }
     }
-    .right {
-      flex-basis: 70px;
-      .flex-between(column);
-      text-align: right;
-      .price {
-        .bold-font(17px,#333);
-        .price-symbol(12px,#333);
+    .dish-info {
+      .flex-between();
+      min-height: 40px;
+      max-height: 100px;
+      margin-bottom: 16px;
+      .left {
+        flex: 1;
+        .flex-simple(flex-start);
+        .img {
+          .box-size(40px,40px,#eee);
+          flex-basis: 40px;
+          margin-right: 8px;
+          border-radius: 2px;
+        }
+        .info {
+          .flex-between(column);
+          .name {
+            .bold-font(16px,#333130);
+            .no-wrap();
+          }
+          .text {
+            .normal-font(12px,#999);
+          }
+        }
       }
-      .quantity {
-        .normal-font(14px,#999);
+      .right {
+        flex-basis: 70px;
+        .flex-between(column);
         text-align: right;
-        .mul-symbol(10px,#999);
+        .price {
+          .bold-font(17px,#333);
+          .price-symbol(12px,#333);
+        }
+        .quantity {
+          .normal-font(14px,#999);
+          text-align: right;
+          .mul-symbol(10px,#999);
+        }
       }
     }
   }

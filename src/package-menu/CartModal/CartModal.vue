@@ -130,7 +130,6 @@ export default {
           }
         }
         .price {
-          .price-symbol();
           .flex-simple(felx-start,flex-end);
           .current-price {
             .bold-font(16px,#f25643);

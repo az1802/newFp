@@ -1,5 +1,5 @@
 <template>
-  <div class="coupon-info-wrapper">
+  <div class="coupon-info-wrapper" v-if="recommendedCoupon.id">
     <div class="angle-mark">
       <div class="title">特惠券包，限时抢购</div>
       <img
@@ -8,7 +8,7 @@
         alt=""
       />
     </div>
-    <div class="coupon-info" v-if="recommendedCoupon.id">
+    <div class="coupon-info">
       <div class="coupon-price">
         <div class="left">
           本单支付立省<span class="red">{{

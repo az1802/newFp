@@ -82,7 +82,6 @@ export default {
 
     function back() {
       console.log("props.customBack: ", props.customBack);
-
       if (props.customBack) {
         emit("customBack");
       } else {

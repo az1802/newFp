@@ -5,8 +5,8 @@
  * @LastEditTime: 2022-02-18 18:23:33
  * @FilePath: /new-fanpiao-uniapp/src/utils/hooks/orderHooks.js
  */
-import { computed, ref, reactive, unref } from 'vue'
-import { getDishInfoById, showToast } from "@utils";
+import { computed, ref, reactive, unref } from 'vue';
+import { getDishInfoById, showToast, formatTime } from "@utils";
 import { useState, useGetters, useMutations } from "@hooks/storeHooks";
 import API from "@api";
 
@@ -150,6 +150,20 @@ export function useOrderDetail() {
   async function getOrderDetailById(orderId) {
     if (!orderId) { return };
     let orderInfoRes = await API.Order.getOrderDetailById(orderId) || {};
+    console.log('orderInfoRes: ', orderInfoRes);
+    // 待付款订单处理菜品信息
+    if (orderInfoRes && orderInfoRes.status != 'PAID') {
+      let curBatchNum = 0;
+      orderInfoRes.dishList.forEach(item => {
+        if (item.batchNumber != curBatchNum) {
+          curBatchNum = item.batchNumber;
+        } else {
+          item.batchNumber = -1;
+        }
+        item.createTimeText = formatTime(item.createTime, 'hh:mm');
+      })
+    }
+
     orderDetail.value = orderInfoRes;
     return orderInfoRes;
   }

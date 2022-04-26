@@ -68,7 +68,6 @@ export default {
       searchDishList,
       changeSearchText() {},
       clearSearchStr() {
-        console.log("a");
         searchStr.value = "";
       },
     };

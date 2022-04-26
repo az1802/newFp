@@ -59,7 +59,6 @@ export function useModal() {
       isShow.value = true;
     },
     hideModal() {
-      console.log("关闭弹窗")
       isShow.value = false;
     },
     stop(e) {

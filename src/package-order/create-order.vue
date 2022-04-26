@@ -15,7 +15,7 @@
       <OrderDishInfo
         :merchantName="merchantInfo.name"
         :dishList="orderDishList"
-        :totalPrice="selectedDishesTotalPrice"
+        :totalPrice="orderTotalPrice"
         :discountPrice="orderDiscountPrice"
       />
       <div style="height: 18px"></div>
@@ -56,7 +56,7 @@ import { useOrder, useOrderDetail } from "@hooks/orderHooks";
 import { useRecommendedCoupon } from "@hooks/payHooks";
 import { useUserMerchantCoupon } from "@hooks/userHooks";
 import { onBeforeMount, ref, computed, unref, watch } from "vue";
-let orderId;
+let pendingOrderId = ref("");
 export default {
   components: {
     TableInfo,
@@ -67,7 +67,8 @@ export default {
     RecommendationModal,
   },
   onLoad(opts) {
-    orderId = opts.orderId;
+    console.log("下单页页面参数 ", opts);
+    pendingOrderId.value = opts.pendingOrderId;
   },
   onShow() {
     this.hasBuyFanpiao = getApp().globalData.hasBuyFanpiao || false;
@@ -91,35 +92,39 @@ export default {
     const { requestCouponList } = useCouponInfo();
 
     async function getOrderInfo(orderId) {
-      let orderInfo = await getOrderDetailById(orderId);
+      let orderInfoRes = await getOrderDetailById(orderId);
+      console.log("orderInfoRes: ", orderInfoRes);
       // todo  设置订单相关的信息同步到本地
       setOrderInfo({
         currentType: "ADD",
         orderId: orderId, //订单id
-        remark: orderInfo.remark, //订单备注
-        billFee: orderInfo.orderInfo, //账单金额
+        remark: orderInfoRes.remark, //订单备注
+        billFee: orderInfoRes.billFee, //账单金额
+        paidFee: orderInfoRes.paidFee, //账单金额
         packageFee: 0, //打包费
         discountAmountPrice: 0, //菜品折扣已优惠的价格
         phoneMemberDiscount: 0, //会员折扣
         groupDiningEventId: "", //TODO 保留字段
         appointmentTime: "", //TODO 保留字段
-        mealType: "EAT_IN", //就餐模式
-        peopleCount: orderInfo.peopleCount, //就餐人数
-        tableId: orderInfo.tableId, //桌台id
-        tableName: orderInfo.tableName, //桌台名称
+        mealType: orderInfoRes.mealType, //就餐模式
+        peopleCount: orderInfoRes.peopleCount, //就餐人数
+        tableId: orderInfoRes.tableId, //桌台id
+        tableName: orderInfoRes.tableName, //桌台名称
       });
-      return res;
+
+      // TODO 此处便于测试才会加载相关资源 默认点餐页面该资源已经被加载
+      await requestMerchantInfo(orderInfoRes.merchantId);
+      requestFanpiaoList(orderInfoRes.merchantId);
+      requestCouponList(orderInfoRes.merchantId);
+      return orderInfoRes;
     }
 
     onBeforeMount(async () => {
       let merchantId;
-      if (orderId) {
+      if (pendingOrderId.value) {
         // 获取订单相关信息 并且获取商户相关资源
-        let orderInfo = await getOrderInfo(orderId);
+        let orderInfo = await getOrderInfo(pendingOrderId.value);
         merchantId = orderInfo.merchantId;
-        await requestMerchantInfo(merchantId);
-        requestFanpiaoList(merchantId);
-        requestCouponList(merchantId);
       } else {
         merchantId = unref(merchantInfo).merchantId;
       }
@@ -176,24 +181,39 @@ export default {
     });
 
     const orderTotalPrice = computed(() => {
-      if (orderId) {
+      if (pendingOrderId.value) {
+        return unref(orderInfo).billFee;
+      } else {
+        return unref(selectedDishesTotalPrice);
       }
     });
 
     const orderDiscountPrice = computed(() => {
-      let res = unref(selectedDishesDiscountPrice) || 0;
-      if (unref(orderInfo).isBuyCouponPackage) {
+      let res = 0;
+      let {
+        billFee,
+        paidFee,
+        isBuyCouponPackage,
+        selCouponId,
+        selCouponReduceCost,
+      } = unref(orderInfo);
+      if (unref(pendingOrderId)) {
+        res = billFee - paidFee;
+      } else {
+        res = unref(selectedDishesDiscountPrice);
+      }
+      if (isBuyCouponPackage) {
         res += unref(recommendedCoupon).couponCost;
-      } else if (unref(orderInfo).selCouponId) {
-        res += unref(orderInfo).selCouponReduceCost;
+      } else if (selCouponId) {
+        res += selCouponReduceCost;
       }
       return res;
     });
 
     const orderDishList = computed(() => {
-      console.log("unref(orderDetail).dishList: ", unref(orderDetail).dishList);
-
-      return orderId ? unref(orderDetail).dishList : unref(selectedDishes);
+      return pendingOrderId.value
+        ? unref(orderDetail).dishList
+        : unref(selectedDishes);
     });
 
     return {
@@ -202,6 +222,7 @@ export default {
       orderDishList,
       selectedDishesTotalPrice,
       orderDiscountPrice,
+      orderTotalPrice,
       recommendationModal,
       autoRecommendedDishes,
     };

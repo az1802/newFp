@@ -121,7 +121,6 @@ export default {
     } else {
       let { selCouponId = "", selCouponReduceCost = "" } =
         unref(orderInfo) || {};
-      console.log("unref(orderInfo): ", unref(orderInfo));
       selCouponInfo = ref({
         id: selCouponId,
         reduceCost: selCouponReduceCost,

@@ -1279,6 +1279,11 @@
   "resolved" "https://registry.npmjs.org/esbuild-darwin-64/-/esbuild-darwin-64-0.14.28.tgz"
   "version" "0.14.28"
 
+"esbuild-darwin-arm64@0.14.28":
+  "integrity" "sha512-XEq/bLR/glsUl+uGrBimQzOVs/CmwI833fXUhP9xrLI3IJ+rKyrZ5IA8u+1crOEf1LoTn8tV+hInmX6rGjbScw=="
+  "resolved" "https://registry.npmjs.org/esbuild-darwin-arm64/-/esbuild-darwin-arm64-0.14.28.tgz"
+  "version" "0.14.28"
+
 "esbuild@^0.14.14":
   "integrity" "sha512-YLNprkCcMVKQ5sekmCKEQ3Obu/L7s6+iij38xNKyBeSmSsTWur4Ky/9zB3XIGT8SCJITG/bZwAR2l7YOAXch4Q=="
   "resolved" "https://registry.npmjs.org/esbuild/-/esbuild-0.14.28.tgz"
