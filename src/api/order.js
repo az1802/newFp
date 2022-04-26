@@ -22,6 +22,11 @@ export async function createOrder(merchantId, orderInfo) {
   let res = await http.post(url, orderInfo);
   return res;
 }
+export async function addOrder(params) {
+  let url = `${URLS.ADD_ORDER}`;
+  let res = await http.post(url, params);
+  return res;
+}
 
 export async function pay(args) {
   let url = URLS.PAYMENT_PREPAY

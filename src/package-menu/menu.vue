@@ -9,7 +9,7 @@
   <div class="container">
     <NavigationBar title="" showOrderIcon />
     <MenuHeader />
-    <div class="menu-wrapper" :style="menuWrapperStyle">
+    <div class="menu-wrapper" :style="menuStyle">
       <MenuList :dishList="dishList" />
     </div>
     <!-- <MenuList :dishList="dishList" /> -->
@@ -24,6 +24,7 @@
     <CodeExpiredModal ref="codeExpiredModal" />
     <DishDetailModal />
     <SplashModal ref="splashModal" />
+    <AddOrder />
   </div>
 </template>
 <script >
@@ -40,10 +41,11 @@ import OptionModal from "./OptionModal/OptionModal.vue";
 import CodeExpiredModal from "./CodeExpiredModal/CodeExpiredModal.vue";
 import DishDetailModal from "./DishDetailModal/DishDetailModal.vue";
 import SplashModal from "./SplashModal/SplashModal.vue";
+import AddOrder from "./AddOrder/AddOrder.vue";
 import API from "@api";
 
-import { sleep, handleDishList, getStorage } from "@utils";
-import { useSystemInfo } from "@hooks/commonHooks";
+import { sleep, handleDishList, getStorage, reLaunch } from "@utils";
+import { useSystemInfo, useLayout } from "@hooks/commonHooks";
 import {
   useMerchantInfo,
   useFanpiaoInfo,
@@ -77,11 +79,12 @@ export default {
     CodeExpiredModal,
     DishDetailModal,
     SplashModal,
+    AddOrder,
   },
   onLoad(options) {
     let userId = uni.getStorageSync("userId") || "";
     if (!userId) {
-      navigateTo("MENU/LOGIN");
+      reLaunch("MENU/LOGIN");
       return "";
     }
     opts = options;
@@ -106,6 +109,7 @@ export default {
     const { showScanModal } = useScanModal();
     const { showOptionModal, toggleShowOptionModal } = useOptionModal();
     const { requestUserMerchantCoupons } = useUserMerchantCoupon();
+    const { menuStyle } = useLayout();
 
     async function _handleMerchantConfig() {
       let { splashMode, disableBuyFanpiao, recentlyOrderId } =
@@ -114,18 +118,26 @@ export default {
         setOrderInfo({
           pendingOrderId: recentlyOrderId,
         });
-
+        if (!getApp().globalData.hasJumpedToCreateOrder) {
+          //跳转到下单页面
+          navigateTo("ORDER/CREATE_ORDER", {
+            pendingOrderId: recentlyOrderId,
+          });
+        }
         return;
       }
+
       if (
         (splashMode == "FANPIAO" || splashMode == "FANPIAO_SNAP_UP") &&
-        !disableBuyFanpiao
+        !disableBuyFanpiao &&
+        unref(userMerchantFanpiaoBalance) < 5000
       ) {
         toggleShowFanpiaoOpenScreenModal(true);
       } else if (splashMode === "IMAGE" || splashMode === "MEMBER_RECHARGE") {
         splashModal.value.showModal();
       }
-      if (!unref(orderInfo).peopleCount) {
+      if (!unref(merchantInfo).disablePeopleCount) {
+        //业务主助手控制是否选择人数
         toggleShowOptionModal(true);
         return;
       }
@@ -188,9 +200,9 @@ export default {
         // 请求资源
         requestFanpiaoList(merchantId);
         requestCouponList(merchantId);
-        requestUserMerchantFanpiaoBalance(merchantId); //获取饭票余额
-        getUserMerchantInfo(merchantId); //获取该用户是否是商户的会员
         requestUserMerchantCoupons(merchantId);
+        await requestUserMerchantFanpiaoBalance(merchantId); //获取饭票余额
+        await getUserMerchantInfo(merchantId); //获取该用户是否是商户的会员
       }
     }
 
@@ -200,7 +212,7 @@ export default {
         return;
       }
       try {
-        let parseRes = await handleQrcodeParams(); //处理二维码参数
+        let parseRes = await handleQrcodeParams(opts); //处理二维码参数
         if (parseRes.codeExpiredModal) {
           //二维码过期
           codeExpiredModal.value.show();
@@ -221,14 +233,10 @@ export default {
       _handleMerchantConfig();
     });
 
-    let menuWrapperStyle = ref({
-      height: `calc(100vh - 250px - ${screenWidth / 3}px)`,
-    });
-
     return {
       dishList,
       userInfo,
-      menuWrapperStyle,
+      menuStyle,
       codeExpiredModal,
       splashModal,
       scanOk,

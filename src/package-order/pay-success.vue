@@ -1,27 +1,30 @@
 <template>
   <div class="page">
-    <NavigationBar title="订单详情" @customBack="navBack" customBack />
-    <OrderStatusInfo :orderInfo="orderDetail" />
-    <OrderDishInfo
-      :merchantName="orderDetail.storeName"
-      :dishList="orderDetail.dishList"
-      :discountPrice="orderDiscountPrice"
-      :totalPrice="orderTotalPrice"
-    />
-    <OrderInfoList :orderInfo="orderDetail" />
-    <RedPacketModal :redPacketVal="redPacketVal" />
+    <NavigationBar title="订单详情" @customBack="navBack" useCustomBack />
+    <scroll-view class="scroll-view" scroll-y>
+      <OrderStatusInfo :orderInfo="orderDetail" />
+      <OrderDishInfo
+        :merchantName="orderDetail.storeName"
+        :dishList="orderDetail.dishList"
+        :discountPrice="orderDiscountPrice"
+        :totalPrice="orderTotalPrice"
+      />
+      <OrderInfoList :orderInfo="orderDetail" />
+      <RedPacketModal ref="redPacketModal" :redPacketVal="redPacketVal" />
+      <div style="height: 150px"></div>
+    </scroll-view>
   </div>
 </template>
 <script>
 import { useOrderDetail } from "@hooks/orderHooks";
-import { computed, onBeforeMount, unref } from "vue";
+import { computed, onBeforeMount, unref, ref } from "vue";
 import OrderStatusInfo from "./OrderStatusInfo/OrderStatusInfo.vue";
 import OrderDishInfo from "./OrderDishInfo/OrderDishInfo.vue";
 import OrderInfoList from "./OrderInfoList/OrderInfoList.vue";
 import RedPacketModal from "./RedPacketModal/RedPacketModal.vue";
 import { navigateBack, navigateTo } from "@utils";
 let orderId = "",
-  redPacketVal = "";
+  redPacketVal = ref(0);
 export default {
   components: {
     OrderStatusInfo,
@@ -31,20 +34,15 @@ export default {
   },
   onLoad(opts) {
     orderId = opts.orderId;
-    redPacketVal = opts.redPacketVal;
+    redPacketVal.value = parseFloat(opts.redPacketVal);
   },
   setup() {
     let { orderDetail, getOrderDetailById } = useOrderDetail();
-
+    let redPacketModal = ref("");
     onBeforeMount(async () => {
       getOrderDetailById(orderId);
-      if (redPacketVal) {
-        //  弹出红包弹窗
-        console.log(
-          "%credPacketValue: ",
-          "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-          redPacketVal
-        );
+      if (redPacketVal.value) {
+        redPacketModal.value.show();
       }
     });
     let orderDiscountPrice = computed(() => {
@@ -77,6 +75,7 @@ export default {
       orderTotalPrice,
       navBack,
       redPacketVal,
+      redPacketModal,
     };
   },
 };
@@ -85,5 +84,8 @@ export default {
 @import "@design/index.less";
 .page {
   .box-size(100vw,100vh,#F8F8F8);
+  .scroll-view {
+    height: calc(100vh - 88px);
+  }
 }
 </style>

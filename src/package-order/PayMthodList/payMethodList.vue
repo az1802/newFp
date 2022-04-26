@@ -94,7 +94,6 @@
           />
           <div class="pay-text">微信支付</div>
         </div>
-        
         <CustomImgRadio :checked="payMethod == 'WECHAT_PAY'" />
       </div>
       <!-- #endif -->

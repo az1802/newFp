@@ -109,6 +109,7 @@ export function usePayOrder() {
         } else {
           let res = await buyFanpiaoAndPay(selFanpiaoInfo, orderInfo);
           showToast(res ? "购买成功" : "购买失败,请稍后重试");
+          return res;
         }
         return;
       } else { //饭票直接支付

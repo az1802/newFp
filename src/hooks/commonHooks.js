@@ -5,7 +5,7 @@
  * @LastEditTime: 2022-02-18 12:21:46
  * @FilePath: /new-fanpiao-uniapp/src/utils/hooks/commonHooks.js
  */
-import { computed, ref, reactive } from 'vue'
+import { computed, ref, reactive, unref } from 'vue'
 import { getDishInfoById, navigateTo, navigateBack, formatTime } from "@utils";
 import { getDishCatalogScene, getMerchantInfo, getMerchantDishCategory } from "@api/merchant"
 import { useState, useGetters, useMutations } from "@hooks/storeHooks";
@@ -66,4 +66,42 @@ export function useModal() {
       return "";
     },
   }
+}
+
+
+export function useLayout() {
+
+  const systemInfo = getApp().globalData.systemInfo;
+  const { statusBarHeight, screenWidth } = systemInfo;
+  const navHeight = parseFloat(statusBarHeight) + 44;
+  const menuHeadrHeight = parseFloat(Number(screenWidth / 3).toFixed(0));
+
+  const { merchantInfo, fanpiaoList } = useState('merchant', ["merchantInfo", "fanpiaoList"]);
+  const { orderInfo } = useState('order', ["orderInfo"])
+
+  const bannerHeight = computed(() => {
+    const { bannerMode } = unref(merchantInfo);
+    let showBanner = bannerMode !== "BANNER_NONE" && unref(fanpiaoList).length;
+    return showBanner ? 100 : 0
+  })
+  const pendingOrderHeight = computed(() => {
+    const { pendingOrderId } = unref(orderInfo);
+    return pendingOrderId ? 44 : 0
+  })
+  const menuStyle = computed(() => {
+    let h = navHeight + menuHeadrHeight + unref(bannerHeight) + unref(pendingOrderHeight);
+    let menuHeight = `calc(100vh) - ${h}px`
+    return {
+      height: menuHeight
+    }
+  })
+
+
+  return {
+    menuStyle,
+    bannerHeight
+
+  }
+
+
 }

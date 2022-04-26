@@ -228,15 +228,17 @@ export default {
         unref(userWallet)
       );
       readyPay = true;
+      console.log("res: ", res);
       if (!res) {
         return;
       }
-      res && resetSelDishes([]);
+      setPayMethod("WECHAT_PAY");
+      resetSelDishes([]);
       await sleep(2000);
       // 跳转到支付成功野蛮
       navigateTo("ORDER/PAY_SUCCESS", {
         orderId: tempOrderInfo.orderId,
-        redPacketVal: tempOrderInfo.redPacketValue,
+        redPacketVal: res.redPacketValue || 0,
       });
     }
 
@@ -302,6 +304,7 @@ export default {
     bottom: 52px;
     left: 0px;
     right: 0px;
+    padding: 0 12px;
     .tooltip {
       .box-size(100%,61px,#f6e7e5);
       .flex-simple(space-between,flex-start);

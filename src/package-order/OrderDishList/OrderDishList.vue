@@ -10,7 +10,9 @@
     <div class="dish-item" v-for="(dishItem, index) in dishList" :key="index">
       <div
         class="dining-count"
-        v-if="dishItem.batchNumber && dishItem.batchNumber != -1"
+        v-if="
+          dishItem.batchNumber && dishItem.batchNumber != -1 && showBatchNumber
+        "
       >
         <div class="text">第{{ dishItem.batchNumber }}次</div>
         <div class="time-text">{{ dishItem.createTimeText }}</div>
@@ -40,16 +42,24 @@
 <script>
 import { useDish, useSkuDish } from "@hooks/menuHooks";
 import { fenToYuan, calcSkuDishPrice } from "@utils";
+import { watch } from "vue";
 export default {
   props: {
     dishList: {
       type: [Array],
       default: [],
     },
+    showBatchNumber: {
+      type: Boolean,
+      default: false,
+    },
   },
   components: {},
-  setup() {
+  setup(props) {
     const { genDishDescribeText } = useSkuDish();
+    watch(props.dishList, (nval) => {
+      nval.forEach(() => {});
+    });
     return {
       genDishDescribeText,
       fenToYuan,

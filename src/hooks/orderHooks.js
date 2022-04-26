@@ -36,13 +36,27 @@ export function useOrder() {
     return res?.orderId;
   }
 
+  async function addOrder(orderId, dishList) {
+    let params = {
+      dishList,
+      orderId,
+      remark: ""
+    };
+
+    let addRes = API.Order.addOrder(params);
+    return addRes
+
+  }
+
+
 
   return {
     payMethod,
     orderInfo,
     createOrder,
     setPayMethod,
-    setOrderInfo
+    setOrderInfo,
+    addOrder
   }
 }
 
@@ -150,9 +164,8 @@ export function useOrderDetail() {
   async function getOrderDetailById(orderId) {
     if (!orderId) { return };
     let orderInfoRes = await API.Order.getOrderDetailById(orderId) || {};
-    console.log('orderInfoRes: ', orderInfoRes);
     // 待付款订单处理菜品信息
-    if (orderInfoRes && orderInfoRes.status != 'PAID') {
+    if (orderInfoRes) {
       let curBatchNum = 0;
       orderInfoRes.dishList.forEach(item => {
         if (item.batchNumber != curBatchNum) {

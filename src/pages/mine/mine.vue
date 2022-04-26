@@ -91,9 +91,12 @@ export default {
     });
 
     async function goToDirectPay() {
-      navigateTo("MARKETING/DIRECT_PAYMENT", {
-        merchantId: "8ec573585d9645229fb01713e30a2a6d",
+      navigateTo("MENU/MENU", {
+        scene: "fea8ae786d044c9eb42bfb288ec53ffd",
       });
+      // navigateTo("MARKETING/DIRECT_PAYMENT", {
+      //   merchantId: "8ec573585d9645229fb01713e30a2a6d",
+      // });
     }
     return {
       navigateTo,

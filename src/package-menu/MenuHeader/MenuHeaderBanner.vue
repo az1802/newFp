@@ -6,23 +6,21 @@
  * @FilePath: /new-fanpiao-uniapp/src/package-menu/MenuHeader/MenuHeaderBanner.vue
 -->
 <template>
-  <div class="banner-container" @click="navigateTo('MARKETING/BUY_FANPIAO')">
+  <div
+    class="banner-container"
+    v-if="showBanner"
+    @click="navigateTo('MARKETING/BUY_FANPIAO')"
+  >
     <div class="banner">
       <img
         class="banner-background"
         src="https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/package-static/package-merchant/menu/fanpiaoBannerBackground_09.png"
         alt=""
       />
-      <div class="fanpiao-discount">
-        {{
-          maxDiscountFanpiao.discount
-            ? (100 - maxDiscountFanpiao.discount) / 10
-            : ""
-        }}
-      </div>
+      <div class="fanpiao-discount">{{ fanpiaoDiscount }}</div>
       <div class="time-box">
         <div class="text">距结束</div>
-        <!-- <TimeCounter
+        <TimeCounter
           mode="dragon-boat-festival"
           customStartText=" "
           :isMini="true"
@@ -31,7 +29,7 @@
             merchantInfo.fanpiaoSnapUpActivityTime &&
             merchantInfo.fanpiaoSnapUpActivityTime.endTimestamp
           "
-        /> -->
+        />
       </div>
     </div>
   </div>
@@ -39,15 +37,26 @@
 <script>
 import { useFanpiaoInfo, useMerchantInfo } from "@hooks/merchantHooks";
 import { useNavigate } from "@hooks/commonHooks";
+import { computed, unref } from "vue";
 export default {
   setup() {
-    const { maxDiscountFanpiao } = useFanpiaoInfo();
+    const { maxDiscountFanpiao, fanpiaoList } = useFanpiaoInfo();
     const { merchantInfo } = useMerchantInfo();
     const { navigateTo } = useNavigate();
+    const showBanner = computed(() => {
+      const { bannerMode } = unref(merchantInfo);
+      return bannerMode !== "BANNER_NONE" && unref(fanpiaoList).length;
+    });
+    const fanpiaoDiscount = computed(() => {
+      let { discount = 0 } = unref(maxDiscountFanpiao);
+      return Number((100 - discount) / 10).toFixed(1);
+    });
     return {
       merchantInfo,
       maxDiscountFanpiao,
       navigateTo,
+      showBanner,
+      fanpiaoDiscount,
     };
   },
 };

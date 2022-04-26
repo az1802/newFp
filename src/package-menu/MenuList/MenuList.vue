@@ -24,6 +24,7 @@
           :active="index == categoryActiveIndex"
         ></CategoryItem>
       </div>
+      <div style="height: 100px"></div>
     </scroll-view>
     <scroll-view
       class="foods-container"
@@ -48,6 +49,7 @@
           :key="dishItem.id"
         />
       </div>
+      <div style="height: 100px"></div>
     </scroll-view>
     <div class="fixed-category-title">
       <div class="text">
@@ -99,7 +101,9 @@ export default {
       let { categoryScrollTops } = getApp().globalData;
       let { scrollTop } = e.detail;
       let categoryIndex =
-        categoryScrollTops.findIndex((item) => item > scrollTop) - 1;
+        scrollTop == 0
+          ? 0
+          : categoryScrollTops.findIndex((item) => item > scrollTop) - 1;
       categoryActiveIndex.value = categoryIndex;
       scrollIntoCategoryView.value = `category-index-${categoryIndex - 3}`;
     }, 100);
@@ -131,6 +135,7 @@ export default {
     .pos-tr-absolute(0,0);
     .flex-simple(space-between,center);
     padding: 0 12px;
+    z-index: 30;
     .text {
       .normal-font(14px,#333);
     }
@@ -140,7 +145,7 @@ export default {
       border-radius: 16px;
       z-index: 10;
       .img {
-        .box-size(20px,20px);
+        .box-size(20px,20px,transparent);
         margin-left: 4px;
       }
       .text {

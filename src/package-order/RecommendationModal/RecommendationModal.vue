@@ -66,6 +66,7 @@
 import API from "@api";
 import { useModal, useNavigate } from "@hooks/commonHooks";
 import { useDish } from "@hooks/menuHooks";
+import { getDishInfoById } from "@utils";
 export default {
   props: {
     recommendedDishes: {
@@ -92,8 +93,13 @@ export default {
       },
       confirm() {
         props.recommendedDishes.forEach((addDishItem) => {
-          addDishItem.quantity &&
-            addDish(JSON.parse(JSON.stringify(addDishItem)));
+          if (addDishItem.quantity) {
+            let dishTemp = JSON.parse(
+              JSON.stringify(getDishInfoById(addDishItem.id) || addDishItem)
+            );
+            dishTemp.quantity = addDishItem.quantity;
+            addDish(dishTemp);
+          }
         });
         props.recommendedDishes.forEach((addDishItem) => {
           addDishItem.quantity = 0;

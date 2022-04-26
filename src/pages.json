@@ -72,7 +72,7 @@
         {
           "path": "pay-success",
           "style": {
-            "disableScroll": true
+            "disableScroll": false
           }
         },
         {

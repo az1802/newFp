@@ -18,6 +18,7 @@ export default {
 
   // 订单相关
   CREATE_ORDER: "/order/create",
+  ADD_ORDER: "/order/add_dish",
   ORDER_DETAIL: "/order/get",
   USER_ORDER_LIST: '/transaction/ordering/list',
   // 用户券包信息

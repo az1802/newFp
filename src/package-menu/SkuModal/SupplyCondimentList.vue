@@ -73,7 +73,13 @@ export default {
     function addCondiment({ id }) {
       let countNum = props.selCondimentsCount;
       let { type, lowerLimit, upperLimit } = props.selectionType;
-      if (countNum >= upperLimit && type != "UNLIMITED") {
+      console.log(
+        "type, lowerLimit, upperLimit : ",
+        type,
+        lowerLimit,
+        upperLimit
+      );
+      if (countNum >= upperLimit && type != "UNLIMITED" && type != "NONE") {
         return;
       }
       selCondiments[id] == undefined
@@ -99,8 +105,8 @@ export default {
 <style lang="less" scoped>
 @import "@design/index.less";
 .condiment-list-container {
-  box-sizing:border-box;
-  padding:0 12px;
+  box-sizing: border-box;
+  padding: 0 12px;
   .title {
     .normal-font(12px,#999);
     .line-center(18px);

@@ -17,6 +17,7 @@
         :dishList="orderDishList"
         :totalPrice="orderTotalPrice"
         :discountPrice="orderDiscountPrice"
+        :showBatchNumber="orderInfo.pendingOrderId ? true : false"
       />
       <div style="height: 18px"></div>
       <CouponInfo />
@@ -69,6 +70,7 @@ export default {
   onLoad(opts) {
     console.log("下单页页面参数 ", opts);
     pendingOrderId.value = opts.pendingOrderId;
+    getApp().globalData.hasJumpedToCreateOrder = true;
   },
   onShow() {
     this.hasBuyFanpiao = getApp().globalData.hasBuyFanpiao || false;
@@ -103,7 +105,7 @@ export default {
         paidFee: orderInfoRes.paidFee, //账单金额
         packageFee: 0, //打包费
         discountAmountPrice: 0, //菜品折扣已优惠的价格
-        phoneMemberDiscount: 0, //会员折扣
+        // phoneMemberDiscount: 0, //会员折扣
         groupDiningEventId: "", //TODO 保留字段
         appointmentTime: "", //TODO 保留字段
         mealType: orderInfoRes.mealType, //就餐模式
@@ -219,6 +221,7 @@ export default {
     return {
       merchantInfo,
       selectedDishes,
+      orderInfo,
       orderDishList,
       selectedDishesTotalPrice,
       orderDiscountPrice,

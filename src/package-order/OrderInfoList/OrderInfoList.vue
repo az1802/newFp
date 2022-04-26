@@ -51,10 +51,10 @@ export default {
     watch(orderInfo, (newOrderInfo) => {
       if (newOrderInfo.id) {
         newOrderInfo.payMethod = payMethodMap[newOrderInfo.payMethod];
-        newOrderInfo.paidTime = formatTime(
-          newOrderInfo.paidTime,
-          "yyyy-MM-dd hh:mm"
-        );
+        newOrderInfo.paidTime =
+          newOrderInfo.paidTime != "0"
+            ? formatTime(newOrderInfo.paidTime, "yyyy-MM-dd hh:mm")
+            : "";
       }
     });
 

@@ -71,7 +71,7 @@ export default {
       type: String,
       default: "relative",
     },
-    customBack: {
+    useCustomBack: {
       type: [Function, null],
       default: null,
     },
@@ -81,8 +81,7 @@ export default {
     let { navigateBack, navigateTo } = useNavigate();
 
     function back() {
-      console.log("props.customBack: ", props.customBack);
-      if (props.customBack) {
+      if (props.useCustomBack) {
         emit("customBack");
       } else {
         navigateBack();

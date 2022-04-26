@@ -28,7 +28,8 @@
       <DishItem
         v-for="dishItem in searchDishList"
         :dish="dishItem"
-        :key="dishItem.id"
+        :key="dishItem.id + searchStr"
+        :highLightStr="searchStr"
       />
       <EmptyStatus
         v-if="searchStr && searchDishList.length == 0"
@@ -36,6 +37,7 @@
         type="dish"
         content="未查询到相关菜品"
       />
+      <div style="height: 140px"></div>
     </scroll-view>
     <MenuBottom />
     <SkuModal />

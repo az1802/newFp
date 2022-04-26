@@ -7,7 +7,10 @@
 -->
 <template>
   <div class="container-wrapper">
-    <div class="buy-fanpiao-tooltip" v-if="tooltipType == 'noBuyFanpiao'">
+    <div
+      class="buy-fanpiao-tooltip"
+      v-if="tooltipType == 'noBuyFanpiao' && userMerchantFanpiaoBalance < 5000"
+    >
       <div class="left">
         <div class="text">本单可享饭票价</div>
         <div class="price">{{ minFanpiaoPrice }}</div>
@@ -31,7 +34,10 @@
         </div>
       </div>
     </div>
-    <div class="use-fanpiao-tooltip" v-if="tooltipType == 'hasBuyFanpiao'">
+    <div
+      class="use-fanpiao-tooltip"
+      v-if="tooltipType == 'hasBuyFanpiao' && userMerchantFanpiaoBalance < 5000"
+    >
       支付时选择饭票支付，即可享饭票价。
     </div>
     <div class="confirm-order-container">
@@ -73,6 +79,7 @@
 import { useNavigate } from "@hooks/commonHooks";
 import { useOrder } from "@hooks/orderHooks";
 import { useDish } from "@hooks/menuHooks";
+import { useUserMerchantFanpiaoBalance } from "@hooks/userHooks";
 import { useRecommendedCoupon, usePay } from "@hooks/payHooks";
 import { useFanpiaoInfo } from "@hooks/merchantHooks";
 import { fenToYuan, showToast } from "@utils";
@@ -98,6 +105,7 @@ export default {
     const { navigateBack, navigateTo } = useNavigate();
     const { createOrder, setOrderInfo, orderInfo } = useOrder();
     const { maxDiscountFanpiao } = useFanpiaoInfo();
+    const { userMerchantFanpiaoBalance } = useUserMerchantFanpiaoBalance();
     // const totalPrice = computed(() => {});
     async function buyCouponAndPay() {
       let { isAgreeCouponAccord, selCouponId, pendingOrderId, paidFee } =
@@ -140,8 +148,16 @@ export default {
       // #endif
 
       let payRes = await commonPay(data);
-
-      return payRes;
+      if (payRes) {
+        // navigateTo("ORDER/PAY_SUCCESS", {
+        //   orderId: "c682d06704b445fa9813dab71e5a3770",
+        //   redPacketVal: 1,
+        // });
+        navigateTo("ORDER/PAY_SUCCESS", {
+          orderId: payRes.id,
+          redPacketVal: payRes.redPacketValue || 0,
+        });
+      }
     }
 
     async function confirmOrder() {
@@ -184,13 +200,16 @@ export default {
 
     const minFanpiaoPrice = computed(() => {
       let { discount = 0 } = unref(maxDiscountFanpiao);
-      let { billFee } = unref(orderInfo);
-      return Number(((100 - discount) * (billFee || 0)) / 10000).toFixed(2);
+      const { pendingOrderId, billFee } = unref(orderInfo);
+      let totalPrice = pendingOrderId
+        ? billFee
+        : unref(selectedDishesTotalPrice);
+      return Number(((100 - discount) * (totalPrice || 0)) / 10000).toFixed(2);
     });
 
     const orderFinalPrice = computed(() => {
       const { pendingOrderId, paidFee } = unref(orderInfo);
-      return pendingOrderId ? paidFee : selectedDishesFinalTotalPrice;
+      return pendingOrderId ? paidFee : unref(selectedDishesFinalTotalPrice);
     });
 
     return {
@@ -203,6 +222,7 @@ export default {
       orderInfo,
       recommendedCoupon,
       minFanpiaoPrice,
+      userMerchantFanpiaoBalance,
     };
   },
 };

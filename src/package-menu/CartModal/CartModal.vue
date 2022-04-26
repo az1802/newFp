@@ -87,7 +87,7 @@ export default {
 <style lang="less" scoped>
 @import "@design/index.less";
 .modal-wrapper {
-  z-index: 10;
+  z-index: 90;
 }
 .cart-container {
   .box-size(100%,unset,white);

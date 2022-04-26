@@ -13,6 +13,7 @@ import API from "@api";
 export function useUserInfo() {
   let { userInfo, userId, userWallet } = useState("user", ['userInfo', "userId", "userWallet"])
   const { setUserInfo, setStats, setUserWallet, setUserId } = useMutations("user", ["setUserInfo", "setUserWallet", 'setUserId']);
+  const { setOrderInfo } = useMutations('order', ["setOrderInfo"])
   if (uni.getStorageSync('userId')) {
     setUserId(userId);
   }
@@ -42,7 +43,10 @@ export function useUserInfo() {
   async function getUserMerchantInfo(merchantId) {
     let res = await API.User.getUserMerchantInfo(merchantId);
     if (res) {
-      setUserInfo(res)
+      setUserInfo(res);
+      setOrderInfo({
+        phoneMemberDiscount: res.phoneMemberDiscount
+      })
     }
   }
 

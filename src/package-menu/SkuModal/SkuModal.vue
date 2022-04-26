@@ -94,7 +94,8 @@ export default {
       }
       nval?.attrList.forEach((attrGroupItem) => {
         if (
-          attrGroupItem.selType == "SINGLE" &&
+          (attrGroupItem.selType == "SINGLE" ||
+            attrGroupItem.selType == "MULTI_MUST") &&
           attrGroupItem?.attrs?.length > 0
         ) {
           selAttrIds.push(attrGroupItem.attrs[0].id); //单选默认选择第一个
@@ -240,8 +241,8 @@ export default {
   .dish-info {
     display: flex;
     margin-bottom: 20px;
-    padding:0 12px;
-    box-sizing:border-box;
+    padding: 0 12px;
+    box-sizing: border-box;
     .img {
       .box-size(80px,80px,#eee);
       border-radius: 3px;

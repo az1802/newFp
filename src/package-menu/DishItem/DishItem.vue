@@ -44,13 +44,20 @@
         lazy-load
         @load="imgLoaded"
       />
+      <div v-if="1 || showRemainQuantity" class="remain-quantity">
+        剩余{{ dish.remainQuantity > 999 ? "999+" : dish.remainQuantity }}份
+      </div>
     </div>
     <div class="info" @click.stop="navigateTo('MARKETING/BUY_FANPIAO')">
       <div class="name">
         <!-- {{ dish.name }} -->
-        <div class="text">{{ dish.name }}</div>
+        <div class="text-wrapper">
+          <div class="text">{{ nameFrontStr }}</div>
+          <div class="high-light" v-if="highLightStr">{{ highLightStr }}</div>
+          <div class="text">{{ nameBackStr }}</div>
+        </div>
         <div class="sold-num" v-if="!merchantInfo.disableShowSoldNumber">
-          月售{{ dish.soldNumber + 20 }}份
+          月售{{ dish.soldNumber }}份
         </div>
       </div>
       <div class="price" @click.stop="navigateTo('MARKETING/BUY_FANPIAO')">
@@ -96,8 +103,12 @@ export default {
       type: Object,
       default: {},
     },
+    highLightStr: {
+      type: String,
+      default: "",
+    },
   },
-  setup({ dish }) {
+  setup({ dish, highLightStr }) {
     let showPlaceHolder = ref(true);
 
     let { merchantInfo } = useMerchantInfo();
@@ -125,13 +136,50 @@ export default {
       return !disableShowDiscountPrice ? price - discountPrice : price;
     });
 
+    let showRemainQuantity = computed(() => {
+      let { status, enableQuantitySetting, remainQuantity } = dish;
+      return status == "NORMAL" && enableQuantitySetting && remainQuantity >= 0;
+    });
+
+    const nameFrontStr = computed(() => {
+      let { name } = dish;
+      if (!highLightStr.trim()) {
+        return name;
+      }
+      let index = name.indexOf(highLightStr);
+
+      if (index == -1) {
+        return name;
+      } else if (index == 0) {
+        return "";
+      } else {
+        return name.slice(0, index);
+      }
+    });
+    const nameBackStr = computed(() => {
+      let { name } = dish;
+      if (!highLightStr.trim()) {
+        return "";
+      }
+      let index = name.indexOf(highLightStr);
+      console.log("index: ", index, highLightStr, name);
+      if (index == -1) {
+        return "";
+      } else {
+        return name.slice(index + highLightStr.length);
+      }
+    });
+
     return {
       showPlaceHolder,
+      showRemainQuantity,
       dishCountMap,
       navigateTo,
       minDiscountFanpiao,
       merchantInfo,
       currentPrice,
+      nameFrontStr,
+      nameBackStr,
       imgLoaded(e) {
         showPlaceHolder.value = false;
       },
@@ -150,6 +198,9 @@ export default {
         toggleShowSkuModal(true);
       },
       showDishDetail() {
+        if (dish.status != "NORMAL") {
+          return;
+        }
         setCurDishDetail(dish);
         toggleShowDishDetailModal(true);
       },
@@ -209,15 +260,30 @@ export default {
     .img {
       .box-size(100%,100%);
     }
+    .remain-quantity {
+      .pos-br-absolute(0,0);
+      .box-size(100%,24px,#000);
+      opacity: 0.5;
+      .normal-font(12px,white);
+      .line-center(24px);
+      text-align: center;
+      border-radius: 0 0 3px 3px;
+    }
   }
   .info {
     .flex-between(column);
     flex: 1;
     .name {
-      .text {
-        .bold-font(16px,#333);
+      .text-wrapper {
+        .flex-simple(flex-start,center);
         .line-center(20px);
         width: 100%;
+        .text {
+          .bold-font(16px,#333);
+        }
+        .high-light {
+          .bold-font(16px,#f25643);
+        }
       }
       .sold-num {
         .line-center(18px);

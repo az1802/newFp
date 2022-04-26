@@ -68,7 +68,12 @@
   </div>
 </template>
 <script>
-import { useCart, useDish, useScanModal } from "@hooks/menuHooks";
+import {
+  useCart,
+  useDish,
+  useScanModal,
+  useAddOrderModal,
+} from "@hooks/menuHooks";
 import { useNavigate } from "@hooks/commonHooks";
 import { useFanpiaoInfo } from "@hooks/merchantHooks";
 import { useOrder } from "@hooks/orderHooks";
@@ -91,21 +96,26 @@ export default {
     const { orderInfo, setOrderInfo } = useOrder();
     const { navigateTo } = useNavigate();
     const { userMerchantCoupons } = useUserMerchantCoupon();
+    const { showAddOrderModal, toggleShowAddOrderModal } = useAddOrderModal();
     function createOrder() {
       console.log("下单信息", unref(orderInfo));
-      if (!unref(orderInfo).tableId) {
+      if (unref(selectedDishes).length == 0) {
+        showToast("请先点菜");
+        return;
+      }
+      const { tableId, orderId, pendingOrderId } = unref(orderInfo);
+      if (pendingOrderId) {
+        //后付款的场景
+        toggleShowAddOrderModal(true);
+        return;
+      }
+
+      if (!tableId) {
         toggleShowScanModal(true);
         return;
       }
 
       // TODO 多人点餐
-      if (unref(selectedDishes).length == 0) {
-        showToast("请先点菜");
-        return;
-      }
-      if (unref(orderInfo).pendingOrderId) {
-        // 添加菜品弹窗
-      }
 
       navigateTo("ORDER/CREATE_ORDER");
     }

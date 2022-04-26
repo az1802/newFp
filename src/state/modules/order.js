@@ -15,10 +15,10 @@ export default {
       currentType: "CREATE",
       orderId: "",//订单id
       remark: "",//订单备注
-      billFee: 10000,//账单金额
+      billFee: 0,//账单金额
       packageFee: 0,//打包费
       discountAmountPrice: 0, //菜品折扣已优惠的价格
-      phoneMemberDiscount: 11,//会员折扣
+      phoneMemberDiscount: 0,//会员折扣
       groupDiningEventId: "", //TODO 保留字段
       appointmentTime: "", //TODO 保留字段
       isTakeAway: false, //是否是外卖
@@ -28,7 +28,7 @@ export default {
       shippingFee: 0, //配送费
       mealType: "",//就餐模式
       onlyForPay: false,
-      peopleCount: 0, //就餐人数
+      peopleCount: 1, //就餐人数
       tableId: "", //桌台id
       tableName: "", //桌台名称
       couponPackageId: "",//券包合并支付的id

@@ -46,6 +46,9 @@ export default {
 
     return {
       isShow,
+      show() {
+        isShow.value = true;
+      },
       hide() {
         isShow.value = false;
       },

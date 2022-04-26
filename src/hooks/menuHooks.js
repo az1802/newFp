@@ -135,6 +135,15 @@ export function useOptionModal() {
     toggleShowOptionModal
   }
 }
+export function useAddOrderModal() {
+  const { showAddOrderModal } = useState('menu', ["showAddOrderModal"]);
+  const { toggleShowAddOrderModal } = useMutations('menu', ["toggleShowAddOrderModal"]);
+
+  return {
+    showAddOrderModal,
+    toggleShowAddOrderModal
+  }
+}
 
 
 export function useSearchDish() {

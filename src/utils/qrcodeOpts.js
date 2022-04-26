@@ -44,7 +44,9 @@ async function qrcodeParams(q) {
 
 let mockOpts = {
   // scene: "09e36b4cd1ea400ba772443f0d2a8747",
-  scene: "5dc8b5512ab8458c92ff398b258aa09a",
+  // scene: "5dc8b5512ab8458c92ff398b258aa09a", //重构是来模式测试点
+  // scene: "e162ac24e1a64dd783f8408741c910b1", //飞鹅模式
+  // scene:"aae068285dfe46a8afc9452539d7e0c2" // 开发用正式环境
   // merchantId:"611e8d6b48e844a186d5ead5a8340ff0", 
 
   // merchantId:"611e8d6b48e844a186d5ead5a8340ff0",

@@ -51,9 +51,7 @@ export default {
     }
 
     function toggleAttr(toggleAttr, { id }) {
-      
       let selIndex = selAttrIds.indexOf(id);
-
       if (toggleAttr.selType == "SINGLE" && selIndex == -1) {
         removeAttrSelId(toggleAttr);
         selAttrIds.push(id);
@@ -94,8 +92,8 @@ export default {
 @import "@design/index.less";
 
 .attr-group-container {
-  box-sizing:border-box;
-  padding:0 12px;
+  box-sizing: border-box;
+  padding: 0 12px;
   .attr-group {
     .group-title {
       .normal-font(12px,#999);

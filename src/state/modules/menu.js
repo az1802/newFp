@@ -35,9 +35,11 @@ export default {
     // showPhoneAuthorize: false,
     showScanModal: false,
     showOptionModal: false,
+    showAddOrderModal: false,
     // showDishDetail: false,
     // showCodeExpiredModal: false,
     showOrderStatusModal: false,
+
     recommendedDishes: [],
     packagingBoxConfig: {
       packageBoxType: "KRY_BOX_QTY", // LADDER
@@ -221,6 +223,9 @@ export default {
     },
     toggleShowOptionModal(state, isShow) {
       state.showOptionModal = isShow;
+    },
+    toggleShowAddOrderModal(state, isShow) {
+      state.showAddOrderModal = isShow;
     },
 
   },
