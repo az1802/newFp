@@ -238,6 +238,7 @@ export default {
       }
       try {
         let parseRes = await handleQrcodeParams(opts); //处理二维码参数
+        console.log("parseRes: ", parseRes);
         if (parseRes.codeExpiredModal) {
           //二维码过期
           codeExpiredModal.value.show();

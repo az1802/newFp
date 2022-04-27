@@ -66,6 +66,7 @@ let mockOpts = {
 export async function handleQrcodeParams(opts = mockOpts) {
   console.log('%c菜单页面入参: ', 'color: MidnightBlue; background: Aquamarine; font-size: 20px;', opts);
   let { merchantId, peopleCount, mealType, scene, timestamp, q, tableId, tableName, id } = opts, parseRes = {};
+  parseRes.merchantId = merchantId;
   parseRes.tableId = tableId;
   parseRes.tableName = tableName;
   // 解析二维码参数
