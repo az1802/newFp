@@ -1,11 +1,31 @@
 <template>
   <div class="header" v-if="show">
-    <div class="title" v-if="titleText !== undefined">{{ titleText }}</div>
-    <div class="code" v-if="codeText !== undefined">{{ codeText }}</div>
-    <div class="text" v-if="tooltipText !== undefined">
-      感谢您对本店的支持,期待您的再次光临
+    <div class="eat-int-header" v-if="orderInfo.mealType === 'EAT_IN'">
+      <p class="title">订单已完成</p>
+      <p class="text">感谢您对本店的支持,期待您的再次光临</p>
     </div>
-    <div v-if="orderInfo.mealType == 'TAKE_OUT'">
+    <div
+      class="self-pick-up-header"
+      v-else-if="orderInfo.mealType === 'SELF_PICK_UP'"
+    >
+      <p class="title">支付成功</p>
+      <p class="code">{{ orderInfo.mealCode }}</p>
+      <p class="text">
+        请于<span v-if="orderInfo.appointmentTime" class="pick-up-time">
+          {{ orderInfo.appointmentTime }} </span
+        >至柜台凭取餐号取餐
+      </p>
+    </div>
+
+    <div
+      class="take-away-header"
+      v-else-if="orderInfo.mealType === 'TAKE_AWAY'"
+    >
+      <p class="title">支付成功</p>
+      <p class="code">{{ orderInfo.mealCode }}</p>
+      <p class="text">请至柜台凭取餐号取餐</p>
+    </div>
+    <div v-else-if="orderInfo.mealType === 'TAKE_OUT'" class="header-wrapper">
       <div class="takeout-wrapper">
         <div class="left-wrapper">
           <p v-if="orderInfo.shippingStatus === 'SHIPPING'" class="title">
@@ -21,17 +41,25 @@
             感谢您的支持，欢迎下次光临
           </p>
         </div>
-        <div class="call-merchant" @click="makePhoneCall">联系商家</div>
+        <div
+          class="call-merchant"
+          @click="makePhoneCall(orderInfo.merchantPhone)"
+        >
+          联系商家
+        </div>
       </div>
     </div>
-
     <div class="rider-container" v-if="orderInfo.mealType === 'TAKE_OUT'">
       <div class="rider-wrapper">
         <div class="left-wrapper">
           <p class="name">骑手姓名：{{ orderInfo.riderName }}</p>
           <p class="platform">第三方平台：{{ orderInfo.logisticsPlatform }}</p>
         </div>
-        <div class="right-wrapper" @click="makePhoneCall(orderInfo.riderPhone)">
+        <div
+          v-if="orderInfo.riderPhone"
+          class="right-wrapper"
+          @click="makePhoneCall(orderInfo.riderPhone)"
+        >
           <img
             src="https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/common/icon-phone_a.png"
             alt=""
@@ -102,30 +130,163 @@ export default {
       titleText,
       codeText,
       tooltipText,
-      makePhoneCall() {},
+      makePhoneCall(phone) {
+        if (!phone) {
+          return;
+        }
+        uni.makePhoneCall(phone);
+      },
     };
   },
 };
 </script>
-<style lang="less" scoped>
-@import "@design/index.less";
+<style scoped lang="stylus" rel="stylesheet/stylus">
 .header {
-  .box-size(100vw,unset,transparent);
-  padding: 8px 12px 12px 12px;
-  .title {
-    .line-center(33px);
-    .bold-font(22px,#333130);
-    .border-bottom-1px(#EEEBE9);
+  width: 100%;
+  box-sizing: border-box;
+
+  .eat-int-header {
+    padding: 8px 12px 12px 12px;
+
+    .title {
+      font-size: 22px;
+      line-height: 33px;
+      color: #333333;
+      font-weight: bold;
+    }
+
+    .text {
+      font-size: 14px;
+      line-height: 21px;
+      color: #333130;
+      margin-top: 4px;
+    }
   }
-  .code {
-    .line-center(66px);
-    .normal-font(44px,#333333);
-    margin-top: 12px;
+
+  .self-pick-up-header, .take-away-header {
+    padding: 0 12px 12px 12px;
+    text-align: center;
+    background-color: white;
+    border-radius: 8px;
+    margin: 8px 12px;
+
+    .title {
+      height: 46px;
+      line-height: 46px;
+      font-size: 18px;
+      color: #333130;
+      border-bottom: 1px solid #EEEBE9;
+      font-weight: bold;
+    }
+
+    .code {
+      line-height: 66px;
+      margin-top: 12px;
+      font-size: 44px;
+      color: #333333;
+      font-weight: bold;
+    }
+
+    .text {
+      font-size: 14px;
+      color: #666666;
+
+      .pick-up-time {
+        color: #F25643;
+      }
+    }
   }
-  .text {
-    .line-center(21px);
-    .normal-font(14px,#666666);
-    margin-top: 4px;
+
+  .header-wrapper {
+    height: 107px;
+    margin-bottom: -44px;
+    background: #666;
+
+    .content {
+      padding: 15px;
+      font-size: 30px;
+      font-weight: bold;
+      color: #333;
+      background-color: #F8F8F8;
+    }
+
+    .takeout-wrapper {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 12px;
+
+      .left-wrapper {
+        margin-top: 5px;
+
+        .title {
+          font-weight: bold;
+          font-size: 24px;
+          color: -white;
+        }
+
+        .desc {
+          margin-top: 9px;
+          font-size: 14px;
+          color: white;
+        }
+      }
+
+      .call-merchant {
+        width: 84px;
+        height: 28px;
+        margin-top: 24px;
+        box-sizing: border-box;
+        line-height: 26px;
+        border-radius: 23px;
+        border: 1px solid white;
+        text-align: center;
+        font-weight: bold;
+        font-size: 16px;
+        color: white;
+      }
+    }
+  }
+
+  .rider-container {
+    margin-bottom: 8px;
+    padding: 0 8px;
+
+    .rider-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      border-radius: 8px;
+      text-align: center;
+      background: white;
+
+      .left-wrapper {
+        padding: 15px 0;
+        text-align: left;
+
+        .name {
+          font-weight: bold;
+          font-size: 16px;
+        }
+
+        .platform {
+          margin-top: 9px;
+          font-size: 14;
+        }
+      }
+
+      .right-wrapper {
+        .icon {
+          width: 27px;
+          height: 27px;
+        }
+
+        .desc {
+          font-size: 10px;
+          color: #666;
+        }
+      }
+    }
   }
 }
 </style>

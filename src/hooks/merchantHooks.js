@@ -24,6 +24,7 @@ export function useMerchantInfo() {
   const { setMerchantInfo } = useMutations("merchant", ["setMerchantInfo", "merchantInfo"]);
   const { setPackagingBoxConfig, setRequiredOrderItems } = useMutations("menu", ["setPackagingBoxConfig", "setRequiredOrderItems"]);
   const { merchantInfo } = useState("merchant", ['merchantInfo']);
+  const { setOrderInfo } = useMutations('order', ['setOrderInfo'])
   async function requestMerchantInfo(merchantId) {
     if (!merchantId) {
       return;
@@ -46,6 +47,12 @@ export function useMerchantInfo() {
     // 处理必选菜
     if (dishesRes.requiredOrderItems?.length > 0) {
       setRequiredOrderItems(dishesRes.requiredOrderItems);
+    }
+    if (dishesRes.minimalBillFee) {
+      setOrderInfo({
+        minimalBillFee: dishesRes.minimalBillFee,
+        shippingFee: dishesRes.shippingFee
+      })
     }
 
 
@@ -303,11 +310,9 @@ export function useRequiredOrderItems() {
       let quantity = 1;
       unref(requiredOrderItems).forEach(item => {
         if (item.type === 'EVERYONE') {
-          console.log('peopleCount: ', peopleCount);
           quantity = peopleCount
         }
         let temp = Object.assign({}, item, { isRequired: true, quantity, minSel: quantity })
-        console.log('temp: ', temp);
         requireArr.push(temp);
       })
     }

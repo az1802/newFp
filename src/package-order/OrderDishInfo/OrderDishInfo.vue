@@ -14,7 +14,7 @@
       >
     </div>
     <div class="dish-list-wrapper">
-      <OrderDishList :dishList="dishList" />
+      <OrderDishList :dishList="dishList" :showBatchNumber="showBatchNumber" />
     </div>
     <CouponReduce />
     <SplitLine paddingTop="16" />
@@ -56,6 +56,10 @@ export default {
     totalPrice: {
       type: [String, Number],
       default: "",
+    },
+    showBatchNumber: {
+      type: Boolean,
+      default: false,
     },
   },
   setup() {

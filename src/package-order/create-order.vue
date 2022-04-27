@@ -21,6 +21,7 @@
       />
       <div style="height: 18px"></div>
       <CouponInfo />
+      <div style="height: 18px"></div>
       <OrderRemarks />
       <div style="height: 100px"></div>
     </scroll-view>
@@ -30,11 +31,13 @@
         merchantInfo.enableFanpiao &&
         (hasBuyFanpiao ? 'hasBuyFanpiao' : 'noBuyFanpiao')
       "
+      @showPayReminderModal="showPayReminderModal"
     />
     <RecommendationModal
       ref="recommendationModal"
       :recommendedDishes="autoRecommendedDishes"
     />
+    <PayReminderModal v-model:show="showReminderModal" />
   </div>
 </template>
 <script>
@@ -44,6 +47,7 @@ import ConfirmOrder from "./ConfirmOrder/ConfirmOrder.vue";
 import CouponInfo from "./CouponInfo/CouponInfo.vue";
 import OrderRemarks from "./OrderRemarks/OrderRemarks.vue";
 import RecommendationModal from "./RecommendationModal/RecommendationModal.vue";
+import PayReminderModal from "./PayReminderModal/PayReminderModal.vue";
 import { getStorage } from "@utils";
 
 import { useDish } from "@hooks/menuHooks";
@@ -55,7 +59,7 @@ import {
 } from "@hooks/merchantHooks";
 import { useOrder, useOrderDetail } from "@hooks/orderHooks";
 import { useRecommendedCoupon } from "@hooks/payHooks";
-import { useUserMerchantCoupon } from "@hooks/userHooks";
+import { useUserMerchantCoupon, useUserAddress } from "@hooks/userHooks";
 import { onBeforeMount, ref, computed, unref, watch } from "vue";
 let pendingOrderId = ref("");
 export default {
@@ -66,9 +70,9 @@ export default {
     CouponInfo,
     OrderRemarks,
     RecommendationModal,
+    PayReminderModal,
   },
   onLoad(opts) {
-    console.log("下单页页面参数 ", opts);
     pendingOrderId.value = opts.pendingOrderId;
     getApp().globalData.hasJumpedToCreateOrder = true;
   },
@@ -85,6 +89,7 @@ export default {
     let { recommendedDishes, requestRecommendDishes } = useRecommendationDish();
     let { merchantInfo, requestMerchantInfo } = useMerchantInfo();
     let { orderInfo, setOrderInfo } = useOrder();
+    console.log(unref(orderInfo));
     let { recommendedCoupon, userAvailableMerchantCoupon } =
       useRecommendedCoupon();
     let { requestUserMerchantCoupons } = useUserMerchantCoupon();
@@ -92,10 +97,12 @@ export default {
     const { orderDetail, getOrderDetailById } = useOrderDetail();
     const { requestFanpiaoList } = useFanpiaoInfo();
     const { requestCouponList } = useCouponInfo();
+    const { userAddressList, requestUserAddressList } = useUserAddress();
+
+    const showReminderModal = ref(false);
 
     async function getOrderInfo(orderId) {
       let orderInfoRes = await getOrderDetailById(orderId);
-      console.log("orderInfoRes: ", orderInfoRes);
       // todo  设置订单相关的信息同步到本地
       setOrderInfo({
         currentType: "ADD",
@@ -143,10 +150,23 @@ export default {
           maxReduceCostCoupon = item;
         }
       });
+      console.log("maxReduceCostCoupon: ", maxReduceCostCoupon);
       if (maxReduceCostCoupon) {
         setOrderInfo({
           selCouponId: maxReduceCostCoupon.id,
           selCouponReduceCost: maxReduceCostCoupon.reduceCost,
+        });
+      } else {
+        setOrderInfo({
+          selCouponId: "",
+          selCouponReduceCost: 0,
+        });
+      }
+
+      if (unref(orderInfo).mealType == "TAKE_OUT") {
+        let addressList = await requestUserAddressList();
+        setOrderInfo({
+          selectedAddress: addressList[0] || {},
         });
       }
     });
@@ -228,6 +248,10 @@ export default {
       orderTotalPrice,
       recommendationModal,
       autoRecommendedDishes,
+      showReminderModal,
+      showPayReminderModal() {
+        showReminderModal.value = true;
+      },
     };
   },
   data() {

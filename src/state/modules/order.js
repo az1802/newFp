@@ -22,6 +22,7 @@ export default {
       groupDiningEventId: "", //TODO 保留字段
       appointmentTime: "", //TODO 保留字段
       isTakeAway: false, //是否是外卖
+      minimalBillFee: 0,//外卖起送费
       takeAwayTime: "", //外卖时间 
       selectedAddress: {},//选择地址
       shippingAddressId: "", //配送地址对应id

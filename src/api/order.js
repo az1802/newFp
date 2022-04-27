@@ -20,6 +20,7 @@ export async function getOrderDetail(orderId) {
 export async function createOrder(merchantId, orderInfo) {
   let url = `${URLS.CREATE_ORDER}/${merchantId}`;
   let res = await http.post(url, orderInfo);
+  console.log('res: ', res);
   return res;
 }
 export async function addOrder(params) {

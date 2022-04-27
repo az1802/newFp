@@ -96,7 +96,7 @@ export default {
       .close-icon {
         .pos-tr-absolute(9px,50px);
         .box-size(18px,18px);
-        z-index: 100;
+        z-index: 10;
       }
     }
     .right {

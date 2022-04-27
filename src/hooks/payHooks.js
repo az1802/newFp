@@ -22,14 +22,21 @@ async function getTransactionId(args) {
 async function commonPay(data) {
   let res = await getTransactionId(data);
   if (res) {
-    let payRes = res;
+    let payRes = true;
     if (data.payMethod == "WECHAT_PAY") {
       payRes = await wechatPay(res.signData);
     } else if (data.payMethod == "ALIPAY") {
       payRes = await aliPay(res);
     }
-    return payRes;
+    if (payRes) {
+      return res;
+    } else {
+      return false;
+    }
   }
+
+  return false;
+
 }
 
 
@@ -115,6 +122,7 @@ export function usePayOrder() {
       } else { //饭票直接支付
         params.paidFee = fanpiaoPaidFee
       }
+      params.transactionType = "SELF_DISH_ORDER_PAYMENT";
     } else if (payMethod === 'SHILAI_MEMBER_CARD_PAY') {
       params.transactionType = "SELF_DISH_ORDER_PAYMENT";
       let { selRechargeInfo } = orderInfo.orderRechargeInfo

@@ -63,11 +63,21 @@
           {{ fenToYuan(orderFinalPrice - orderInfo.selCouponReduceCost) }}
         </div>
       </div>
-      <div class="right" v-if="!orderInfo.pendingOrderId">
+      <div class="right" v-if="merchantInfo.payType !== 'PAY_LATER'">
         <div class="continue-order" @click="navigateBack">继续点菜</div>
         <div class="confirm-order" @click="confirmOrder">确认下单</div>
       </div>
-      <div class="right" v-if="orderInfo.pendingOrderId">
+      <div
+        class="right"
+        v-if="!orderInfo.pendingOrderId && merchantInfo.payType == 'PAY_LATER'"
+      >
+        <div class="continue-order" @click="navigateBack">继续点菜</div>
+        <div class="confirm-order" @click="confirmOrder">确认下单</div>
+      </div>
+      <div
+        class="right"
+        v-if="orderInfo.pendingOrderId && merchantInfo.payType == 'PAY_LATER'"
+      >
         <div class="continue-order" @click="navigateBack">加菜</div>
         <div class="confirm-order" @click="confirmOrder">支付</div>
       </div>
@@ -81,7 +91,7 @@ import { useOrder } from "@hooks/orderHooks";
 import { useDish } from "@hooks/menuHooks";
 import { useUserMerchantFanpiaoBalance } from "@hooks/userHooks";
 import { useRecommendedCoupon, usePay } from "@hooks/payHooks";
-import { useFanpiaoInfo } from "@hooks/merchantHooks";
+import { useFanpiaoInfo, useMerchantInfo } from "@hooks/merchantHooks";
 import { fenToYuan, showToast } from "@utils";
 
 import { ref, unref, computed } from "vue";
@@ -93,7 +103,7 @@ export default {
       default: "",
     },
   },
-  setup() {
+  setup(props, { emit }) {
     const {
       selectedDishesTotalPrice,
       selectedDishesDiscountPrice,
@@ -107,6 +117,7 @@ export default {
     const { createOrder, setOrderInfo, orderInfo, resetOrder } = useOrder();
     const { maxDiscountFanpiao } = useFanpiaoInfo();
     const { userMerchantFanpiaoBalance } = useUserMerchantFanpiaoBalance();
+    const { merchantInfo } = useMerchantInfo();
     // const totalPrice = computed(() => {});
     async function buyCouponAndPay() {
       let { isAgreeCouponAccord, selCouponId, pendingOrderId, paidFee } =
@@ -164,8 +175,20 @@ export default {
     }
 
     async function confirmOrder() {
-      let { isBuyCouponPackage, isAgreeCouponAccord, billFee, pendingOrderId } =
-        unref(orderInfo);
+      let {
+        isBuyCouponPackage,
+        isAgreeCouponAccord,
+        billFee,
+        pendingOrderId,
+        mealType,
+        selectedAddress,
+        paidFee,
+      } = unref(orderInfo);
+      let { payType, disablePaymentReminder } = unref(merchantInfo);
+      if (mealType == "TAKE_OUT" && (!selectedAddress || !selectedAddress.id)) {
+        showToast("请选择收货地址");
+        return;
+      }
 
       if (isBuyCouponPackage) {
         //券包合并支付
@@ -173,7 +196,6 @@ export default {
         return;
       }
 
-      let { paidFee } = unref(orderInfo);
       let orderId = "";
       if (pendingOrderId) {
         orderId = pendingOrderId;
@@ -184,7 +206,6 @@ export default {
       if (!orderId) {
         return;
       }
-
       let discountAmountPrice = unref(selectedDishesDiscountPrice), //菜品折扣的优化
         orderBillFee = pendingOrderId
           ? billFee
@@ -197,6 +218,16 @@ export default {
         couponPrice: 0,
         couponId: 0,
       });
+
+      // 存在orderId 后付款弹出确认下单对话框提示
+      if (payType == "PAY_LATER" && !pendingOrderId) {
+        emit("showPayReminderModal");
+        setOrderInfo({
+          pendingOrderId: orderId,
+        });
+        resetSelDishes([]); //清空购物车
+        return;
+      }
 
       navigateTo("ORDER/PAY_ORDER");
     }
@@ -216,6 +247,7 @@ export default {
     });
 
     return {
+      merchantInfo,
       navigateBack,
       navigateTo,
       createOrder,

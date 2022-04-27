@@ -72,7 +72,7 @@ export default {
       default: "relative",
     },
     useCustomBack: {
-      type: [Function, null],
+      type: [Boolean],
       default: null,
     },
   },

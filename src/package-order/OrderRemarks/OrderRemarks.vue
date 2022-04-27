@@ -41,7 +41,7 @@ export default {
 @import "@design/index.less";
 .remark-info-wrapper {
   .box-size(calc(100% - 24px),unset,white);
-  margin: 8px auto 52px;
+  margin: 0px auto 52px;
   padding: 0 12px 12px;
   .remark-header {
     .flex-simple(space-between,center);

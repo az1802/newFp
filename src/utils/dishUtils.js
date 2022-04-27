@@ -219,7 +219,6 @@ export function handleStorageDishes(storageDishes, dishMap) {
   storageDishes.forEach(item => {
     let isValid = true
     let newDishInfo = dishMap[item.id];
-    console.log('newDishInfo: ', newDishInfo);
     if (newDishInfo && newDishInfo.status == 'NORMAL') {
       // 商家折扣有可能发生了更改，需要同步最新的折扣立减金额
       item.discountPrice = newDishInfo.discountPrice;

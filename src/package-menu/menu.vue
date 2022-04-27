@@ -96,7 +96,6 @@ export default {
     AddOrder,
   },
   onLoad(options) {
-    console.log("options: ", options);
     let userId = uni.getStorageSync("userId") || "";
     if (!userId) {
       navigateTo("MENU/LOGIN", {
@@ -184,7 +183,6 @@ export default {
     function addStorageDishes(merchantId) {
       let storageDishes = getStorage(`selected-dishes-${merchantId}`) || [];
       let dishesMap = getApp().globalData.dishesMap || {};
-      console.log("dishesMap: ", dishesMap);
       resetSelDishes(handleStorageDishes(storageDishes, dishesMap));
     }
 
@@ -198,7 +196,6 @@ export default {
       // TODO 多人点餐;
     }
     function selPeopleOk(peopleCount) {
-      console.log("peopleCount: ", peopleCount);
       setOrderInfo({
         peopleCount,
       });
@@ -229,10 +226,11 @@ export default {
         parseRes.peopleCount =
           parseRes.peopleCount || (res.mealType !== "EAT_IN" ? 0 : 1);
         parseRes.onlyForPay = res.onlyForPay;
+        parseRes.isTakeAway = res.isTakeAway;
         parseRes.isSelectTablePay = res.isSelectTablePay;
         parseRes = Object.assign({}, parseRes);
-        setOrderInfo(res);
       }
+      setOrderInfo(parseRes);
 
       if (parseRes.merchantId) {
         //获取商户信息和菜单信息
@@ -258,7 +256,6 @@ export default {
     async function prepareMerchantInfo() {
       try {
         let parseRes = await handleQrcodeParams(opts); //处理二维码参数
-        console.log("parseRes: ", parseRes);
         if (parseRes.codeExpiredModal) {
           //二维码过期
           codeExpiredModal.value.show();

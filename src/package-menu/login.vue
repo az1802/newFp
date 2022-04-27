@@ -56,7 +56,6 @@ export default {
     return {};
   },
   onLoad(options) {
-    console.log("options: ", options);
     opts = options;
   },
   methods: {
@@ -109,7 +108,6 @@ export default {
       let { from, params } = opts;
       try {
         params = JSON.parse(params);
-        console.log("params: ", params);
       } catch (err) {
         params = {};
       }

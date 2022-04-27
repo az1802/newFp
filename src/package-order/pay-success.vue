@@ -3,12 +3,14 @@
     <NavigationBar title="订单详情" @customBack="navBack" useCustomBack />
     <scroll-view class="scroll-view" scroll-y>
       <OrderStatusInfo :orderInfo="orderDetail" />
+
       <OrderDishInfo
         :merchantName="orderDetail.storeName"
         :dishList="orderDetail.dishList"
         :discountPrice="orderDiscountPrice"
         :totalPrice="orderTotalPrice"
       />
+      <TakeOutInfo :orderDetail="orderDetail" />
       <OrderInfoList :orderInfo="orderDetail" />
       <RedPacketModal ref="redPacketModal" :redPacketVal="redPacketVal" />
       <div style="height: 150px"></div>
@@ -22,6 +24,7 @@ import OrderStatusInfo from "./OrderStatusInfo/OrderStatusInfo.vue";
 import OrderDishInfo from "./OrderDishInfo/OrderDishInfo.vue";
 import OrderInfoList from "./OrderInfoList/OrderInfoList.vue";
 import RedPacketModal from "./RedPacketModal/RedPacketModal.vue";
+import TakeOutInfo from "./TakeOutInfo/TakeOutInfo.vue";
 import { navigateBack, navigateTo, transformDetailDishList } from "@utils";
 let orderId = "",
   redPacketVal = ref(0);
@@ -31,6 +34,7 @@ export default {
     OrderInfoList,
     OrderDishInfo,
     RedPacketModal,
+    TakeOutInfo,
   },
   onLoad(opts) {
     orderId = opts.orderId;
@@ -61,10 +65,8 @@ export default {
       let pages = getCurrentPages(),
         delta = 1;
       let menuPageIndex = pages.findIndex((item) => {
-        console.log("item: ", item);
         return item.route == "package-menu/menu";
       });
-      console.log("menuPageIndex: ", menuPageIndex);
 
       if (menuPageIndex != -1) {
         delta = pages.length - 1 - menuPageIndex || 1;
@@ -92,6 +94,8 @@ export default {
   .box-size(100vw,100vh,#F8F8F8);
   .scroll-view {
     height: calc(100vh - 88px);
+  }
+  .card-container {
   }
 }
 </style>

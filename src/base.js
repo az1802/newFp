@@ -17,11 +17,9 @@ export default {
     },
     // 记录页面路径
     _saveCurrentPage() {
-      console.log('this.$mp: ', this.$mp);
 
       if (!this.$mp) return
       let url = this.$getUrl()
-      console.log('url: ', url);
 
       // 记录页面栈
       if (!url || url.includes('pages/lost') || url.includes('pages/network-error') || url.includes('pages/login')) {

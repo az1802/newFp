@@ -25,6 +25,7 @@ const orderDefaultInfo = {
   takeAwayTime: "", //外卖时间 
   selectedAddress: {},//选择地址
   shippingAddressId: "", //配送地址对应id
+  shippingFee: 0,
   shippingFee: 0, //配送费
   mealType: "",//就餐模式
   onlyForPay: false,
@@ -48,7 +49,9 @@ export function useOrder() {
   const { setPayMethod, setOrderInfo } = useMutations("order", ["setPayMethod", "setOrderInfo"]);
   const { phone } = useState('user', ['phone']);
   async function createOrder() {
+
     let orderInfoTemp = unref(orderInfo);
+    let { mealType, selectedAddress, shippingFee } = orderInfoTemp;
     let orderArgs = {
       dishList: unref(selectedDishes),
       mealType: orderInfoTemp.mealType,
@@ -62,7 +65,16 @@ export function useOrder() {
       appointmentTime: orderInfoTemp.takeawayTime || '',
       discountAmountPrice: 0,
     }
+    if (mealType == "TAKE_OUT") {
+      orderArgs.shippingAddressId = selectedAddress.id;
+      orderArgs.shippingFee = shippingFee;
+    }
+
     let res = await API.Order.createOrder(unref(merchantInfo).merchantId, orderArgs);;
+    console.log('res: ', res);
+    if (!res?.orderId && res.errmsg) {
+      showToast(res.errmsg)
+    }
     return res?.orderId;
   }
 
@@ -221,12 +233,15 @@ export function useOrderDetail() {
     // 待付款订单处理菜品信息
     if (orderInfoRes) {
       transformDetailDishList(orderInfoRes)
-      let curBatchNum = 0;
-      orderInfoRes.dishList.forEach(item => {
-        if (item.batchNumber != curBatchNum) {
-          curBatchNum = item.batchNumber;
-        } else {
-          item.batchNumber = -1;
+      let curBatchNum = 1;
+
+      orderInfoRes.dishList.forEach((item, index) => {
+        if (index > 0) {
+          if (item.batchNumber != curBatchNum) {
+            curBatchNum = item.batchNumber;
+          } else {
+            item.batchNumber = -1;
+          }
         }
         item.createTimeText = formatTime(item.createTime, 'hh:mm');
       })

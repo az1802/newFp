@@ -176,7 +176,9 @@ export function useUserAddress() {
 
   async function requestUserAddressList() {
     let res = await API.User.getUserProfile();
-    setUserAddressList(res?.userInfo?.memberProfile?.shippingAddress || [])
+    let addressList = res?.userInfo?.memberProfile?.shippingAddress || [];
+    setUserAddressList(addressList)
+    return addressList
   }
 
   async function addAddress(addressInfo) {

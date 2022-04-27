@@ -215,7 +215,6 @@ export default {
         return;
       }
       let tempOrderInfo = { ...unref(orderInfo) };
-      console.log("tempOrderInfo: ", tempOrderInfo, unref(orderFanpiaoPayInfo));
       // return;
       tempOrderInfo.merchantId = unref(merchantInfo).merchantId;
       tempOrderInfo.paidFee = unref(paidFee);
@@ -227,8 +226,9 @@ export default {
         tempOrderInfo,
         unref(userWallet)
       );
+      console.log("payOrder res: ", res);
+
       readyPay = true;
-      console.log("res: ", res);
       if (!res) {
         return;
       }
@@ -305,7 +305,7 @@ export default {
 .pay-order-page {
   .box-size(100vw,100vh,white);
   .scroll-view {
-    .box-size(100vw,calc(100vh - 100px),transparent);
+    .box-size(100vw,calc(100vh - 84px),transparent);
     padding-bottom: 100px;
   }
   .bottom {

@@ -74,12 +74,6 @@ export default {
     function addCondiment({ id }) {
       let countNum = props.selCondimentsCount;
       let { type, lowerLimit, upperLimit } = props.selectionType;
-      console.log(
-        "type, lowerLimit, upperLimit : ",
-        type,
-        lowerLimit,
-        upperLimit
-      );
       if (countNum >= upperLimit && type != "UNLIMITED" && type != "NONE") {
         return;
       }

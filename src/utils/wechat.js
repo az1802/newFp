@@ -189,3 +189,15 @@ export async function wechatSignUp() {
     API.User.setUserHeader(userId)
   }
 }
+
+
+export async function getLocation() {
+  try {
+    let location = await uni.getLocation();
+    const { latitude, longitude } = location;
+    return location;
+  } catch (e) {
+    console.warn("获取位置信息失败！");
+    return false;
+  }
+}

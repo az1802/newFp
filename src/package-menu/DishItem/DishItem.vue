@@ -51,11 +51,15 @@
     <div class="info" @click.stop="navigateTo('MARKETING/BUY_FANPIAO')">
       <div class="name">
         <!-- {{ dish.name }} -->
-        <div class="text-wrapper">
+        <div class="text-wrapper high-light-wrapper" v-if="highLightStr">
           <div class="text">{{ nameFrontStr }}</div>
-          <div class="high-light" v-if="highLightStr">{{ highLightStr }}</div>
+          <div class="high-light">{{ highLightStr }}</div>
           <div class="text">{{ nameBackStr }}</div>
         </div>
+        <div class="text-wrapper" v-else>
+          {{ dish.name }}
+        </div>
+
         <div class="sold-num" v-if="!merchantInfo.disableShowSoldNumber">
           月售{{ dish.soldNumber }}份
         </div>
@@ -121,10 +125,6 @@ export default {
     let { setCurDishDetail, toggleShowDishDetailModal } = useDishDetail();
     const { navigateTo } = useNavigate();
 
-    // watch(minDiscountFanpiao, (nval) => {
-    //   console.log(nval);
-    // });
-
     let minFanpiaoPrice = computed(() => {
       let maxDiscount = unref(maxDiscountFanpiao).discount;
       if (maxDiscount !== undefined) {
@@ -165,7 +165,6 @@ export default {
         return "";
       }
       let index = name.indexOf(highLightStr);
-      console.log("index: ", index, highLightStr, name);
       if (index == -1) {
         return "";
       } else {
@@ -278,11 +277,16 @@ export default {
   .info {
     .flex-between(column);
     flex: 1;
+    width: calc(100% - 86px);
     .name {
+      width: 100%;
       .text-wrapper {
-        .flex-simple(flex-start,center);
         .line-center(20px);
-        width: 100%;
+        .bold-font(16px,#333);
+        .no-wrap();
+        &.high-light-wrapper {
+          .flex-simple(flex-start,center);
+        }
         .text {
           .bold-font(16px,#333);
         }

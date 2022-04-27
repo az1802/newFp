@@ -90,6 +90,7 @@ export default {
       if (addRes) {
         await sleep(1000);
         resetSelDishes([]);
+        toggleShowAddOrderModal(false);
         navigateTo("ORDER/CREATE_ORDER", {
           pendingOrderId,
         });

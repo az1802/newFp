@@ -121,6 +121,7 @@ export default {
             }
           });
         }
+        console.log(unref(selChildDishes));
       });
     });
 

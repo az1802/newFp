@@ -201,9 +201,15 @@ export default {
       }
     }
 
-    function modSku({ id }, childDishInfo) {
-      childDishInfo.groupId = id;
-      setCurChildSkuDish(childDishInfo);
+    function modSku(group, childDishInfo) {
+      console.log("childDishInfo: ", group, childDishInfo);
+      let { id } = group;
+      let temp = JSON.parse(JSON.stringify(childDishInfo));
+      temp.groupId = id;
+      if (group.isFixed) {
+        temp.isFixed = true;
+      }
+      setCurChildSkuDish(temp);
       toggleShowChildSkuModal(true);
     }
 

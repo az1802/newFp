@@ -169,6 +169,7 @@ export default {
     height: 100%;
     padding: 0 12px;
     box-sizing: border-box;
+    width: calc(100% - 80px);
     .category-view-wrapper:last-child {
       padding-bottom: 60px;
     }

@@ -65,7 +65,8 @@ http.interceptors.response.use(function (response) {
     }
     return response.data.data || response.data;
   } else {
-    if (response.config.url == "/payment/prepay") {
+    let arr = ['/order/create', '/payment/prepay']
+    if (arr.indexOf(response.config.url)) {
       return response.data
     }
     return false;

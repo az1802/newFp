@@ -34,7 +34,7 @@
           :selCondimentsCount="selCondimentsCount"
         />
       </scroll-view>
-      <div class="sel-ok-btn" @click="selOK">选好了</div>
+      <div class="sel-ok-btn" @click="selOk">选好了</div>
       <span
         class="iconfont icon-guanbi2"
         @click="toggleShowChildSkuModal(false)"
@@ -132,7 +132,7 @@ export default {
       }
       return true;
     }
-    function selOK() {
+    function selOk() {
       let dishInfo = unref(curChildSkuDish),
         attrs = [],
         supplyCondiments = [];
@@ -161,8 +161,10 @@ export default {
       dishInfo.quantity = dishInfo.quantityIncrement || 1;
       dishInfo.addPrice = unref(totalPrice);
       let selGroupChilDish = unref(selChildDishes)[dishInfo.groupId];
+      console.log("dishInfo: ", dishInfo);
 
-      if (0) {
+      if (!dishInfo.isFixed) {
+        //非固定组直接做增加处理
         //添加
         selGroupChilDish.push(dishInfo);
       } else {
@@ -189,7 +191,7 @@ export default {
       fenToYuan,
       toggleShowChildSkuModal,
       selCondimentsCount,
-      selOK,
+      selOk,
     };
   },
 };

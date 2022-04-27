@@ -58,11 +58,20 @@
         </div>
       </div>
       <div
+        v-if="orderInfo.mealType !== 'TAKE_OUT'"
         class="text-wrapper"
         :class="[selectedDishes.length > 0 ? 'has-dish' : '']"
         @click.stop="createOrder"
       >
         {{ selectedDishes.length > 0 ? "去下单" : "请先点菜" }}
+      </div>
+      <div
+        v-else
+        class="text-wrapper"
+        :class="[canOrder ? 'can-order' : 'disable-order']"
+        @click.stop="createOrder"
+      >
+        {{ canOrder ? "去下单" : `满${orderInfo.minimalBillFee / 100}起送` }}
       </div>
     </div>
   </div>
@@ -98,9 +107,13 @@ export default {
     const { userMerchantCoupons } = useUserMerchantCoupon();
     const { showAddOrderModal, toggleShowAddOrderModal } = useAddOrderModal();
     function createOrder() {
-      console.log("下单信息", unref(orderInfo));
+      let { mealType } = unref(orderInfo);
+      console.log("mealType: ", mealType, unref(canOrder));
       if (unref(selectedDishes).length == 0) {
         showToast("请先点菜");
+        return;
+      }
+      if (!unref(canOrder) && mealType == "TAKE_OUT") {
         return;
       }
       const { tableId, orderId, pendingOrderId } = unref(orderInfo);
@@ -155,7 +168,12 @@ export default {
       );
     });
 
+    const canOrder = computed(() => {
+      return unref(orderInfo).minimalBillFee <= unref(selectedDishesTotalPrice);
+    });
+
     return {
+      orderInfo,
       toggleShowCartModal,
       showCartModal,
       selectedDishes,
@@ -168,6 +186,7 @@ export default {
       userMerchantCoupons,
       availableUseCoupon,
       canUsedCoupon,
+      canOrder,
     };
   },
 };
@@ -251,6 +270,15 @@ export default {
       .bold-font(16px, rgba(255, 255, 255, 0.5));
       text-align: right;
       &.has-dish {
+        background: #ff4029;
+        color: white;
+      }
+      &.disable-order {
+        background: #ff4029;
+        color: white;
+        opacity: 0.3;
+      }
+      &.can-order {
         background: #ff4029;
         color: white;
       }

@@ -1,5 +1,4 @@
 export function calcRecommendCoupon(couponList = [], billFee, userMerchantCoupon = []) {
-  console.log('userMerchantCoupon: ', userMerchantCoupon, couponList);
 
   let res = {}, availableFee = 0;
   for (let i = 0; i < couponList.length; i++) {

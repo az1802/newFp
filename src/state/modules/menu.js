@@ -41,6 +41,8 @@ export default {
     // showCodeExpiredModal: false,
     showOrderStatusModal: false,
 
+
+
     recommendedDishes: [],
     packagingBoxConfig: {
       packageBoxType: "KRY_BOX_QTY", // LADDER
@@ -143,18 +145,21 @@ export default {
     reduceCartDish({ selectedDishes }, index, quantity = 1) {
       if (selectedDishes[index]) {
         let { isRequired, minSel, minOrderNum, quantity: oldVal } = selectedDishes[index];
-        if (isRequired && oldVal <= minSel || minOrderNum && oldVal <= minOrderNum) {
+        if (isRequired && oldVal <= minSel) {
           return;
         }
         if (selectedDishes[index].quantity > quantity) {
-          selectedDishes[index].quantity -= quantity;
+          if (minOrderNum > 1 && minOrderNum >= selectedDishes[index].quantity) {
+            selectedDishes.splice(index, 1);
+          } else {
+            selectedDishes[index].quantity -= quantity;
+          }
         } else {
           selectedDishes.splice(index, 1);
         }
       }
     },
     addSelDish({ selectedDishes }, dishInfo) {
-      console.log('dishInfo: ', dishInfo);
       dishInfo = JSON.parse(JSON.stringify(dishInfo))
       let addStep = 1;
       if (dishInfo.quantity) {
@@ -176,7 +181,6 @@ export default {
           selectedDishes.push(dishInfo)
         } else {
           selectedDishes[index].quantity += addStep;
-          console.log(dishInfo.minSel);
           if (dishInfo.minSel) { //暂时针对必选菜数量处理
             selectedDishes[index].minSel = dishInfo.minSel
           }
@@ -187,13 +191,15 @@ export default {
       let index = selectedDishes.findIndex(item => item.id == dishId);
       if (index != -1) {
         let { quantity, isRequired, minSel, minOrderNum } = selectedDishes[index];
-        console.log('quantity, isRequired, minSel, minOrderNum : ', quantity, isRequired, minSel, minOrderNum);
-        if (isRequired && quantity <= minSel || minOrderNum && minOrderNum >= quantity) {
+        if (isRequired && quantity <= minSel) {
           return;
         }
-
         if (quantity > 1) {
-          selectedDishes[index].quantity -= 1;
+          if (minOrderNum > 1 && minOrderNum >= quantity) {
+            selectedDishes.splice(index, 1);
+          } else {
+            selectedDishes[index].quantity -= 1;
+          }
         } else {
           selectedDishes.splice(index, 1);
         }
@@ -253,7 +259,6 @@ export default {
       state.showAddOrderModal = isShow;
     },
     resetDishModal(state) {
-      console.log("重置菜单页面弹窗");
       state.showScanModal = false;
       state.showOptionModal = false;
       state.showAddOrderModal = false;
