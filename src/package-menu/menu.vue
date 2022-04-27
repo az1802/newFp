@@ -44,7 +44,6 @@ import SplashModal from "./SplashModal/SplashModal.vue";
 import AddOrder from "./AddOrder/AddOrder.vue";
 import API from "@api";
 
-import { sleep, handleDishList, getStorage, reLaunch } from "@utils";
 import { useSystemInfo, useLayout } from "@hooks/commonHooks";
 import {
   useMerchantInfo,
@@ -66,7 +65,15 @@ import {
   useResetModal,
 } from "@hooks/menuHooks";
 import { useOrder } from "@hooks/orderHooks";
-import { handleQrcodeParams, navigateTo, showToast } from "@utils";
+import {
+  handleQrcodeParams,
+  navigateTo,
+  showToast,
+  handleDishList,
+  sleep,
+  getStorage,
+  reLaunch,
+} from "@utils";
 
 let opts;
 
@@ -89,7 +96,10 @@ export default {
   onLoad(options) {
     let userId = uni.getStorageSync("userId") || "";
     if (!userId) {
-      reLaunch("MENU/LOGIN");
+      navigateTo("MENU/LOGIN", {
+        from: "MENU/MENU",
+        params: options,
+      });
       return "";
     }
     opts = options;

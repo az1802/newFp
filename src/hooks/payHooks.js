@@ -150,21 +150,7 @@ export function usePayOrder() {
 
     //  跳转到支付成功页面
     showToast(res ? "买单成功" : "买单失败,请稍后重试");
-
-
     return res;
-    // res&&resetSelDishes([]);
-
-
-
-
-
-
-
-
-
-
-
   }
 
 

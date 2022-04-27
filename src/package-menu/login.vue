@@ -34,7 +34,9 @@ import {
   reLaunchUrl,
   sleep,
   navigateBack,
+  navigateTo,
 } from "@utils";
+let opts = {};
 
 let loginTime = 3;
 const TAB_BAR = [
@@ -53,7 +55,9 @@ export default {
   data() {
     return {};
   },
-  onLoad() {},
+  onLoad(options) {
+    opts = options;
+  },
   methods: {
     async loginSuccess() {
       await showToast("登录成功");
@@ -74,7 +78,7 @@ export default {
           : reLaunchUrl("/" + targetPage);
         return;
       }
-      navigateBack();
+      this.back();
       // switchTab("/" + TAB_BAR[0].pagePath);
       //#endif
 
@@ -87,7 +91,7 @@ export default {
         reLaunchUrl("/" + targetPage);
         return;
       }
-      navigateBack();
+      this.back();
       // reLaunchUrl("/" + targetPage);
       //#endif
     },
@@ -97,7 +101,15 @@ export default {
         this.navigateNextPage();
         return;
       }
-      navigateBack();
+      this.back();
+    },
+    back() {
+      let { from, params } = opts;
+      if (from) {
+        navigateTo(from, params);
+      } else {
+        switchTab("index/index");
+      }
     },
   },
 };

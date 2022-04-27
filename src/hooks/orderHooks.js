@@ -6,7 +6,7 @@
  * @FilePath: /new-fanpiao-uniapp/src/utils/hooks/orderHooks.js
  */
 import { computed, ref, reactive, unref } from 'vue';
-import { getDishInfoById, showToast, formatTime } from "@utils";
+import { getDishInfoById, showToast, formatTime, transformDetailDishList } from "@utils";
 import { useState, useGetters, useMutations } from "@hooks/storeHooks";
 import API from "@api";
 const orderDefaultInfo = {
@@ -220,6 +220,7 @@ export function useOrderDetail() {
     let orderInfoRes = await API.Order.getOrderDetailById(orderId) || {};
     // 待付款订单处理菜品信息
     if (orderInfoRes) {
+      transformDetailDishList(orderInfoRes)
       let curBatchNum = 0;
       orderInfoRes.dishList.forEach(item => {
         if (item.batchNumber != curBatchNum) {

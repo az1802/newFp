@@ -63,6 +63,11 @@ export function handleDishList(dishes, dishBaseSellCountMap = {}) {
       dishList: hotDishes
     })
   }
+  dishes.forEach((categoryItem, index) => {
+    categoryItem.dishList.forEach(dishItem => {
+      dishesMap[dishItem.id] = dishItem;
+    })
+  })
 
   // 更新菜品映射表
   dishes.forEach((categoryItem, index) => {
@@ -71,7 +76,6 @@ export function handleDishList(dishes, dishBaseSellCountMap = {}) {
 
     categoryItem.dishList.forEach(dishItem => {
       // dishItem.status = 'NOT_IN_TIME_LIMIT_SALE';
-      dishesMap[dishItem.id] = dishItem;
       allDishes.push(dishItem);
       dishItem.isSku = isSkuDish(dishItem)
       dishItem.soldNumber += (dishBaseSellCountMap[dishItem.id]?.soldNumber || 0)
@@ -82,7 +86,12 @@ export function handleDishList(dishes, dishBaseSellCountMap = {}) {
       if (dishItem?.childDishGroups?.length > 0) {
         dishItem.childDishGroups.forEach(groupItem => {
           groupItem.childDishes.forEach(childDishItem => {
-            let childDishInfo = dishesMap[childDishItem.id]
+
+            let childDishInfo = dishesMap[childDishItem.id];
+            // if (groupItem.groupName == "测试固定分组") {
+            //   console.log('childDishInfo: ', childDishInfo);
+
+            // }
             if (childDishInfo) {
               let { image, attrList, price, supplyCondiments, supplyCondimentUplimit, selectionType } = childDishInfo
               childDishItem.image = image
@@ -139,4 +148,55 @@ export function calcSkuDishPrice(dish, type = "discount") {
     discountPrice = 0
   }
   return ((price - discountPrice) + attrPrice + condimentPrice + childDishesPrice) * quantity;
+}
+
+
+
+export function transformDetailDishList(detailInfo) {
+  if (detailInfo.isPhoneMemberPay) {
+    detailInfo.payMethod = "PHONE_MEMBER_PAY"
+  }
+  if (detailInfo.dishList) {
+    let dishList = detailInfo.dishList || []
+    // 按菜品收取打包费,过滤出打包盒菜
+    if (detailInfo.packageBoxType == "KRY_BOX_QTY" && detailInfo.packagingBoxDishId) {
+      detailInfo.dishList = dishList.filter(dish => {
+        return dish.id !== detailInfo.packagingBoxDishId
+      })
+    }
+    detailInfo.dishList.forEach((dish) => {
+      dish.priceText = Math.abs(Number((dish.totalFee / 100).toFixed(2)))
+    })
+  }
+  detailInfo.dishList && detailInfo.dishList.forEach((dish) => {
+    if (dish.isChildDish) {
+      let index = detailInfo.dishList.findIndex((item) => item.uuid === dish.parentUuid)
+      if (!detailInfo.dishList[index].childDishes) {
+        detailInfo.dishList[index].childDishes = [dish]
+      } else {
+        detailInfo.dishList[index].childDishes.push(dish)
+      }
+    }
+  })
+}
+
+
+export function checkChildDishGroupCount(dishInfo, selChildDishesTemp) {
+  const { childDishGroups } = dishInfo;
+  for (let key in selChildDishesTemp) {
+    let selGrouoDishes = selChildDishesTemp[key];
+    let groupInfoIndex = childDishGroups.findIndex(
+      (item) => item.id == key
+    );
+
+    let { orderMin, orderMax, isFixed } = childDishGroups[groupInfoIndex];
+    if (
+      !isFixed &&
+      (selGrouoDishes.length < orderMin || selGrouoDishes.length > orderMax)
+    ) {
+      return false;
+    }
+  }
+
+  return true;
 }

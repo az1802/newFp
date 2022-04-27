@@ -42,7 +42,13 @@
           :selChildDishes="selChildDishes"
         />
       </scroll-view>
-      <div class="sel-ok-btn" @click="selOK">选好了</div>
+      <div
+        class="sel-ok-btn"
+        :class="canAddComboDish ? 'enabled' : 'disabled'"
+        @click="selOK"
+      >
+        选好了
+      </div>
       <span
         class="iconfont icon-guanbi2"
         @click="toggleShowSkuModal(false)"
@@ -56,7 +62,7 @@ import SupplyCondimentList from "./SupplyCondimentList.vue";
 import ChildDishList from "./ChildDishList.vue";
 import { useSkuDish, useDish } from "@hooks/menuHooks";
 import { reactive, watch, watchEffect, ref, computed, toRaw, unref } from "vue";
-import { showToast, fenToYuan } from "@utils";
+import { showToast, fenToYuan, checkChildDishGroupCount } from "@utils";
 import { cloneDeep } from "lodash";
 
 export default {
@@ -65,16 +71,7 @@ export default {
     SupplyCondimentList,
     ChildDishList,
   },
-  props: {
-    skuDish: {
-      type: Object,
-      default: {},
-    },
-    showModal: {
-      type: Boolean,
-      default: false,
-    },
-  },
+  props: {},
   setup(props) {
     let selAttrIds = reactive([]);
     let selCondiments = reactive({});
@@ -181,15 +178,17 @@ export default {
         let groupInfoIndex = childDishGroups.findIndex(
           (item) => item.id == key
         );
-        console.log("groupInfoIndex: ", groupInfoIndex);
-
-        let { orderMin, orderMax } = childDishGroups[groupInfoIndex];
+        let { orderMin, orderMax, isFixed } = childDishGroups[groupInfoIndex];
         if (
-          selGrouoDishes.length < orderMin ||
-          selGrouoDishes.length > orderMax
+          !isFixed &&
+          (selGrouoDishes.length < orderMin || selGrouoDishes.length > orderMax)
         ) {
           showToast(
-            `${childDishGroups[groupInfoIndex].groupName}必须选择${orderMin}到${orderMax}个紫菜`
+            `${childDishGroups[groupInfoIndex].groupName}分组必须选择${
+              orderMin == orderMax
+                ? orderMin
+                : String(orderMin) + "-" + String(orderMax)
+            }个子菜`
           );
           return false;
         }
@@ -198,6 +197,9 @@ export default {
       return true;
     }
     function selOK() {
+      if (!unref(canAddComboDish)) {
+        return;
+      }
       let dishInfo = unref(curSkuDish),
         attrs = [],
         supplyCondiments = [],
@@ -220,7 +222,10 @@ export default {
         return;
       }
 
-      if (!checkChildDishGroupCount(dishInfo)) {
+      if (
+        dishInfo.childDishGroups.length > 0 &&
+        !checkChildDishGroupCount(dishInfo)
+      ) {
         return;
       }
 
@@ -238,6 +243,46 @@ export default {
       toggleShowSkuModal(false);
     }
 
+    const canAddComboDish = computed(() => {
+      let res = true;
+
+      let selChildDishesTemp = unref(selChildDishes);
+      let { childDishGroups } = unref(curSkuDish);
+      if (!childDishGroups || childDishGroups.length == 0) {
+        return true;
+      }
+      for (let key in selChildDishesTemp) {
+        let selGrouoDishes = selChildDishesTemp[key];
+        let groupInfoIndex = childDishGroups.findIndex(
+          (item) => item.id == key
+        );
+
+        let { orderMin, orderMax, isFixed, childDishes } =
+          childDishGroups[groupInfoIndex]; //找到当前子菜分组
+        if (
+          !isFixed &&
+          (selGrouoDishes.length < orderMin || selGrouoDishes.length > orderMax)
+        ) {
+          return false;
+        }
+
+        let isMustDishSel = childDishes.every((item) => {
+          if (item.isMust) {
+            //套餐里面必选菜的校验
+            let mustDishIndex = selGrouoDishes.findIndex((selItem) => {
+              selItem.id == item.id;
+            });
+            return mustDishIndex != -1;
+          }
+          return true;
+        });
+        if (!isMustDishSel) {
+          return false;
+        }
+      }
+      return res;
+    });
+
     return {
       selAttrIds,
       selCondiments,
@@ -249,6 +294,7 @@ export default {
       toggleShowSkuModal,
       selCondimentsCount,
       selOK,
+      canAddComboDish,
     };
   },
 };
@@ -299,6 +345,9 @@ export default {
     .box-size(100%,45px);
     .btn(45px);
     .bold-font(19px,white);
+    &.disabled {
+      opacity: 0.5;
+    }
   }
 }
 </style>

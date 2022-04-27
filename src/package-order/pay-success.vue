@@ -22,7 +22,7 @@ import OrderStatusInfo from "./OrderStatusInfo/OrderStatusInfo.vue";
 import OrderDishInfo from "./OrderDishInfo/OrderDishInfo.vue";
 import OrderInfoList from "./OrderInfoList/OrderInfoList.vue";
 import RedPacketModal from "./RedPacketModal/RedPacketModal.vue";
-import { navigateBack, navigateTo } from "@utils";
+import { navigateBack, navigateTo, transformDetailDishList } from "@utils";
 let orderId = "",
   redPacketVal = ref(0);
 export default {

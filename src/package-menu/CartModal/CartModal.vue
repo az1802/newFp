@@ -121,6 +121,8 @@ export default {
       }
       .info {
         .flex-between(column);
+        flex: 1;
+        width: calc(100vw - 114px);
         .name {
           .bold-font(17px,#333);
           .describe-text {

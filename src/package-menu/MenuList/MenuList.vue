@@ -96,7 +96,6 @@ export default {
       scrollIntoCategoryView = ref("category-index-0");
 
     let dishScroll = useThrottleFn((e) => {
-      console.log("e: ", e);
       let { categoryScrollTops } = getApp().globalData;
       let { scrollTop } = e.detail;
       let categoryIndex =
@@ -112,7 +111,6 @@ export default {
     }
     watch(props.dishList, (nval) => {
       setTimeout(() => {
-        console.log("重置显示目录");
         categoryActiveIndex.value = 0;
       }, 2000);
     });

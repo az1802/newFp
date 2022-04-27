@@ -45,12 +45,14 @@ import HomeFanpiaoList from "./HomeFanpiaoList/HomeFanpiaoList.vue";
 
 import { ref, onBeforeMount, watch, unref } from "vue";
 import { handleQrcodeStr, navigateTo } from "@utils";
-
+import API from "@api";
 let merchantId = "",
   scene = "",
   // ownTableId = "", //用于首页跳转到不同桌台
   tableId = "",
-  tableName = "";
+  tableName = "",
+  mealType = "",
+  opts = {};
 
 export default {
   components: {
@@ -60,10 +62,11 @@ export default {
     HomeCouponList,
     HomeFanpiaoList,
   },
-  onLoad(opts) {
+  onLoad(options) {
+    opts = options;
     // // 二合一码参数解析
-    if (opts.q) {
-      let queryParams = handleQrcodeStr(decodeURIComponent(opts.q));
+    if (options.q) {
+      let queryParams = handleQrcodeStr(decodeURIComponent(options.q));
       // ownTableId = queryParams.id;
       merchantId = queryParams.merchantId;
     }
@@ -80,12 +83,12 @@ export default {
     }
     //#endif
 
-    if (opts.merchantId) {
-      merchantId = opts.merchantId;
+    if (options.merchantId) {
+      merchantId = options.merchantId;
     }
 
-    if (opts.scene) {
-      scene = opts.scene;
+    if (options.scene) {
+      scene = options.scene;
     }
   },
   setup() {
@@ -116,7 +119,10 @@ export default {
     function goToMenu(mealType) {
       let userId = uni.getStorageSync("userId") || "";
       if (!userId) {
-        navigateTo("MENU/LOGIN");
+        navigateTo("MENU/LOGIN", {
+          from: "MERCHANT/HOME",
+          params: opts,
+        });
         return "";
       }
       if (

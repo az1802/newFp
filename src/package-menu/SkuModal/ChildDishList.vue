@@ -13,7 +13,9 @@
       :key="groupItem.id"
     >
       <div class="title">
-        <div class="group-name">{{ groupItem.groupName }}</div>
+        <div class="group-name">
+          {{ groupItem.groupName }} {{ selRangeText(groupItem) }}
+        </div>
         <div v-if="!groupItem.isFixed" class="sel-text-wrapper">
           <div class="sel-text">
             已选
@@ -200,6 +202,14 @@ export default {
       toggleShowChildSkuModal(true);
     }
 
+    function selRangeText(group) {
+      return `(${
+        group.orderMax != group.orderMin
+          ? "可选" + group.orderMin + "-"
+          : "必选"
+      }${group.orderMax}份)`;
+    }
+
     return {
       dishSelMap,
       genRangeText,
@@ -207,6 +217,7 @@ export default {
       addChildDish,
       reduceChildDish,
       modSku,
+      selRangeText,
     };
   },
 };
