@@ -117,7 +117,7 @@ export function handleDishList(dishes, dishBaseSellCountMap = {}) {
   // 更新菜品滚动距离表
 
 
-  getApp().globalData.dishMap = dishesMap;
+  getApp().globalData.dishesMap = dishesMap;
   getApp().globalData.allDishes = allDishes;
   getApp().globalData.dishSrollTops = dishSrollTops;
   getApp().globalData.categoryScrollTops = categoryScrollTops;
@@ -125,7 +125,7 @@ export function handleDishList(dishes, dishBaseSellCountMap = {}) {
   return dishes;
 }
 export function getDishInfoById(dishId) {
-  let dishesMap = getApp().globalData.dishMap || {};
+  let dishesMap = getApp().globalData.dishesMap || {};
   return dishesMap[dishId] || "";
 }
 
@@ -199,4 +199,65 @@ export function checkChildDishGroupCount(dishInfo, selChildDishesTemp) {
   }
 
   return true;
+}
+
+function hasAttrId(foodInfo = {}, attrId) {
+  let attrMap = {};
+  foodInfo.attrList && foodInfo.attrList.forEach(attrgroupItem => {
+    attrgroupItem.attrs && attrgroupItem.attrs.forEach(attrItem => {
+      attrMap[attrItem.id] = true;
+    })
+  })
+  return attrMap[attrId];
+}
+
+export function handleStorageDishes(storageDishes, dishMap) {
+
+  let validSelectedDishes = [];
+  storageDishes.forEach(item => {
+    let isValid = true
+    let newDishInfo = dishMap[item.id];
+    console.log('newDishInfo: ', newDishInfo);
+    if (newDishInfo && newDishInfo.status == 'NORMAL') {
+      // 商家折扣有可能发生了更改，需要同步最新的折扣立减金额
+      item.discountPrice = newDishInfo.discountPrice;
+      // 菜品属性组进行校验
+      item.attrs && item.attrs.forEach((attrItem) => {
+        if (!hasAttrId(newDishInfo, attrItem.id)) {
+          isValid = false;
+          return
+        }
+      })
+
+      if (item.childDishGroups && item.childDishGroups.length > 0) {
+        item.childDishGroups.forEach((dishGroup) => {
+          dishGroup.childDishes.forEach((dish) => {
+            if (!(dish.id in dishMap)) {
+              isValid = false
+            } else {
+              dish.discountPrice = dishMap[dish.id].discountPrice
+              // 菜品属性组进行校验
+              let newDishInfo = dishMap[dish.id];
+              dish.attrs && dish.attrs.forEach((attrItem) => {
+                if (!hasAttrId(newDishInfo, attrItem.id)) {
+                  isValid = false;
+                }
+              })
+            }
+          })
+        })
+      }
+
+
+    } else {
+      isValid = false;
+    }
+
+    if (isValid) {
+      validSelectedDishes.push(item)
+    }
+  })
+
+
+  return validSelectedDishes
 }

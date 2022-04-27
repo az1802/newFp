@@ -13,7 +13,7 @@
   >
     <div class="cart-container" @click.stop="noop">
       <div class="title">
-        <div class="text-wrapper" @click="resetSelDishes([])">
+        <div class="text-wrapper" @click="clearCart">
           <span class="iconfont icon-shanchu"></span>清空
         </div>
       </div>
@@ -61,6 +61,7 @@
 import { noop, fenToYuan } from "@utils";
 import { useCart, useDish, useSkuDish } from "@hooks/menuHooks";
 import { useMerchantInfo } from "@hooks/merchantHooks";
+import { unref } from "vue";
 export default {
   setup() {
     const { showCartModal, toggleShowCartModal, addCartDish, reduceCartDish } =
@@ -68,6 +69,13 @@ export default {
     const { selectedDishes, addDish, reduceDish, resetSelDishes } = useDish();
     const { genDishDescribeText, calcSkuDishPrice } = useSkuDish();
     const { merchantInfo } = useMerchantInfo();
+    function clearCart() {
+      let requredDishes = unref(selectedDishes).filter((item) => {
+        return item.isRequired;
+      });
+      resetSelDishes(requredDishes);
+    }
+
     return {
       toggleShowCartModal,
       showCartModal,
@@ -77,7 +85,7 @@ export default {
       addCartDish,
       reduceCartDish,
       genDishDescribeText,
-      resetSelDishes,
+      clearCart,
       calcSkuDishPrice,
       merchantInfo,
     };

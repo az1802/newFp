@@ -197,8 +197,10 @@ export default {
       },
       showSkuDish() {
         let dishInfo = getDishInfoById(dish.id);
-        setCurSkuDish(dishInfo);
-        toggleShowSkuModal(true);
+        if (dishInfo) {
+          setCurSkuDish(dishInfo);
+          toggleShowSkuModal(true);
+        }
       },
       showDishDetail() {
         if (dish.status != "NORMAL") {

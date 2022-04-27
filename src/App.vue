@@ -13,6 +13,8 @@ export default {
   globalData: {
     systemInfo: {},
     dishesMap: {},
+    dishSrollTops: [],
+    categoryScrollTops: [],
     hasBuyFanpiao: false,
     allDishes: [],
     hasJumpedToCreateOrder: false,

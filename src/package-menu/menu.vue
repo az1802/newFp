@@ -50,6 +50,7 @@ import {
   useFanpiaoInfo,
   useCouponInfo,
   useFanpiaoOpenScreen,
+  useRequiredOrderItems,
 } from "@hooks/merchantHooks";
 import {
   useUserLogin,
@@ -73,6 +74,7 @@ import {
   sleep,
   getStorage,
   reLaunch,
+  handleStorageDishes,
 } from "@utils";
 
 let opts;
@@ -136,6 +138,7 @@ export default {
     const { showOptionModal, toggleShowOptionModal } = useOptionModal();
     const { requestUserMerchantCoupons } = useUserMerchantCoupon();
     const { menuStyle } = useLayout();
+    const { addRequiredOrderItems } = useRequiredOrderItems();
 
     async function _handleMerchantConfig() {
       let { splashMode, disableBuyFanpiao, recentlyOrderId } =
@@ -169,6 +172,13 @@ export default {
       }
     }
 
+    function addStorageDishes(merchantId) {
+      let storageDishes = getStorage(`selected-dishes-${merchantId}`) || [];
+      let dishesMap = getApp().globalData.dishesMap || {};
+      console.log("dishesMap: ", dishesMap);
+      resetSelDishes(handleStorageDishes(storageDishes, dishesMap));
+    }
+
     function scanOk(tableInfo) {
       opts = {
         ...opts,
@@ -179,9 +189,12 @@ export default {
       // TODO 多人点餐;
     }
     function selPeopleOk(peopleCount) {
+      console.log("peopleCount: ", peopleCount);
       setOrderInfo({
         peopleCount,
       });
+      // 选择人数之后重新处理必选菜
+      addRequiredOrderItems();
     }
 
     async function loadSource(parseRes) {
@@ -220,9 +233,10 @@ export default {
 
         let dishListRes = await requestMerchantDishes(merchantId);
         dishList.push(...dishListRes);
-
         // 进入页面根据缓存重置选中菜
-        resetSelDishes(getStorage(`selected-dishes-${merchantId}`) || []);
+        addStorageDishes(merchantId);
+        // 处理必选菜
+        addRequiredOrderItems();
         // 请求资源
         requestFanpiaoList(merchantId);
         requestCouponList(merchantId);

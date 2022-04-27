@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="coupon-info-wrapper"
-    v-if="recommendedCoupon.id"
-  >
+  <div class="coupon-info-wrapper" v-if="recommendedCoupon.id">
     <div class="angle-mark">
       <div class="title">特惠券包，限时抢购</div>
       <img
@@ -22,7 +19,7 @@
         <div class="right">
           <div class="buy-price">
             <div class="discount-price">
-              ¥{{ recommendedCoupon.price / 100 }}
+              {{ recommendedCoupon.price / 100 }}
             </div>
             <div class="origin-price">
               ¥{{ recommendedCoupon.originalPrice / 100 }}
@@ -73,7 +70,7 @@
               >张
             </p>
             <p class="limit">
-              满{{ recommendedCoupon.availableFee / 100 }}可用
+              满{{ recommendedCoupon.availableFee / 100 }}元可用
             </p>
             <p class="limit">无门槛优惠券</p>
           </div>
@@ -109,8 +106,6 @@ export default {
     let { orderInfo, setOrderInfo } = useOrder();
     let { recommendedCoupon, userAvailableMerchantCoupon } =
       useRecommendedCoupon();
-
-
 
     // TODO 计算合适的券然后使用
     return {

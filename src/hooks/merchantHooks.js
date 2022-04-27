@@ -9,6 +9,7 @@ import { computed, ref, reactive, unref } from 'vue'
 import { sleep, handleDishList, getStorage, getDishInfoById, showToast } from "@utils";
 import { useState, useGetters, useMutations } from "@hooks/storeHooks";
 import API from "@api";
+import order from '../state/modules/order';
 const {
   getDishCatalogScene,
   getMerchantInfo,
@@ -20,8 +21,8 @@ const {
 
 
 export function useMerchantInfo() {
-  const { setMerchantInfo } = useMutations("merchant", ["setMerchantInfo"]);
-  const { setPackagingBoxConfig } = useMutations("menu", ["setPackagingBoxConfig"]);
+  const { setMerchantInfo } = useMutations("merchant", ["setMerchantInfo", "merchantInfo"]);
+  const { setPackagingBoxConfig, setRequiredOrderItems } = useMutations("menu", ["setPackagingBoxConfig", "setRequiredOrderItems"]);
   const { merchantInfo } = useState("merchant", ['merchantInfo']);
   async function requestMerchantInfo(merchantId) {
     if (!merchantId) {
@@ -39,9 +40,15 @@ export function useMerchantInfo() {
   async function requestMerchantDishes(merchantId) {
     if (!merchantId) { return };
     let dishesRes = await API.Merchant.getMerchantDishCategory(merchantId);
-    setPackagingBoxConfig({ //设置打包费配置
-      packageBoxDishPrice: dishesRes.packagingBoxConfig?.dish?.prce || 0
-    })
+    // setPackagingBoxConfig({ //TODO 打包费模块暂时不处理
+    //   packageBoxDishPrice: dishesRes.packagingBoxConfig?.dish?.price || 0
+    // }) 
+    // 处理必选菜
+    if (dishesRes.requiredOrderItems?.length > 0) {
+      setRequiredOrderItems(dishesRes.requiredOrderItems);
+    }
+
+
     let dishBaseSellCountMap = await API.Merchant.getDishSoldNumber(merchantId);
     let dishListRes = handleDishList(dishesRes.dishes, dishBaseSellCountMap);
 
@@ -269,5 +276,57 @@ export function useMerchantOrderRecord(merchantId) {
     getCouponRecordList,
     refundFanpiao,
     refundCoupon
+  }
+}
+
+
+export function useRequiredOrderItems() {
+  const { requiredOrderItems, selectedDishes } = useState('menu', ["requiredOrderItems", "selectedDishes"]);
+  const { orderInfo } = useState('order', ['orderInfo']);
+  const { merchantInfo } = useState('merchant', ["merchantInfo"])
+  let {
+    addSelDish,
+    reduceSelDish,
+    resetSelectedDishes,
+    saveSelectedDishesStorage } = useMutations("menu", [
+      "addSelDish",
+      "reduceSelDish",
+      "resetSelectedDishes",
+      "saveSelectedDishesStorage"
+    ]);
+
+  async function addRequiredOrderItems() {
+    let { peopleCount } = unref(orderInfo);
+    const { recentlyPaidOrderId } = unref(merchantInfo);
+    let requireArr = [];
+    if (recentlyPaidOrderId == "") {//没有最近的订单则设置必选菜
+      let quantity = 1;
+      unref(requiredOrderItems).forEach(item => {
+        if (item.type === 'EVERYONE') {
+          console.log('peopleCount: ', peopleCount);
+          quantity = peopleCount
+        }
+        let temp = Object.assign({}, item, { isRequired: true, quantity, minSel: quantity })
+        console.log('temp: ', temp);
+        requireArr.push(temp);
+      })
+    }
+    requireArr.forEach(requireItem => {
+      let index = unref(selectedDishes).findIndex(item => {
+        return item.id == requireItem.id
+      })
+      let selDishItem = unref(selectedDishes)[index];
+
+      if (index != -1 && requireItem.minSel > selDishItem.quantity) { //校验数量
+        let addTemp = Object.assign({}, requireItem, { quantity: requireItem.minSel - selDishItem.quantity });
+        addSelDish(addTemp)
+      } else if (index == -1) {
+        addSelDish(requireItem)
+      }
+    })
+
+  }
+  return {
+    addRequiredOrderItems
   }
 }

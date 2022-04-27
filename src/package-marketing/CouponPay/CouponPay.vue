@@ -156,7 +156,7 @@
     >
       <div class="coupon-detail-wrapper">
         <div class="available-tag">
-          满{{ minMerchantLeastCostCoupon.availableFee / 100 }}可用
+          满{{ minMerchantLeastCostCoupon.availableFee / 100 }}元可用
         </div>
         <div class="left">
           <div class="count-and-price">

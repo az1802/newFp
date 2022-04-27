@@ -8,6 +8,7 @@
 import { setStorage, calcSkuDishPrice } from "@utils"
 export default {
   state: {
+    requiredOrderItems: [],
     selectedDishes: [],
     curSkuDish: {
       attrList: [],
@@ -141,7 +142,10 @@ export default {
     },
     reduceCartDish({ selectedDishes }, index, quantity = 1) {
       if (selectedDishes[index]) {
-        let { quantity: oldVal } = selectedDishes[index];
+        let { isRequired, minSel, minOrderNum, quantity: oldVal } = selectedDishes[index];
+        if (isRequired && oldVal <= minSel || minOrderNum && oldVal <= minOrderNum) {
+          return;
+        }
         if (selectedDishes[index].quantity > quantity) {
           selectedDishes[index].quantity -= quantity;
         } else {
@@ -150,23 +154,44 @@ export default {
       }
     },
     addSelDish({ selectedDishes }, dishInfo) {
+      console.log('dishInfo: ', dishInfo);
       dishInfo = JSON.parse(JSON.stringify(dishInfo))
-      dishInfo.quantity = dishInfo.quantity || 1; //此菜品每次递增的数量
+      let addStep = 1;
+      if (dishInfo.quantity) {
+        addStep = dishInfo.quantity
+      } else {
+        dishInfo.quantity = 1;
+      }
+      let index = selectedDishes.findIndex(item => item.id == dishInfo.id);
+      if (index == -1) {//初次添加设置起售数量
+        if (dishInfo.minOrderNum && dishInfo.minOrderNum > (dishInfo.quantity || 1)) {
+          dishInfo.quantity = dishInfo.minOrderNum;
+        }
+      }
       if (dishInfo.isSku) {
         selectedDishes.push(dishInfo)
       } else {
-        let index = selectedDishes.findIndex(item => item.id == dishInfo.id);
         if (index == -1) {
+          // 初次添加的时候
           selectedDishes.push(dishInfo)
         } else {
-          selectedDishes[index].quantity += 1
+          selectedDishes[index].quantity += addStep;
+          console.log(dishInfo.minSel);
+          if (dishInfo.minSel) { //暂时针对必选菜数量处理
+            selectedDishes[index].minSel = dishInfo.minSel
+          }
         }
       }
     },
     reduceSelDish({ selectedDishes }, dishId) {
       let index = selectedDishes.findIndex(item => item.id == dishId);
       if (index != -1) {
-        let { quantity } = selectedDishes[index];
+        let { quantity, isRequired, minSel, minOrderNum } = selectedDishes[index];
+        console.log('quantity, isRequired, minSel, minOrderNum : ', quantity, isRequired, minSel, minOrderNum);
+        if (isRequired && quantity <= minSel || minOrderNum && minOrderNum >= quantity) {
+          return;
+        }
+
         if (quantity > 1) {
           selectedDishes[index].quantity -= 1;
         } else {
@@ -235,6 +260,9 @@ export default {
       state.showDishDetailModal = false;
       state.showChildSkuDishModal = false;
       state.showOrderStatusModal = false;
+    },
+    setRequiredOrderItems(state, requiredOrderItems = []) {
+      state.requiredOrderItems = requiredOrderItems;
     }
 
   },

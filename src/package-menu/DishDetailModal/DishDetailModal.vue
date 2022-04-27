@@ -110,13 +110,15 @@ export default {
       },
       addCart() {
         let dishInfo = getDishInfoById(unref(curDishDetail).id);
-        addDish(dishInfo);
+        dishInfo && addDish(dishInfo);
       },
       selectSku() {
         let dishInfo = getDishInfoById(unref(curDishDetail).id);
-        setCurSkuDish(dishInfo);
-        toggleShowDishDetailModal(false);
-        toggleShowSkuModal(true);
+        if (dishInfo) {
+          setCurSkuDish(dishInfo);
+          toggleShowDishDetailModal(false);
+          toggleShowSkuModal(true);
+        }
       },
     };
   },

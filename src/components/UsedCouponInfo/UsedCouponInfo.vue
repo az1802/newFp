@@ -25,7 +25,7 @@
           ¥<span class="amount">{{ coupon.reduceCost / 100 }}</span>
         </div>
         <div class="coupon-least-cost" :class="{ disabled: disabled }">
-          满{{ coupon.leastCost / 100 }}可用
+          满{{ coupon.leastCost / 100 }}元可用
         </div>
       </div>
     </div>
