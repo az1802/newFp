@@ -85,7 +85,8 @@ export default {
     let { setPayMethod, payMethod } = usePayMethod();
     let { navigateTo } = useNavigate();
     const { userWallet } = useUserMerchantWallet();
-    const { orderFanpiaoPayInfo, setOrderFanpiaoPayInfo } = useFanpiaoPayInfo();
+    const { orderFanpiaoPayInfo, setOrderFanpiaoPayInfo, finalFanpiaoPaidFee } =
+      useFanpiaoPayInfo();
     const { maxDiscountFanpiao, minDiscountFanpiao } = useFanpiaoInfo();
 
     watch(payMethod, (nval) => {
@@ -129,15 +130,17 @@ export default {
     }
 
     const fanpiaoPayTooltipText = computed(() => {
-      let { recommendFanpiaoList } = unref(orderFanpiaoPayInfo);
+      let { recommendFanpiaoList, fanpiaoRemainPaidFee, fanpiaoPaidFee } =
+        unref(orderFanpiaoPayInfo);
+
+      if (fanpiaoRemainPaidFee <= 0) {
+        // 饭票足够支付时
+        let discountTemp = props.billFee - fanpiaoPaidFee;
+        return `${discountTemp > 0 ? discountTemp / 100 : 0}元`;
+      }
       let { maxFanpiaoDiscount, minFanpiaoDiscount } = calcFanpiaoDiscountPrice(
         unref(recommendFanpiaoList),
         props.billFee || 0
-      );
-      console.log(
-        "maxFanpiaoDiscount, minFanpiaoDiscount : ",
-        maxFanpiaoDiscount,
-        minFanpiaoDiscount
       );
       if (maxFanpiaoDiscount < minFanpiaoDiscount) {
         return "";

@@ -94,11 +94,12 @@ export default {
     AddOrder,
   },
   onLoad(options) {
+    console.log("options: ", options);
     let userId = uni.getStorageSync("userId") || "";
     if (!userId) {
       navigateTo("MENU/LOGIN", {
         from: "MENU/MENU",
-        params: options,
+        params: JSON.stringify(options),
       });
       return "";
     }
@@ -232,10 +233,6 @@ export default {
     }
 
     async function prepareMerchantInfo() {
-      let userId = checkLogin();
-      if (!userId) {
-        return;
-      }
       try {
         let parseRes = await handleQrcodeParams(opts); //处理二维码参数
         console.log("parseRes: ", parseRes);
@@ -251,6 +248,10 @@ export default {
     }
 
     onBeforeMount(async () => {
+      let userId = uni.getStorageSync("userId") || "";
+      if (!userId) {
+        return;
+      }
       // 处理参数
       await prepareMerchantInfo();
       resetDishModal();

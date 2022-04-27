@@ -20,16 +20,16 @@
       <div class="fanpiao-discount">{{ fanpiaoDiscount }}</div>
       <div class="time-box">
         <div class="text">距结束</div>
-        <!-- <TimeCounter
+        <TimeCounter
           mode="dragon-boat-festival"
-          customStartText=" "
+          customStartText=""
           :isMini="true"
           :endDate="
             merchantInfo &&
             merchantInfo.fanpiaoSnapUpActivityTime &&
             merchantInfo.fanpiaoSnapUpActivityTime.endTimestamp
           "
-        /> -->
+        />
       </div>
     </div>
   </div>

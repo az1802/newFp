@@ -121,7 +121,7 @@ export default {
       if (!userId) {
         navigateTo("MENU/LOGIN", {
           from: "MERCHANT/HOME",
-          params: opts,
+          params: JSON.stringify(opts),
         });
         return "";
       }

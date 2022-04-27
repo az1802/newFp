@@ -56,6 +56,7 @@ export default {
     return {};
   },
   onLoad(options) {
+    console.log("options: ", options);
     opts = options;
   },
   methods: {
@@ -67,18 +68,19 @@ export default {
     navigateNextPage() {
       uni.removeStorageSync("merchantIndexLogin");
       //#ifdef MP-WEIXIN
-      let targetPage = uni.getStorageSync("errorUrl");
-      if (targetPage) {
-        let isTab = TAB_BAR.findIndex((item) =>
-          targetPage.includes(item.pagePath)
-        );
-        // tab页面记录参数
-        isTab !== -1
-          ? switchTab("/" + targetPage)
-          : reLaunchUrl("/" + targetPage);
-        return;
-      }
+      // let targetPage = uni.getStorageSync("errorUrl");
+      // if (targetPage) {
+      //   let isTab = TAB_BAR.findIndex((item) =>
+      //     targetPage.includes(item.pagePath)
+      //   );
+      //   // tab页面记录参数
+      //   isTab !== -1
+      //     ? switchTab("/" + targetPage)
+      //     : reLaunchUrl("/" + targetPage);
+      //   return;
+      // }
       this.back();
+
       // switchTab("/" + TAB_BAR[0].pagePath);
       //#endif
 
@@ -105,6 +107,12 @@ export default {
     },
     back() {
       let { from, params } = opts;
+      try {
+        params = JSON.parse(params);
+        console.log("params: ", params);
+      } catch (err) {
+        params = {};
+      }
       if (from) {
         navigateTo(from, params);
       } else {

@@ -21,7 +21,7 @@
         <div class="coupon-list-wtapper">
           <div v-if="!buyRecordList.length" class="time-counter-wrapper">
             <div class="text">超值饭票限时抢购</div>
-            <!-- <TimeCounter customStartText=" " mode="fanpiao" /> -->
+            <TimeCounter customStartText=" " mode="fanpiao" />
           </div>
           <div class="buy-record-list" v-if="buyRecordList.length">
             <div class="record-item">

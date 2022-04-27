@@ -232,10 +232,10 @@ export default {
       if (!res) {
         return;
       }
+      await sleep(1000);
       setPayMethod("WECHAT_PAY");
       resetSelDishes([]);
       resetOrder();
-      await sleep(2000);
       // 跳转到支付成功野蛮
       navigateTo("ORDER/PAY_SUCCESS", {
         orderId: tempOrderInfo.orderId,
@@ -244,8 +244,16 @@ export default {
     }
 
     let fanpiaoPayTooltipText = computed(() => {
-      let { recommendFanpiaoList } = unref(orderFanpiaoPayInfo);
+      let { recommendFanpiaoList, fanpiaoRemainPaidFee } =
+        unref(orderFanpiaoPayInfo);
       let { billFee } = unref(orderInfo);
+
+      if (unref(orderFanpiaoPayInfo).fanpiaoRemainPaidFee <= 0) {
+        let discountTemp = billFee - unref(orderFanpiaoPayInfo).fanpiaoPaidFee;
+        return discountTemp > 0 ? discountTemp / 100 : 0;
+      }
+
+      // 按照推荐的饭票比例处理
       let { maxFanpiaoDiscount, minFanpiaoDiscount } = calcFanpiaoDiscountPrice(
         unref(recommendFanpiaoList),
         billFee || 0
