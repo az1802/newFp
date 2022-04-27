@@ -59,7 +59,12 @@
                 @click.stop="showTimeLimitSaleTooltip"
               ></text>
             </div>
-            <div v-else-if="dishItem.status == 'SOLD_OUT'" class="status">
+            <div
+              v-else-if="
+                dishItem.status == 'SOLD_OUT' || dishItem.status == 'GUQING'
+              "
+              class="status"
+            >
               已售罄
             </div>
             <div v-else-if="groupItem.isFixed" class="fixed-operation">
@@ -287,6 +292,7 @@ export default {
         position: relative;
         min-width: 120px;
         .status {
+          text-align: right;
           background: transparent;
           color: #666;
         }

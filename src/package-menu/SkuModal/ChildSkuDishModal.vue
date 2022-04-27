@@ -160,7 +160,23 @@ export default {
       });
       dishInfo.quantity = dishInfo.quantityIncrement || 1;
       dishInfo.addPrice = unref(totalPrice);
-      unref(selChildDishes)[dishInfo.groupId].push(dishInfo);
+      let selGroupChilDish = unref(selChildDishes)[dishInfo.groupId];
+
+      if (0) {
+        //添加
+        selGroupChilDish.push(dishInfo);
+      } else {
+        //修改
+        let index = selGroupChilDish.findIndex((item) => {
+          item.id == dishInfo.id;
+        });
+        if (index != -1) {
+          selGroupChilDish.push(dishInfo);
+        } else {
+          selGroupChilDish.splice(index, 1, dishInfo);
+        }
+      }
+
       toggleShowChildSkuModal(false);
     }
 

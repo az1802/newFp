@@ -141,8 +141,13 @@ export default {
     const { addRequiredOrderItems } = useRequiredOrderItems();
 
     async function _handleMerchantConfig() {
-      let { splashMode, disableBuyFanpiao, recentlyOrderId } =
-        unref(merchantInfo);
+      let {
+        splashMode,
+        disableBuyFanpiao,
+        recentlyOrderId,
+        disablePeopleCount,
+      } = unref(merchantInfo);
+      let { mealType } = unref(orderInfo);
       if (recentlyOrderId) {
         setOrderInfo({
           pendingOrderId: recentlyOrderId,
@@ -165,7 +170,11 @@ export default {
       } else if (splashMode === "IMAGE" || splashMode === "MEMBER_RECHARGE") {
         splashModal.value.showModal();
       }
-      if (!unref(merchantInfo).disablePeopleCount) {
+
+      if (
+        !disablePeopleCount &&
+        (mealType == "EAT_IN" || mealType == "KERUYUN_FAST_FOOD")
+      ) {
         //业务主助手控制是否选择人数
         toggleShowOptionModal(true);
         return;

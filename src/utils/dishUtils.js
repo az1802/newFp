@@ -93,7 +93,8 @@ export function handleDishList(dishes, dishBaseSellCountMap = {}) {
 
             // }
             if (childDishInfo) {
-              let { image, attrList, price, supplyCondiments, supplyCondimentUplimit, selectionType } = childDishInfo
+
+              let { image, attrList, price, supplyCondiments, supplyCondimentUplimit, selectionType, status } = childDishInfo
               childDishItem.image = image
               childDishItem.shilaiSkuPirce = price
               childDishItem.supplyCondimentUplimit = supplyCondimentUplimit
@@ -101,6 +102,7 @@ export function handleDishList(dishes, dishBaseSellCountMap = {}) {
               childDishItem.attrList = attrList || []
               childDishItem.supplyCondiments = supplyCondiments || []
               childDishItem.isSku = isSkuDish(childDishItem)
+              childDishItem.status = status
               _processDishAttr(childDishItem)
             }
           })
