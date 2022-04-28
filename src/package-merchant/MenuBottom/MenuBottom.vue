@@ -73,6 +73,16 @@
       >
         {{ canOrder ? "去下单" : `满${orderInfo.minimalBillFee / 100}起送` }}
       </div>
+      <div
+        class="get-phone-wrapper"
+        v-if="merchantInfo.enforcePhoneRegistration && !phone"
+        @click.stop="stop"
+      >
+        <GetPhoneButton
+          class="get-phone-btn"
+          @success="getPhoneSuccess"
+        ></GetPhoneButton>
+      </div>
     </div>
   </div>
 </template>
@@ -84,9 +94,9 @@ import {
   useAddOrderModal,
 } from "@hooks/menuHooks";
 import { useNavigate } from "@hooks/commonHooks";
-import { useFanpiaoInfo } from "@hooks/merchantHooks";
+import { useFanpiaoInfo, useMerchantInfo } from "@hooks/merchantHooks";
 import { useOrder } from "@hooks/orderHooks";
-import { useUserMerchantCoupon } from "@hooks/userHooks";
+import { useUserMerchantCoupon, useUserPhone } from "@hooks/userHooks";
 import { unref, computed } from "vue";
 import { fenToYuan, showToast } from "@utils";
 
@@ -94,7 +104,8 @@ export default {
   setup() {
     const { showCartModal, toggleShowCartModal } = useCart();
     const { toggleShowScanModal } = useScanModal();
-
+    const { merchantInfo } = useMerchantInfo();
+    const { phone } = useUserPhone();
     const {
       selectedDishes,
       selectedDishesTotalQuantity,
@@ -187,6 +198,12 @@ export default {
       availableUseCoupon,
       canUsedCoupon,
       canOrder,
+      merchantInfo,
+      phone,
+      stop() {
+        return false;
+      },
+      getPhoneSuccess() {},
     };
   },
 };
@@ -227,6 +244,18 @@ export default {
     padding-left: calc(@cartHeight / 2);
     overflow: hidden;
     margin: 0 auto;
+    position: relative;
+    .get-phone-wrapper {
+      position: absolute;
+      left: 0;
+      right: 12px;
+      top: 0;
+      bottom: 0;
+      .get-phone-button {
+        .box-size(100%,100%,transparent);
+        opacity: 0;
+      }
+    }
     .cart-info {
       flex: 1;
       .flex-simple(flex-start,center);

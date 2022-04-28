@@ -61,8 +61,8 @@ export function useOrder() {
       remark: orderInfoTemp.remark,
       peopleCount: Number(orderInfoTemp.peopleCount || 1),
       groupDiningEventId: orderInfoTemp.groupDiningEventId,
-      phone: unref(phone),
-      appointmentTime: orderInfoTemp.takeawayTime || '',
+      phone: orderInfoTemp.phone || unref(phone),
+      appointmentTime: orderInfoTemp.takeAwayTime || '',
       discountAmountPrice: 0,
     }
     if (mealType == "TAKE_OUT") {

@@ -85,6 +85,7 @@
 import { useMerchantInfo, useFanpiaoInfo } from "@hooks/merchantHooks";
 import { useNavigate } from "@hooks/commonHooks";
 import { useFanpiaoPay } from "@hooks/payHooks";
+import { navigateTo } from "@utils";
 import {
   onBeforeMount,
   onBeforeUnmount,
@@ -93,9 +94,22 @@ import {
   unref,
   ref,
 } from "vue";
+let merchantId = "",
+  opts;
 export default {
   components: {},
-  onLoad() {},
+  onLoad(options) {
+    opts = options;
+    merchantId = options.scene || options.merchantId || "";
+    let userId = uni.getStorageSync("userId") || "";
+    if (!userId) {
+      navigateTo("MENU/LOGIN", {
+        from: "MARKETING/BUY_FANPIAO",
+        params: JSON.stringify(opts),
+      });
+      return "";
+    }
+  },
   onShareAppMessage() {
     return {
       title: this.merchantName,
@@ -103,12 +117,13 @@ export default {
   },
   setup() {
     let { navigateTo, navigateBack } = useNavigate();
-    let { merchantInfo } = useMerchantInfo();
+    let { merchantInfo, requestMerchantInfo } = useMerchantInfo();
     let {
       fanpiaoList,
       requestFanpiaoPlatformRecords,
       fanpiaoUserNum,
       fanpiaoUserAvaterList,
+      requestFanpiaoList,
     } = useFanpiaoInfo();
     const { buyFanpiao } = useFanpiaoPay();
     const animating = ref(true),
@@ -118,6 +133,10 @@ export default {
     let timeOutId = "";
 
     onBeforeMount(async () => {
+      if (merchantId) {
+        await requestMerchantInfo(merchantId);
+        await requestFanpiaoList(merchantId);
+      }
       await requestFanpiaoPlatformRecords();
       timeOutId = setInterval(() => {
         curImgIndex.value += 1;

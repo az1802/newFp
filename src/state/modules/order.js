@@ -24,6 +24,7 @@ export default {
       isTakeAway: false, //是否是外卖
       minimalBillFee: 0,//外卖起送费
       takeAwayTime: "", //外卖时间 
+      phone: "",
       selectedAddress: {},//选择地址
       shippingAddressId: "", //配送地址对应id
       shippingFee: 0, //配送费

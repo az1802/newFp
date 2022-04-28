@@ -3,7 +3,6 @@
     <NavigationBar title="订单详情" @customBack="navBack" useCustomBack />
     <scroll-view class="scroll-view" scroll-y>
       <OrderStatusInfo :orderInfo="orderDetail" />
-
       <OrderDishInfo
         :merchantName="orderDetail.storeName"
         :dishList="orderDetail.dishList"

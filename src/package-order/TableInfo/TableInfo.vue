@@ -27,7 +27,13 @@
       <div class="phone">
         <div class="label">预留电话</div>
         <div class="phone-input-wrapper">
-          <input v-if="phone" type="text" :value="phone" class="input" />
+          <input
+            v-if="phone"
+            type="text"
+            :value="phone"
+            class="input"
+            @input="changePhone"
+          />
           <GetPhoneButton v-else
             ><div class="text">请填写手机号(必填)</div></GetPhoneButton
           >
@@ -95,7 +101,7 @@ export default {
   },
   setup() {
     let { merchantInfo } = useMerchantInfo();
-    let { orderInfo } = useOrder();
+    let { orderInfo, setOrderInfo } = useOrder();
     let { phone } = useUserPhone();
     const { navigateTo } = useNavigate();
 
@@ -104,6 +110,12 @@ export default {
       merchantInfo,
       phone,
       navigateTo,
+      changePhone(e) {
+        let val = e.detail.value;
+        setOrderInfo({
+          phone: val,
+        });
+      },
     };
   },
 };

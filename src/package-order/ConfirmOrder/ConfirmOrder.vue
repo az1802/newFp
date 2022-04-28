@@ -12,7 +12,7 @@
       v-if="tooltipType == 'noBuyFanpiao' && userMerchantFanpiaoBalance < 5000"
     >
       <div class="left">
-        <div class="text">本单可享饭票价</div>
+        <div class="text">本单可享最低饭票价</div>
         <div class="price">{{ minFanpiaoPrice }}</div>
       </div>
       <div class="right">

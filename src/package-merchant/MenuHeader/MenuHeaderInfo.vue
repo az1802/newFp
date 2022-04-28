@@ -51,7 +51,7 @@ export default {
   .box-size(100%,66px,white);
   padding: 12px 12px 6px 12px;
   border-radius: 16px 16px 0 0;
-  margin-top: -16px;
+  // margin-top: -16px;
   display: flex;
   z-index: 10;
   .logo {

@@ -12,6 +12,96 @@ function handleSkuDish(dishes) {
 
 
 
+export function _processDishes(dishes, dishBaseSellCountMap = {}) {
+  // 建立菜品索引
+  let dishMap = {}
+  let dishNameMap = {}
+  dishes.forEach((dishCategory) => {
+    dishCategory.dishList.forEach((dish) => {
+      dishMap[dish.id] = dish
+      if (dish.name in dishNameMap) {
+        dishNameMap[dish.name].push(dish)
+      } else {
+        dishNameMap[dish.name] = [dish]
+      }
+      // 将菜品的规格属性组移动到第一位
+      let skuAttrGroupIndex = dish.attrList.findIndex(attrGroupItem => {
+        return attrGroupItem.attrs[0] && attrGroupItem.attrs[0].type == "SPECIFICATION"
+      })
+      if (skuAttrGroupIndex != -1) {
+        let temp = dish.attrList.splice(skuAttrGroupIndex, 1);
+        dish.attrList.unshift(...temp);
+      }
+    })
+  })
+  // 对于规格类菜品，需要进行多菜品合并(受客如云原始数据格式限制)
+  let attrDishMap = {}, needAdjustGroupId = "", needAdjustIndex = "";
+  for (var name in dishNameMap) {
+    if (dishNameMap[name].length > 1) {
+      let attrMap = {}
+      dishNameMap[name].forEach((dish, index) => {
+        if (index > 0) {
+          dish.hidden = true
+        } else {
+          dish.hidden = false
+        }
+        dish.attrList.forEach((attrItem) => {
+          attrItem.attrs.forEach((attr) => {
+            if (attr.type === 'SPECIFICATION') {
+              attrDishMap[dish.name + attr.id] = dish
+            }
+          })
+          if (attrItem.groupId in attrMap) {
+            if (attrItem.attrs.length > 0 && attrItem.attrs[0].type === 'SPECIFICATION') {
+              attrMap[attrItem.groupId] = [...attrMap[attrItem.groupId]];//后续调整该groupId至最前面
+              for (let i = 0; i < attrItem.attrs.length; i++) {
+                let attrTemp = attrItem.attrs[i] || {};
+                let hasAttr = attrMap[attrItem.groupId].some(attrMapItem => {
+                  return attrMapItem.id == attrTemp.id
+                })
+                if (!hasAttr) {
+                  attrMap[attrItem.groupId].push(JSON.parse(JSON.stringify(attrTemp)));
+                }
+              }
+              needAdjustGroupId = attrItem.groupId
+            }
+          } else {
+            attrMap[attrItem.groupId] = [...attrItem.attrs]
+          }
+        })
+      })
+
+      dishNameMap[name][0].attrList.forEach((attrItem, index) => {
+        attrItem.attrs = attrMap[attrItem.groupId];
+        if (needAdjustGroupId == attrItem.groupId) {
+          needAdjustIndex = index
+        }
+      })
+      // 将合并的规格属性调整到最前面
+      dishNameMap[name][0].attrList.unshift(...dishNameMap[name][0].attrList.splice(needAdjustIndex, 1))
+    }
+  }
+
+
+
+  getApp().globalData.attrDishMap = attrDishMap;
+
+
+
+
+
+
+
+
+  // this.$storage(`${this.merchantId}-merchant-process-dish`,JSON.parse(JSON.stringify(this.dish)))
+  getApp().globalData.processDishes = JSON.parse(JSON.stringify(dishes));
+
+
+
+}
+
+
+
 // 处理菜品的单选多选问题
 function _processDishAttr(dish) {
   if (dish.attrList.length > 0) {
@@ -33,7 +123,72 @@ export function handleDishList(dishes, dishBaseSellCountMap = {}) {
   let dishesMap = {}, dishNameMap = {}, attrDishMap = {}, hotDishes = [], allDishes = [];
   let dishSrollTops = [], categoryScrollTops = [], scrollTop = 0;
 
-  // 
+  dishes.forEach((dishCategory) => {
+    dishCategory.dishList.forEach((dish) => {
+      dishesMap[dish.id] = dish
+      if (dish.name in dishNameMap) {
+        dishNameMap[dish.name].push(dish)
+      } else {
+        dishNameMap[dish.name] = [dish]
+      }
+      // 将菜品的规格属性组移动到第一位
+      let skuAttrGroupIndex = dish.attrList.findIndex(attrGroupItem => {
+        return attrGroupItem.attrs[0] && attrGroupItem.attrs[0].type == "SPECIFICATION"
+      })
+      if (skuAttrGroupIndex != -1) {
+        let temp = dish.attrList.splice(skuAttrGroupIndex, 1);
+        dish.attrList.unshift(...temp);
+      }
+    })
+  })
+  // 对于规格类菜品，需要进行多菜品合并(受客如云原始数据格式限制)
+  let needAdjustGroupId = "", needAdjustIndex = "";
+  for (var name in dishNameMap) {
+    if (dishNameMap[name].length > 1) {
+      let attrMap = {}
+      dishNameMap[name].forEach((dish, index) => {
+        if (index > 0) {
+          dish.hidden = true
+        } else {
+          dish.hidden = false
+        }
+        dish.attrList.forEach((attrItem) => {
+          attrItem.attrs.forEach((attr) => {
+            if (attr.type === 'SPECIFICATION') {
+              attrDishMap[dish.name + attr.id] = dish
+            }
+          })
+          if (attrItem.groupId in attrMap) {
+            if (attrItem.attrs.length > 0 && attrItem.attrs[0].type === 'SPECIFICATION') {
+              attrMap[attrItem.groupId] = [...attrMap[attrItem.groupId]];//后续调整该groupId至最前面
+              for (let i = 0; i < attrItem.attrs.length; i++) {
+                let attrTemp = attrItem.attrs[i] || {};
+                let hasAttr = attrMap[attrItem.groupId].some(attrMapItem => {
+                  return attrMapItem.id == attrTemp.id
+                })
+                if (!hasAttr) {
+                  attrMap[attrItem.groupId].push(JSON.parse(JSON.stringify(attrTemp)));
+                }
+              }
+              needAdjustGroupId = attrItem.groupId
+            }
+          } else {
+            attrMap[attrItem.groupId] = [...attrItem.attrs]
+          }
+        })
+      })
+
+      dishNameMap[name][0].attrList.forEach((attrItem, index) => {
+        attrItem.attrs = attrMap[attrItem.groupId];
+        if (needAdjustGroupId == attrItem.groupId) {
+          needAdjustIndex = index
+        }
+      })
+      // 将合并的规格属性调整到最前面
+      dishNameMap[name][0].attrList.unshift(...dishNameMap[name][0].attrList.splice(needAdjustIndex, 1))
+    }
+  }
+
   dishes.forEach((categoryItem, index) => {
     categoryItem.dishList.forEach((dish) => {
 

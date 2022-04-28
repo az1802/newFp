@@ -6,16 +6,16 @@
  * @FilePath: /new-fanpiao-uniapp/src/utils/routes.js
  */
 const ORDER = '/package-order';
-const MENU = '/package-menu'
+const MENU = '/package-merchant'
 const OTHER = '/package-other'
-const MARKETING = '/package-marketing'
+const MARKETING = '/package-payment'
 const MINE = '/package-mine'
-const MERCHANT = '/package-merchant'
+const MERCHANT = '/package-mhome'
 
 
 export default {
   "TABS": {
-    "HOME": '/pages/index/index',
+    "HOME": '/pages/home/home',
     "ORDER": '/pages/order/order',
     "MINE": '/pages/mine/mine',
   },
@@ -25,7 +25,7 @@ export default {
     "SEARCH_DISH": `${MENU}/search-dish`,
   },
   "MERCHANT": {
-    "HOME": `${MERCHANT}/home`,
+    "HOME": `/pages/merchant/index`,
     "ORDER": `${MERCHANT}/merchant-order`,
   },
   "ORDER": {

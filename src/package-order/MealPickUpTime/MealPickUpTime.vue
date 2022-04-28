@@ -25,6 +25,7 @@
 </template>
 <script>
 import { ref, unref } from "vue";
+import { useOrder } from "@hooks/orderHooks";
 const MULTI_ARRAY = [
   [
     {
@@ -152,6 +153,7 @@ export default {
   },
   setup(props, { emit }) {
     let multiArray = ref(MULTI_ARRAY);
+    let { setOrderInfo } = useOrder();
     return {
       multiArray,
       changeTakeawayTime(e) {
@@ -160,11 +162,18 @@ export default {
           unref(multiArray)[0][index[0]].value +
           ":" +
           unref(multiArray)[1][index[1]].value;
-        emit("update:time", takeawayTime);
+        console.log("takeawayTime: ", takeawayTime);
+        // emit("update:time", takeawayTime);
+        setOrderInfo({
+          takeAwayTime: takeawayTime,
+        });
       },
       changeTakeawayTimeAli(e) {
         let takeawayTime = e.detail.value;
-        emit("update:time", takeawayTime);
+        setOrderInfo({
+          takeAwayTime: takeawayTime,
+        });
+        // emit("update:time", takeawayTime);
       },
     };
   },

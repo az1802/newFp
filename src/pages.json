@@ -4,7 +4,7 @@
   },
   "pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
     {
-      "path": "pages/index/index",
+      "path": "pages/home/home",
       "style": {
         "navigationBarTitleText": "uni-app"
       }
@@ -23,7 +23,7 @@
     }
   ],
   "subPackages": [{
-      "root": "package-menu",
+      "root": "package-merchant",
       "pages": [{
         "path": "menu",
         "style": {
@@ -42,7 +42,7 @@
       }]
     },
     {
-      "root": "package-merchant",
+      "root": "package-mhome",
       "pages": [{
         "path": "home",
         "style": {
@@ -115,7 +115,7 @@
       ]
     },
     {
-      "root": "package-marketing",
+      "root": "package-payment",
       "pages": [{
         "path": "buy-fanpiao/buy-fanpiao",
         "style": {
@@ -203,7 +203,7 @@
     "borderStyle": "white",
     "list": [{
         "text": "饭票",
-        "pagePath": "pages/index/index",
+        "pagePath": "pages/home/home",
         "spacing": "2px",
         "iconPath": "static/tabs/tab-icon-fanpiao.jpg",
         "selectedIconPath": "static/tabs/tab-icon-fanpiao_active.jpg"
