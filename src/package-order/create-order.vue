@@ -37,7 +37,7 @@
       ref="recommendationModal"
       :recommendedDishes="autoRecommendedDishes"
     />
-    <PayReminderModal v-model:show="showReminderModal" />
+    <PayReminderModal v-model:show="showReminderModal" @payLater="payLater" />
   </div>
 </template>
 <script>
@@ -241,6 +241,11 @@ export default {
         : unref(selectedDishes);
     });
 
+    const payLater = async function () {
+      pendingOrderId.value = unref(orderInfo).orderId;
+      console.log("pendingOrderId: ", pendingOrderId);
+      await getOrderInfo(pendingOrderId.value);
+    };
     return {
       merchantInfo,
       selectedDishes,
@@ -255,6 +260,7 @@ export default {
       showPayReminderModal() {
         showReminderModal.value = true;
       },
+      payLater,
     };
   },
   data() {

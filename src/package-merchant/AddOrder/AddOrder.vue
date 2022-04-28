@@ -81,12 +81,18 @@ export default {
     const { addOrder, orderInfo } = useOrder();
     let { merchantInfo } = useMerchantInfo();
     const { genDishDescribeText, calcSkuDishPrice } = useSkuDish();
+    let isAdding = false;
     async function addDish() {
+      if (isAdding) {
+        return;
+      }
+      isAdding = true;
       let { pendingOrderId } = unref(orderInfo);
       let addRes = await addOrder(pendingOrderId, unref(selectedDishes));
       await showToast(
         addRes.errcode == 0 ? "您已加菜成功" : addRes.errmsg || "加菜失败"
       );
+      isAdding = false;
       if (addRes) {
         await sleep(1000);
         resetSelDishes([]);

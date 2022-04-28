@@ -37,7 +37,7 @@ export default {
   },
   onLoad(opts) {
     orderId = opts.orderId;
-    redPacketVal.value = parseFloat(opts.redPacketVal);
+    redPacketVal.value = parseFloat(opts.redPacketVal || 0);
     // 进入到此页面后,后续回到点餐页面需要重新加载用户相关的商户信息
     getApp().globalData.resetUserMerchantInfo = true;
   },
@@ -52,6 +52,8 @@ export default {
       getOrderDetailById(orderId);
       if (redPacketVal.value) {
         redPacketModal.value.show();
+      } else {
+        redPacketModal.value.hide();
       }
     });
     let orderDiscountPrice = computed(() => {

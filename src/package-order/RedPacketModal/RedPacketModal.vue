@@ -15,7 +15,7 @@
         />
         <div class="price-wrapper">
           <div class="price-wrapper-text1">恭喜您获得提现红包</div>
-          <div class="price">{{ redPacketVal / 100 }}</div>
+          <div class="price">{{ (redPacketVal || 0) / 100 }}</div>
           <div class="price-wrapper-text2">红包已自动存放至"我的-红包"</div>
         </div>
         <div class="item"></div>
@@ -42,7 +42,7 @@ export default {
     },
   },
   setup(props) {
-    const isShow = ref(props.redPacketVal ? true : false);
+    const isShow = ref(false);
 
     return {
       isShow,

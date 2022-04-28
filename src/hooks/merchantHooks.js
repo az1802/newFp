@@ -306,13 +306,15 @@ export function useRequiredOrderItems() {
     let { peopleCount } = unref(orderInfo);
     const { recentlyPaidOrderId } = unref(merchantInfo);
     let requireArr = [];
+
     if (recentlyPaidOrderId == "") {//没有最近的订单则设置必选菜
-      let quantity = 1;
       unref(requiredOrderItems).forEach(item => {
+        let quantity = 1;
         if (item.type === 'EVERYONE') {
           quantity = peopleCount
         }
         let temp = Object.assign({}, item, { isRequired: true, quantity, minSel: quantity })
+        console.log('temp: ', temp);
         requireArr.push(temp);
       })
     }

@@ -33,7 +33,9 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { navigateTo } from "@utils";
+import { navigateTo, redirectTo } from "@utils";
+import { useOrder } from "@hooks/orderHooks";
+import { unref } from "vue";
 
 export default {
   props: {
@@ -45,12 +47,9 @@ export default {
       type: String,
       default: "",
     },
-    orderId: {
-      type: String,
-      default: "",
-    },
   },
   setup(props, { emit }) {
+    let { orderInfo } = useOrder();
     function hide() {
       emit("update:show", false);
     }
@@ -64,6 +63,10 @@ export default {
         hide();
       },
       payLater() {
+        let { orderId } = unref(orderInfo);
+        redirectTo("ORDER/CREATE_ORDER", {
+          pendingOrderId: orderId,
+        });
         hide();
       },
     };

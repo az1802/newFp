@@ -77,6 +77,28 @@ export async function reLaunchUrl(url) {
 }
 
 
+export async function redirectTo(path, pageOpts) {
+  let url = parsePath(path);
+  let paramsStrs = genParamsStrs(pageOpts);
+
+  if (url) {
+    return new Promise(resolve => {
+      uni.redirectTo({
+        url: paramsStrs.length == 0 ? url : `${url}?${paramsStrs.join("&")}`,
+        success() {
+          resolve(true)
+        },
+        fail(err) {
+          resolve(false)
+        }
+      })
+    })
+  } else {
+    throw new Error(`路径解析错误${path}`)
+  }
+}
+
+
 
 
 
