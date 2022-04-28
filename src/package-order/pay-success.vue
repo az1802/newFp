@@ -8,6 +8,7 @@
         :dishList="orderDetail.dishList"
         :discountPrice="orderDiscountPrice"
         :totalPrice="orderTotalPrice"
+        :showUseCoupon="false"
       />
       <TakeOutInfo :orderDetail="orderDetail" />
       <OrderInfoList :orderInfo="orderDetail" />

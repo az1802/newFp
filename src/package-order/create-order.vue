@@ -18,6 +18,7 @@
         :totalPrice="orderTotalPrice"
         :discountPrice="orderDiscountPrice"
         :showBatchNumber="orderInfo.pendingOrderId ? true : false"
+        :showUseCoupon="true"
       />
       <div style="height: 18px"></div>
       <CouponInfo />

@@ -9,37 +9,38 @@
   <div class="modal-wrapper" v-show="showSkuModal">
     <div
       class="container"
-      :class="[curSkuDish.childDishGroups.length > 0 ? 'higher' : '']"
+      :class="[skuDishInfo.childDishGroups.length > 0 ? 'higher' : '']"
     >
       <div class="dish-info">
         <img
-          :src="curSkuDish.thumbImage"
+          :src="skuDishInfo.thumbImage"
           alt=""
           class="img"
           mode="aspectFill"
         />
         <div class="info">
-          <div class="name">{{ curSkuDish.name }}</div>
+          <div class="name">{{ skuDishInfo.name }}</div>
           <div class="price">{{ fenToYuan(totalPrice) }}</div>
         </div>
       </div>
       <scroll-view class="other-info" scroll-y="true">
         <AttrGroupList
-          v-show="curSkuDish.attrList.length > 0"
-          :attrGroupList="curSkuDish.attrList"
+          v-show="skuDishInfo.attrList.length > 0"
+          :attrGroupList="skuDishInfo.attrList"
           v-model:selAttrIds="selAttrIds"
         />
         <SupplyCondimentList
-          v-show="curSkuDish.supplyCondiments.length > 0"
-          :condimentList="curSkuDish.supplyCondiments"
+          v-show="skuDishInfo.supplyCondiments.length > 0"
+          :condimentList="skuDishInfo.supplyCondiments"
           :selCondiments="selCondiments"
-          :selectionType="curSkuDish.selectionType"
+          :selectionType="skuDishInfo.selectionType"
           :selCondimentsCount="selCondimentsCount"
         />
         <ChildDishList
-          v-show="curSkuDish.childDishGroups.length > 0"
-          :childDishGroups="curSkuDish.childDishGroups"
+          v-show="skuDishInfo.childDishGroups.length > 0"
+          :childDishGroups="skuDishInfo.childDishGroups"
           :selChildDishes="selChildDishes"
+          :skuDishInfo="skuDishInfo"
         />
       </scroll-view>
       <div
@@ -75,7 +76,15 @@ export default {
     let selAttrIds = reactive([]);
     let selCondiments = reactive({});
     let childDishList = reactive([]);
-    let skuDishInfo = ref({});
+    let skuDishInfo = ref({
+      thumbImage: "",
+      name: "",
+      childDishGroups: [],
+      supplyCondiments: [],
+      attrList: [],
+      price: 0,
+      selectionType: {},
+    });
 
     const {
       curSkuDish,
@@ -128,7 +137,10 @@ export default {
           unref(selChildDishes)[childDishGroup.id] = []; //存储子菜的选择
           childDishGroup?.childDishes.forEach((dishItem) => {
             let tempDish = JSON.parse(JSON.stringify(dishItem));
-            //
+            tempDish.customId = dishItem.id + "-" + childDishGroup.id;
+            tempDish.isFixedGroup = childDishGroup.isFixed;
+            dishItem.customId = dishItem.id + "-" + childDishGroup.id;
+            dishItem.isFixedGroup = childDishGroup.isFixed;
             if (tempDish.isSku) {
               //暂时未处理默认规格
               let tempSelAttrIds = [],
@@ -149,11 +161,13 @@ export default {
 
               tempDish.selAttrIds = tempSelAttrIds;
               tempDish.attrs = tempSelAttrs;
-              tempDish.addPrice = addPrice; //子菜的加价
+              tempDish.addPrice = addPrice + tempDish.price; //子菜的加价
             }
+
             if (childDishGroup.isFixed) {
               //固定分组中加入
               tempDish.quantity = tempDish.quantityIncrement;
+              console.log(tempDish.addPrice);
               tempDish.childDishGroupInfo = {
                 groupIndex: childGroupIndex,
                 groupId: childDishGroup.id,
@@ -166,7 +180,7 @@ export default {
     });
 
     let totalPrice = computed(() => {
-      let res = unref(curSkuDish).price || 0;
+      let res = unref(skuDishInfo).price || 0;
 
       selAttrIds.forEach((id) => {
         //处理属性的加价
@@ -182,9 +196,11 @@ export default {
         //处理选中的子菜价格
         let groupChildDishes = unref(selChildDishes)[key];
         // price为菜品的加价  addPrice 是属性相关的价格 quantity 是
-        groupChildDishes.forEach(({ price = 0, addPrice = 0, quantity }) => {
-          res += (price + addPrice) * quantity;
-        });
+        groupChildDishes.forEach(
+          ({ price = 0, addPrice = 0, quantity, isSku }) => {
+            res += isSku ? addPrice * quantity : (price + addPrice) * quantity;
+          }
+        );
       }
 
       return res;
@@ -317,7 +333,7 @@ export default {
       selAttrIds,
       selCondiments,
       selChildDishes,
-      curSkuDish,
+      skuDishInfo,
       showSkuModal,
       totalPrice,
       fenToYuan,
@@ -326,7 +342,7 @@ export default {
       selOK,
       canAddComboDish,
       skuDishInfo,
-      curSkuDish,
+      skuDishInfo,
     };
   },
 };

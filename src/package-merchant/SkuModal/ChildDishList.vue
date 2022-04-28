@@ -42,12 +42,12 @@
             <div
               class="price-tag"
               v-if="
-                dishSelMap[groupItem.id].childAddPriceMap[dishItem.id] ||
+                dishSelMap[groupItem.id].childAddPriceMap[dishItem.customId] ||
                 dishItem.price
               "
             >
               +¥{{
-                (dishSelMap[groupItem.id].childAddPriceMap[dishItem.id] ||
+                (dishSelMap[groupItem.id].childAddPriceMap[dishItem.customId] ||
                   dishItem.price) / 100
               }}
             </div>
@@ -58,7 +58,9 @@
               v-if="
                 dishItem.isMust &&
                 dishItem.status == 'NORMAL' &&
-                !dishSelMap[groupItem.id].childCountMap[dishItem.id]
+                !dishSelMap[groupItem.id].childCountMap[
+                  groupItem.id + dishItem.id
+                ]
               "
             >
               必选
@@ -83,12 +85,20 @@
             </div>
             <div v-else-if="groupItem.isFixed" class="fixed-operation">
               <div v-if="!dishItem.isSku" class="fixed-quantity">
-                {{ dishSelMap[groupItem.id].childCountMap[dishItem.id] || 1 }}
+                {{
+                  dishSelMap[groupItem.id].childCountMap[
+                    groupItem.id + dishItem.id
+                  ] || 1
+                }}
               </div>
               <div v-else class="mod-sku" @click="modSku(groupItem, dishItem)">
                 修改规格
                 <div class="num-tag">
-                  {{ dishSelMap[groupItem.id].childCountMap[dishItem.id] || 1 }}
+                  {{
+                    dishSelMap[groupItem.id].childCountMap[
+                      groupItem.id + dishItem.id
+                    ] || 1
+                  }}
                 </div>
               </div>
             </div>
@@ -98,9 +108,12 @@
                 dishSelMap[groupItem.id].childTotalCount ==
                   groupItem.orderMax ||
                 (!groupItem.allowDuplicate &&
-                  dishSelMap[groupItem.id].childCountMap[dishItem.id] >= 1)
+                  dishSelMap[groupItem.id].childCountMap[dishItem.customId] >=
+                    1)
               "
-              :quantity="dishSelMap[groupItem.id].childCountMap[dishItem.id]"
+              :quantity="
+                dishSelMap[groupItem.id].childCountMap[dishItem.customId]
+              "
               @add="addChildDish(groupItem, dishItem)"
               @reduce="reduceChildDish(groupItem, dishItem)"
             />
@@ -129,6 +142,10 @@ export default {
       type: Object,
       default: {},
     },
+    skuDishInfo: {
+      type: Object,
+      default: {},
+    },
   },
   setup(props) {
     const { setCurChildSkuDish, toggleShowChildSkuModal } = useSkuDish();
@@ -153,16 +170,19 @@ export default {
           childAddPriceMap: {},
         };
         selChildDishes[key]?.forEach((item) => {
-          if (res[key].childCountMap[item.id] == undefined) {
-            res[key].childCountMap[item.id] = 0;
-            res[key].childAddPriceMap[item.id] = 0;
+          console.log("key: ", key, item.customId);
+          if (!res[key].childCountMap[item.customId]) {
+            res[key].childCountMap[item.customId] = 0;
+          }
+          if (!res[key].childAddPriceMap[item.customId]) {
+            res[key].childAddPriceMap[item.customId] = 0;
           }
 
-          res[key].childCountMap[item.id] += item.quantity || 0; //单个紫菜的数量
+          res[key].childCountMap[item.customId] += item.quantity || 0; //单个紫菜的数量
           res[key].childTotalCount += item.quantity || 0; //子菜总数量
 
-          res[key].childAddPriceMap[item.id] +=
-            (item.price + (item.addPrice || 0)) * item.quantity; //子菜总价的计算
+          res[key].childAddPriceMap[item.customId] +=
+            (item.addPrice || 0) * item.quantity; //子菜总价的计算
         });
       }
       return res;
@@ -227,11 +247,21 @@ export default {
     }
 
     function selRangeText(group) {
-      return `(${
-        group.orderMax != group.orderMin
-          ? "可选" + group.orderMin + "-"
-          : "必选"
-      }${group.orderMax}份)`;
+      let text = "";
+      if (group.isFixed) {
+        let num = 0;
+        group.childDishes.forEach((item) => {
+          num += item.quantityIncrement;
+        });
+        return `必选${num}份`;
+      } else {
+        text = `(${
+          group.orderMax != group.orderMin
+            ? "可选" + group.orderMin + "-"
+            : "必选"
+        }${group.orderMax}份)`;
+      }
+      return text;
     }
 
     return {

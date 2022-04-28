@@ -300,7 +300,7 @@ export function calcSkuDishPrice(dish, type = "discount") {
   let { supplyCondiments = [], attrs = [], childDishes = [], price, quantity = 0, discountPrice } = dish;
   let attrPrice = attrs.reduce((sum, { reprice }) => sum += reprice, 0);
   let condimentPrice = supplyCondiments.reduce((sum, { marketPrice, quantity = 0 }) => sum += marketPrice * quantity, 0);
-  let childDishesPrice = childDishes.reduce((sum, { price = 0, addPrice = 0, quantity = 0 }) => sum += quantity * (addPrice + price), 0)
+  let childDishesPrice = childDishes.reduce((sum, { price = 0, addPrice = 0, quantity = 0, isSku }) => sum += isSku ? (quantity * addPrice) : (quantity * (addPrice + price)), 0)
   if (type == "origin") {
     discountPrice = 0
   }

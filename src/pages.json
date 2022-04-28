@@ -20,6 +20,10 @@
       "style": {
         "navigationBarTitleText": "uni-app"
       }
+    },
+    {
+      "path": "pages/merchant/index",
+      "style": {}
     }
   ],
   "subPackages": [{

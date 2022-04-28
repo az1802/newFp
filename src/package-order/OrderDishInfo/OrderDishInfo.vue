@@ -16,7 +16,7 @@
     <div class="dish-list-wrapper">
       <OrderDishList :dishList="dishList" :showBatchNumber="showBatchNumber" />
     </div>
-    <CouponReduce />
+    <CouponReduce :showUseCoupon="showUseCoupon" />
     <SplitLine paddingTop="16" />
     <div class="price-info">
       <div class="discount-price">
@@ -58,6 +58,14 @@ export default {
       default: "",
     },
     showBatchNumber: {
+      type: Boolean,
+      default: false,
+    },
+    showCouponInfo: {
+      type: Boolean,
+      default: false,
+    },
+    showUseCoupon: {
       type: Boolean,
       default: false,
     },

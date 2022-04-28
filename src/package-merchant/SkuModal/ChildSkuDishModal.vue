@@ -77,6 +77,8 @@ export default {
       condimentMap = {};
     }
     watch(curChildSkuDish, (nval) => {
+      console.log("nval: ", nval);
+
       //重置组建内部数据以及选中默认的属性和加料
       resetData();
       nval.attrList.forEach((attrGroupItem) => {
@@ -163,7 +165,7 @@ export default {
       dishInfo.supplyCondiments = supplyCondiments;
 
       let selGroupChilDish = unref(selChildDishes)[dishInfo.groupId];
-      console.log("dishInfo: ", dishInfo);
+      console.log("dishInfo: ", selGroupChilDish, dishInfo);
 
       if (!dishInfo.isFixed) {
         //非固定组直接做增加处理
@@ -172,7 +174,7 @@ export default {
       } else {
         //修改
         let index = selGroupChilDish.findIndex((item) => {
-          item.id == dishInfo.id;
+          return item.customId == dishInfo.customId;
         });
         if (index != -1) {
           selGroupChilDish.push(dishInfo);
@@ -180,6 +182,7 @@ export default {
           selGroupChilDish.splice(index, 1, dishInfo);
         }
       }
+
       toggleShowChildSkuModal(false);
     }
 

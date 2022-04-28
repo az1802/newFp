@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="coupon-reduce-wrapper"
-    v-if="
-      userAvailableMerchantCoupon.length > 0 || orderInfo.isBuyCouponPackage
-    "
-  >
+  <div class="coupon-reduce-wrapper" v-if="userMerchantCoupons.length > 0">
     <div class="use-coupon">
       <div class="label">
         <p class="title"><span class="tag">券</span>优惠券</p>
@@ -55,7 +50,51 @@
           </span>
           <img src="@assets/icon-arrow_right.svg" alt="" class="arrow-right" />
         </div>
-        <div v-else>暂无可用</div>
+        <div v-else-if="userMerchantCoupons.length > 0" class="no-coupon-text">
+          暂无可用
+          <img src="@assets/arrow-right1.png" alt="" class="icon-coupon" />
+        </div>
+        <div v-else class="no-coupon-text">暂无可用</div>
+      </div>
+    </div>
+
+    <div
+      v-if="
+        showUseCoupon &&
+        orderInfo.payType !== 'PAY_LATER' &&
+        userMerchantCoupons.length > 0 &&
+        selectedDishesTotalPrice < availableUseCoupon.leastCost
+      "
+      class="merge-wrapper"
+    >
+      <div class="left-wrapper">
+        <img
+          src="https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/common/icon-warn-grey.png"
+          alt=""
+          class="icon"
+        />
+        <div>
+          <p class="desc">
+            还差<span class="high-light"
+              >{{
+                (availableUseCoupon.leastCost - selectedDishesTotalPrice) / 100
+              }}元</span
+            >解锁特惠券包功能
+          </p>
+          <p class="desc">
+            用券后本单<span class="high-light"
+              >再减{{ availableUseCoupon.reduceCost / 100 }}元</span
+            >
+          </p>
+        </div>
+      </div>
+      <div class="right-wrapper" @click="navigateBack">
+        <p class="content">去凑单</p>
+        <img
+          src="@assets/arrow-right1.png"
+          alt=""
+          class="arrow-right arrow-right1"
+        />
       </div>
     </div>
   </div>
@@ -65,14 +104,30 @@ import { useOrder } from "@hooks/orderHooks";
 import { useRecommendedCoupon } from "@hooks/payHooks";
 import { useUserMerchantCoupon } from "@hooks/userHooks";
 import { useNavigate } from "@hooks/commonHooks";
+import { useDish } from "@hooks/menuHooks";
+import { computed, ref, unref } from "vue";
+import { navigateBack } from "@utils";
 export default {
+  props: {
+    showUseCoupon: {
+      type: Boolean,
+      default: false,
+    },
+  },
   setup() {
     let { userMerchantCoupons } = useUserMerchantCoupon();
+    console.log("userMerchantCoupons: ", userMerchantCoupons);
 
     const { navigateTo } = useNavigate();
     const { setOrderInfo, orderInfo } = useOrder();
     const { recommendedCoupon, userAvailableMerchantCoupon } =
       useRecommendedCoupon();
+    const {
+      selectedDishes,
+      selectedDishesTotalQuantity,
+      selectedDishesTotalPrice,
+      selectedDishesDiscountPrice,
+    } = useDish();
 
     function goToSelectCoupon() {
       let merchantId = uni.getStorageSync("merchantId");
@@ -81,6 +136,16 @@ export default {
         from: "createOrder",
       });
     }
+    const availableUseCoupon = computed(() => {
+      let res = null;
+      unref(userMerchantCoupons).forEach((item) => {
+        if (item.leastCost < res || res === null) {
+          res = item;
+        }
+      });
+      return res;
+    });
+
     return {
       navigateTo,
       userMerchantCoupons,
@@ -88,6 +153,9 @@ export default {
       recommendedCoupon,
       userAvailableMerchantCoupon,
       goToSelectCoupon,
+      availableUseCoupon,
+      selectedDishesTotalPrice,
+      navigateBack,
     };
   },
 };
@@ -169,6 +237,46 @@ export default {
           .box-size(12px,12px);
           margin-left: 4px;
         }
+      }
+      .no-coupon-text {
+        .normal-font(14px,#999);
+        .icon-coupon {
+          display: inline-block;
+          .box-size(12px,12px);
+          margin-left: 4px;
+        }
+      }
+    }
+  }
+  .merge-wrapper {
+    .flex-simple(space-between,fkex-start);
+    padding: 10px 0;
+    margin-bottom: -20px;
+    .left-wrapper {
+      display: flex;
+      .icon {
+        .box-size(19px,19px);
+        align-self: center;
+      }
+      .desc {
+        line-height: 20px;
+        font-size: 14px;
+        .high-light {
+          color: #f25643;
+        }
+      }
+    }
+    .right-wrapper {
+      display: flex;
+      align-items: center;
+      margin-left: 50px;
+      .content {
+        .normal-font(14px,#f25643);
+        white-space: nowrap;
+      }
+      .arrow-right {
+        .box-size(12px,12px);
+        margin-left: 4px;
       }
     }
   }
