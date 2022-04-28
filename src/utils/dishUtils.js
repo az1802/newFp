@@ -341,15 +341,27 @@ export function transformDetailDishList(detailInfo) {
 export function checkChildDishGroupCount(dishInfo, selChildDishesTemp) {
   const { childDishGroups } = dishInfo;
   for (let key in selChildDishesTemp) {
-    let selGrouoDishes = selChildDishesTemp[key];
+    let selGroupDishes = selChildDishesTemp[key];
     let groupInfoIndex = childDishGroups.findIndex(
       (item) => item.id == key
     );
+    childDishGroups[groupInfoIndex]?.childDishes?.forEach(childDishItem => {
+      if (childDishItem.isMust) {
+        let isMustSel = selGroupDishes.some(item => {
+          item.id == childDishItem.id;
+        })
+        if (!isMustSel) {
+          return false;
+        }
+      }
+    })
+
+
 
     let { orderMin, orderMax, isFixed } = childDishGroups[groupInfoIndex];
     if (
       !isFixed &&
-      (selGrouoDishes.length < orderMin || selGrouoDishes.length > orderMax)
+      (selGroupDishes.length < orderMin || selGroupDishes.length > orderMax)
     ) {
       return false;
     }

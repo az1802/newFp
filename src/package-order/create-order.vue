@@ -89,7 +89,6 @@ export default {
     let { recommendedDishes, requestRecommendDishes } = useRecommendationDish();
     let { merchantInfo, requestMerchantInfo } = useMerchantInfo();
     let { orderInfo, setOrderInfo } = useOrder();
-    console.log(unref(orderInfo));
     let { recommendedCoupon, userAvailableMerchantCoupon } =
       useRecommendedCoupon();
     let { requestUserMerchantCoupons } = useUserMerchantCoupon();

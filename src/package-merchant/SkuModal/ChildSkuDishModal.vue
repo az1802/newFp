@@ -64,18 +64,21 @@ export default {
       toggleShowChildSkuModal,
       selChildDishes,
     } = useSkuDish();
-    const { addDish } = useDish();
 
-    const attrMap = {},
+    let attrMap = {},
       condimentMap = {};
-    watch(curChildSkuDish, (nval) => {
-      //规格菜变化时重置属性和加料的选项
+
+    function resetData() {
       selAttrIds.splice(0, selAttrIds.length);
-      selAttrIds.push(...(nval.selAttrIds || []));
       for (let key in selCondiments) {
         delete selCondiments[key];
       }
-
+      attrMap = {};
+      condimentMap = {};
+    }
+    watch(curChildSkuDish, (nval) => {
+      //重置组建内部数据以及选中默认的属性和加料
+      resetData();
       nval.attrList.forEach((attrGroupItem) => {
         if (
           (attrGroupItem.selType == "SINGLE" ||
@@ -88,7 +91,6 @@ export default {
           attrMap[attrItem.id] = attrItem;
         });
       });
-
       nval.supplyCondiments.forEach((condimentItem) => {
         condimentMap[condimentItem.id] = condimentItem;
       });

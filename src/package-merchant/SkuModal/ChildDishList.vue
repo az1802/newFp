@@ -41,14 +41,28 @@
             {{ dishItem.name }}
             <div
               class="price-tag"
-              v-if="dishSelMap[groupItem.id].childAddPriceMap[dishItem.id]"
+              v-if="
+                dishSelMap[groupItem.id].childAddPriceMap[dishItem.id] ||
+                dishItem.price
+              "
             >
               +¥{{
-                dishSelMap[groupItem.id].childAddPriceMap[dishItem.id] / 100
+                (dishSelMap[groupItem.id].childAddPriceMap[dishItem.id] ||
+                  dishItem.price) / 100
               }}
             </div>
           </div>
           <div class="operation">
+            <div
+              class="is-must"
+              v-if="
+                dishItem.isMust &&
+                dishItem.status == 'NORMAL' &&
+                !dishSelMap[groupItem.id].childCountMap[dishItem.id]
+              "
+            >
+              必选
+            </div>
             <div
               class="status"
               v-if="dishItem.status == 'NOT_IN_TIME_LIMIT_SALE'"
@@ -117,10 +131,7 @@ export default {
     },
   },
   setup(props) {
-    const { curChildSkuDish, setCurChildSkuDish, toggleShowChildSkuModal } =
-      useSkuDish();
-
-    const { addDish } = useDish();
+    const { setCurChildSkuDish, toggleShowChildSkuModal } = useSkuDish();
 
     function genRangeText({ orderMin, orderMax }) {
       if (orderMin === orderMax) {
@@ -146,10 +157,12 @@ export default {
             res[key].childCountMap[item.id] = 0;
             res[key].childAddPriceMap[item.id] = 0;
           }
-          res[key].childCountMap[item.id] += item.quantity || 0;
+
+          res[key].childCountMap[item.id] += item.quantity || 0; //单个紫菜的数量
+          res[key].childTotalCount += item.quantity || 0; //子菜总数量
+
           res[key].childAddPriceMap[item.id] +=
-            item.price + (item.addPrice || 0);
-          res[key].childTotalCount += item.quantity || 0;
+            (item.price + (item.addPrice || 0)) * item.quantity; //子菜总价的计算
         });
       }
       return res;
@@ -179,6 +192,7 @@ export default {
         } else {
           let cloneDishInfo = cloneDeep(childDishInfo);
           cloneDishInfo.quantity = 1;
+          cloneDishInfo.groupId = id;
           selGroupChilDish.push(cloneDishInfo);
         }
       }
@@ -202,7 +216,6 @@ export default {
     }
 
     function modSku(group, childDishInfo) {
-      console.log("childDishInfo: ", group, childDishInfo);
       let { id } = group;
       let temp = JSON.parse(JSON.stringify(childDishInfo));
       temp.groupId = id;
@@ -297,9 +310,18 @@ export default {
         .box-size(unset,100%);
         position: relative;
         min-width: 120px;
+        .is-must {
+          .box-size(38px,18px,transparent);
+          .line-center(18px);
+          .normal-font(11px,#f2513c);
+          .pos-tr-absolute(7px,25px);
+          text-align: center;
+          border: 1px solid #f2513c;
+          margin-right: 8px;
+        }
         .status {
           text-align: right;
-          background: transparent;
+          background: #f8f8f8;
           color: #666;
         }
         .fixed-operation {
