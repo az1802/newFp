@@ -55,6 +55,11 @@ export async function getUserFanpiaoPaidFee(data) {
   let res = await http.post(url, data);
   return res;
 }
+export async function getOrderFanpiaoPaidFee(data) {
+  let url = `${URLS.GET_ORDER_SHOW_PAID_FEE}`;
+  let res = await http.post(url, data);
+  return res;
+}
 export async function getUserInfo() {
   let url = `${URLS.USER_INFO}`;
   let res = await http.get(url);

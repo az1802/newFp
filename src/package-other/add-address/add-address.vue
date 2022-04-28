@@ -88,7 +88,12 @@ export default {
       latitude: "",
       longitude: "",
     });
-    const { addAddress, updateAddress, getAddressDetail } = useUserAddress();
+    const {
+      addAddress,
+      updateAddress,
+      getAddressDetail,
+      requestUserAddressList,
+    } = useUserAddress();
     const { navigateBack } = useNavigate();
     onBeforeMount(async () => {
       if (addressId) {
@@ -127,6 +132,9 @@ export default {
       }
       await showToast(saveRes ? "保存成功" : "保存失败");
       await sleep(1000);
+      if (saveRes) {
+        requestUserAddressList();
+      }
       saveRes && navigateBack();
     }
 

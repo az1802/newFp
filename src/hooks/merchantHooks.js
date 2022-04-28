@@ -316,6 +316,23 @@ export function useRequiredOrderItems() {
         requireArr.push(temp);
       })
     }
+
+
+    if (unref(orderInfo).mealType == "TAKE_OUT") {
+      let allDishes = getApp().globalData.allDishes;
+      let requireItem;
+      for (let i = 0; i < allDishes.length; i++) {
+        if (allDishes[i].name == "配送费") {
+          requireItem = allDishes[i];
+          // requireItem.minSel = 1;
+          // requireItem.isRequired = true;
+          requireItem.quantity = 1;
+          break;
+        }
+      }
+      requireArr.push(requireItem);
+    }
+
     requireArr.forEach(requireItem => {
       let index = unref(selectedDishes).findIndex(item => {
         return item.id == requireItem.id

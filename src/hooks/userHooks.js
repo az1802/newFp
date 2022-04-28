@@ -241,11 +241,11 @@ export function useUserMerchantWallet() {
     })
 
   }
-  async function requestFanpiaoPaidFee(merchantId, billFee = 10000 * 100) {
-    let res = await API.User.getUserFanpiaoPaidFee({
+  async function requestFanpiaoPaidFee(merchantId, orderId, billFee = 10000 * 100) {
+    let res = await API.User.getOrderFanpiaoPaidFee({
       merchantId,
-      billFee,
-      noDiscountFee: 0
+      fee: billFee,
+      orderId,
     });
 
     return res;

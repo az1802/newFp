@@ -64,7 +64,7 @@ export default {
       let pages = getCurrentPages(),
         delta = 1;
       let menuPageIndex = pages.findIndex((item) => {
-        return item.route == "package-menu/menu";
+        return item.route == "package-merchant/menu";
       });
 
       if (menuPageIndex != -1) {

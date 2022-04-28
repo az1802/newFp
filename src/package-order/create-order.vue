@@ -163,7 +163,10 @@ export default {
         });
       }
 
-      if (unref(orderInfo).mealType == "TAKE_OUT") {
+      if (
+        unref(orderInfo).mealType == "TAKE_OUT" &&
+        !unref(orderInfo).selectedAddress.id
+      ) {
         let addressList = await requestUserAddressList();
         setOrderInfo({
           selectedAddress: addressList[0] || {},

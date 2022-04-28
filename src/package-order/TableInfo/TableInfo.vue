@@ -58,7 +58,11 @@
         />
         <p class="text">添加收货地址</p>
       </div>
-      <div class="address-info" v-else>
+      <div
+        class="address-info"
+        v-else
+        @click="navigateTo('OTHER/ADDRESS_LIST')"
+      >
         <div class="address-detail">
           <div class="text">
             {{
@@ -78,12 +82,7 @@
             }}
           </p>
         </div>
-        <img
-          src="@assets/icon-arrow_right.svg"
-          alt=""
-          class="arrow-right"
-          @click="navigateTo('OTHER/ADDRESS_LIST')"
-        />
+        <img src="@assets/icon-arrow_right.svg" alt="" class="arrow-right" />
       </div>
     </div>
   </div>

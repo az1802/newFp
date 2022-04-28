@@ -87,10 +87,14 @@ export default {
     const { payMethod, setPayMethod } = usePayMethod();
 
     async function genRecommendFanpiaoList(merchantId) {
+      let orderId = unref(orderInfo).orderId || unref(orderInfo).pendingOrderId;
       let res = await requestFanpiaoPaidFee(
         merchantId,
+        orderId,
         unref(orderInfo).billFee
       );
+      console.log("res: ", res);
+
       let remainPaidFee = res.remainDiscountFee + res.remainNoDiscountFee;
       let recommendFanpiaoList = [];
       if (remainPaidFee > 0) {
