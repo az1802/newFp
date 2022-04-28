@@ -41,10 +41,7 @@
             感谢您的支持，欢迎下次光临
           </p>
         </div>
-        <div
-          class="call-merchant"
-          @click="makePhoneCall(orderInfo.merchantPhone)"
-        >
+        <div class="call-merchant" @click="phoneCall(orderInfo.merchantPhone)">
           联系商家
         </div>
       </div>
@@ -58,7 +55,7 @@
         <div
           v-if="orderInfo.riderPhone"
           class="right-wrapper"
-          @click="makePhoneCall(orderInfo.riderPhone)"
+          @click="phoneCall(orderInfo.riderPhone)"
         >
           <img
             src="https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/common/icon-phone_a.png"
@@ -73,6 +70,7 @@
 </template>
 <script>
 import { computed, unref, ref, toRefs } from "vue";
+import { makePhoneCall } from "@utils";
 export default {
   props: {
     orderInfo: {
@@ -130,11 +128,12 @@ export default {
       titleText,
       codeText,
       tooltipText,
-      makePhoneCall(phone) {
+      phoneCall(phone) {
+        console.log("phone: ", phone);
         if (!phone) {
           return;
         }
-        uni.makePhoneCall(phone);
+        makePhoneCall(phone);
       },
     };
   },

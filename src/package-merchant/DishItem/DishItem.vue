@@ -76,7 +76,11 @@
         </div>
         <div
           class="fanpiao"
-          v-if="dish.status !== 'NOT_IN_TIME_LIMIT_SALE' && dish.hasDiscount"
+          v-if="
+            dish.status !== 'NOT_IN_TIME_LIMIT_SALE' &&
+            dish.hasDiscount &&
+            !merchantInfo.disableBuyFanpiao
+          "
         >
           <span class="text">{{ fenToYuan(minFanpiaoPrice) }}</span>
           <span class="icon">饭票价</span>
@@ -209,6 +213,7 @@ export default {
         toggleShowDishDetailModal(true);
       },
       showTimeLimitSaleTooltip() {
+        return;
         let limitTimeStr = dish.saleTimeStr;
         uni.showModal({
           icon: "none",

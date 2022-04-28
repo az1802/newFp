@@ -71,6 +71,7 @@ export function useSkuDish() {
       "toggleShowSkuModal",
       "setCurChildSkuDish",
       "toggleShowChildSkuModal",
+      "resetSelChildDishes"
     ]),
     genDishDescribeText,
     calcSkuDishPrice,

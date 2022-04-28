@@ -92,14 +92,17 @@ export default {
       await showToast(
         addRes.errcode == 0 ? "您已加菜成功" : addRes.errmsg || "加菜失败"
       );
-      isAdding = false;
+
       if (addRes) {
         await sleep(1000);
         resetSelDishes([]);
         toggleShowAddOrderModal(false);
+        isAdding = false;
         navigateTo("ORDER/CREATE_ORDER", {
           pendingOrderId,
         });
+      } else {
+        isAdding = false;
       }
     }
     return {

@@ -77,13 +77,34 @@ export default {
     let selCondiments = reactive({});
     let childDishList = reactive([]);
 
-    const { curSkuDish, showSkuModal, toggleShowSkuModal, selChildDishes } =
-      useSkuDish();
+    const {
+      curSkuDish,
+      showSkuModal,
+      toggleShowSkuModal,
+      selChildDishes,
+      resetSelChildDishes,
+    } = useSkuDish();
+
     const { addDish } = useDish();
 
-    const attrMap = {},
+    let attrMap = {},
       condimentMap = {};
+
+    function resetData() {
+      attrMap = {};
+      condimentMap = {};
+      selAttrIds.splice(0, selAttrIds.length);
+      childDishList.splice(0, childDishList.length);
+      for (let key in selCondiments) {
+        delete selCondiments[key];
+      }
+      resetSelChildDishes();
+    }
     watch(curSkuDish, (nval) => {
+      console.log("nval: ", nval);
+
+      resetData();
+      console.log(selAttrIds);
       //规格菜变化时重置属性和加料的选项
       selAttrIds.splice(0, selAttrIds.length);
       for (let key in selCondiments) {
@@ -98,7 +119,7 @@ export default {
           selAttrIds.push(attrGroupItem.attrs[0].id); //单选默认选择第一个
         }
         attrGroupItem.attrs.forEach((attrItem) => {
-          attrMap[attrItem.id] = attrItem;
+          attrMap[attrItem.id] = JSON.parse(JSON.stringify(attrItem));
         });
       });
 
@@ -108,12 +129,32 @@ export default {
 
       nval?.childDishGroups.forEach((childDishGroup) => {
         unref(selChildDishes)[childDishGroup.id] = [];
+        // 针对规格菜默认选中属性
         if (childDishGroup.isFixed) {
           //处理固定分组的菜品
           childDishGroup?.childDishes.forEach((dishItem) => {
-            let tempDish = cloneDeep(dishItem);
+            let tempDish = JSON.parse(JSON.stringify(dishItem));
             if (tempDish.isSku) {
               //暂时未处理默认规格
+              let tempSelAttrIds = [],
+                tempSelAttrs = [],
+                addPrice = 0;
+              tempDish?.attrList.forEach((attrGroupItem) => {
+                if (
+                  (attrGroupItem.selType == "SINGLE" ||
+                    attrGroupItem.selType == "MULTI_MUST") &&
+                  attrGroupItem?.attrs?.length > 0
+                ) {
+                  let selAttrItem = attrGroupItem.attrs[0];
+                  tempSelAttrIds.push(selAttrItem.id); //单选默认选择第一个
+                  tempSelAttrs.push(selAttrItem);
+                  addPrice += selAttrItem.reprice;
+                }
+              });
+
+              tempDish.selAttrIds = tempSelAttrIds;
+              tempDish.attrs = tempSelAttrs;
+              tempDish.addPrice = addPrice;
               unref(selChildDishes)[childDishGroup.id].push(tempDish);
             } else {
               tempDish.quantity = 1;
@@ -121,12 +162,12 @@ export default {
             }
           });
         }
-        console.log(unref(selChildDishes));
       });
     });
 
     let totalPrice = computed(() => {
       let res = unref(curSkuDish).price || 0;
+      console.log("unref(curSkuDish).price: ", unref(curSkuDish).price);
 
       selAttrIds.forEach((id) => {
         res += attrMap[id].reprice;
@@ -135,6 +176,7 @@ export default {
       for (let key in selCondiments) {
         res += parseFloat(condimentMap[key].marketPrice * selCondiments[key]);
       }
+      console.log("unref(selChildDishes): ", unref(selChildDishes));
 
       for (let key in unref(selChildDishes)) {
         let groupChildDishes = unref(selChildDishes)[key];
@@ -171,32 +213,7 @@ export default {
       }
       return true;
     }
-    function checkChildDishGroupCount(dishInfo) {
-      let selChildDishesTemp = unref(selChildDishes);
-      const { childDishGroups } = dishInfo;
-      for (let key in selChildDishesTemp) {
-        let selGrouoDishes = selChildDishesTemp[key];
-        let groupInfoIndex = childDishGroups.findIndex(
-          (item) => item.id == key
-        );
-        let { orderMin, orderMax, isFixed } = childDishGroups[groupInfoIndex];
-        if (
-          !isFixed &&
-          (selGrouoDishes.length < orderMin || selGrouoDishes.length > orderMax)
-        ) {
-          showToast(
-            `${childDishGroups[groupInfoIndex].groupName}分组必须选择${
-              orderMin == orderMax
-                ? orderMin
-                : String(orderMin) + "-" + String(orderMax)
-            }个子菜`
-          );
-          return false;
-        }
-      }
 
-      return true;
-    }
     function selOK() {
       if (!unref(canAddComboDish)) {
         return;
@@ -240,6 +257,7 @@ export default {
         supplyCondiments,
         childDishes,
       });
+      console.log("最终选中的套餐信息", dishInfo);
       addDish(dishInfo);
       toggleShowSkuModal(false);
     }
@@ -260,9 +278,13 @@ export default {
 
         let { orderMin, orderMax, isFixed, childDishes } =
           childDishGroups[groupInfoIndex]; //找到当前子菜分组
+        let selGrouoDishesCount = 0;
+        selGrouoDishes.forEach((item) => {
+          selGrouoDishesCount += item.quantity || 0;
+        });
         if (
           !isFixed &&
-          (selGrouoDishes.length < orderMin || selGrouoDishes.length > orderMax)
+          (selGrouoDishesCount < orderMin || selGrouoDishesCount > orderMax)
         ) {
           return false;
         }

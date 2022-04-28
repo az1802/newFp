@@ -9,7 +9,11 @@
   <div class="menu-bottom-container">
     <div
       class="discount-tooltip"
-      v-if="selectedDishesTotalQuantity && !userMerchantCoupons.length"
+      v-if="
+        selectedDishesTotalQuantity &&
+        !userMerchantCoupons.length &&
+        !merchantInfo.disableBuyFanpiao
+      "
     >
       <div class="text">
         使用饭票支付,本单可再减

@@ -57,7 +57,6 @@ export default {
   setup(props) {
     let selAttrIds = reactive([]);
     let selCondiments = reactive({});
-    let childDishList = reactive([]);
 
     const {
       curChildSkuDish,
@@ -72,13 +71,15 @@ export default {
     watch(curChildSkuDish, (nval) => {
       //规格菜变化时重置属性和加料的选项
       selAttrIds.splice(0, selAttrIds.length);
+      selAttrIds.push(...(nval.selAttrIds || []));
       for (let key in selCondiments) {
         delete selCondiments[key];
       }
 
       nval.attrList.forEach((attrGroupItem) => {
         if (
-          attrGroupItem.selType == "SINGLE" &&
+          (attrGroupItem.selType == "SINGLE" ||
+            attrGroupItem.selType == "MULTI_MUST") &&
           attrGroupItem?.attrs?.length > 0
         ) {
           selAttrIds.push(attrGroupItem.attrs[0].id); //单选默认选择第一个
@@ -133,7 +134,7 @@ export default {
       return true;
     }
     function selOk() {
-      let dishInfo = unref(curChildSkuDish),
+      let dishInfo = JSON.parse(JSON.stringify(unref(curChildSkuDish))),
         attrs = [],
         supplyCondiments = [];
 
@@ -154,12 +155,11 @@ export default {
         return;
       }
 
-      Object.assign({}, dishInfo, {
-        attrs,
-        supplyCondiments,
-      });
       dishInfo.quantity = dishInfo.quantityIncrement || 1;
       dishInfo.addPrice = unref(totalPrice);
+      dishInfo.attrs = attrs;
+      dishInfo.supplyCondiments = supplyCondiments;
+
       let selGroupChilDish = unref(selChildDishes)[dishInfo.groupId];
       console.log("dishInfo: ", dishInfo);
 
@@ -178,7 +178,6 @@ export default {
           selGroupChilDish.splice(index, 1, dishInfo);
         }
       }
-
       toggleShowChildSkuModal(false);
     }
 

@@ -268,6 +268,9 @@ export default {
     },
     setRequiredOrderItems(state, requiredOrderItems = []) {
       state.requiredOrderItems = requiredOrderItems;
+    },
+    resetSelChildDishes(state) {
+      state.selChildDishes = {}
     }
 
   },

@@ -304,10 +304,10 @@ export function useRequiredOrderItems() {
 
   async function addRequiredOrderItems() {
     let { peopleCount } = unref(orderInfo);
-    const { recentlyPaidOrderId } = unref(merchantInfo);
-    let requireArr = [];
+    const { recentlyPaidOrderId, recentlyOrderId } = unref(merchantInfo);
+    let requireArr = [], removeArr = [];
 
-    if (recentlyPaidOrderId == "") {//没有最近的订单则设置必选菜
+    if (!recentlyPaidOrderId && !recentlyOrderId) {//没有最近的订单则设置添加必选菜
       unref(requiredOrderItems).forEach(item => {
         let quantity = 1;
         if (item.type === 'EVERYONE') {
@@ -320,19 +320,26 @@ export function useRequiredOrderItems() {
     }
 
 
-    if (unref(orderInfo).mealType == "TAKE_OUT") {
-      let allDishes = getApp().globalData.allDishes;
-      let requireItem;
-      for (let i = 0; i < allDishes.length; i++) {
-        if (allDishes[i].name == "配送费") {
-          requireItem = allDishes[i];
-          // requireItem.minSel = 1;
-          // requireItem.isRequired = true;
-          requireItem.quantity = 1;
-          break;
-        }
+    // 处理配送费相关的问题
+    let takeOutDishItem;
+    let allDishes = getApp().globalData.allDishes;
+    for (let i = 0; i < allDishes.length; i++) {
+      if (allDishes[i].name == "配送费") {
+        takeOutDishItem = allDishes[i];
+        takeOutDishItem.minSel = 1;
+        takeOutDishItem.isRequired = true;
+        takeOutDishItem.quantity = 1;
+        break;
       }
-      requireArr.push(requireItem);
+    }
+
+    if (unref(orderInfo).mealType == "TAKE_OUT" && takeOutDishItem) {
+      requireArr.push(takeOutDishItem);
+    } else { //其它模式一处配送费
+      let index = unref(selectedDishes).findIndex(item => {
+        return item.name == "配送费";
+      })
+      unref(selectedDishes).splice(index, 1)
     }
 
     requireArr.forEach(requireItem => {

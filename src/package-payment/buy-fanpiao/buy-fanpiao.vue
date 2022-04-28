@@ -27,7 +27,10 @@
             <TimeCounter customStartText=" " :show-day="false" />
           </div>
         </div>
-        <div class="buy-fanpiao-page-box">
+        <div
+          class="buy-fanpiao-page-box"
+          v-if="!merchantInfo.disableBuyFanpiao"
+        >
           <div
             class="buy-fanpiao-page-item"
             v-for="(fanpiaoItem, index) in fanpiaoList"

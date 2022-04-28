@@ -44,8 +44,12 @@ export default {
     const { merchantInfo } = useMerchantInfo();
     const { navigateTo } = useNavigate();
     const showBanner = computed(() => {
-      const { bannerMode } = unref(merchantInfo);
-      return bannerMode !== "BANNER_NONE" && unref(fanpiaoList).length;
+      const { bannerMode, disableBuyFanpiao } = unref(merchantInfo);
+      return (
+        !disableBuyFanpiao &&
+        bannerMode !== "BANNER_NONE" &&
+        unref(fanpiaoList).length
+      );
     });
     const fanpiaoDiscount = computed(() => {
       let { discount = 0 } = unref(maxDiscountFanpiao);
