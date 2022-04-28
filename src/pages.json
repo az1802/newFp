@@ -24,7 +24,7 @@
     {
       "path": "pages/merchant/index",
       "style": {}
-    }
+    },
   ],
   "subPackages": [{
       "root": "package-merchant",

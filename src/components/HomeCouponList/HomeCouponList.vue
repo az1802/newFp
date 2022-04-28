@@ -208,14 +208,18 @@ export default {
               height: 16px;
               color: #333333;
               font-weight: bold;
-              no-wrap();
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
             }
 
             .detail {
               font-size: 12px;
               margin-top: 8px;
               color: #666666;
-              no-wrap();
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
             }
           }
 

@@ -76,8 +76,7 @@ let merchantId;
 export default {
   components: { FxAmountInput, FanpiaoPay, CouponPay },
   async onLoad(opts) {
-    merchantId =
-      opts.merchantId || opts.scene || "8ec573585d9645229fb01713e30a2a6d";
+    merchantId = opts.merchantId || opts.scene;
   },
   setup() {
     let { statusBarHeight } = useSystemInfo();

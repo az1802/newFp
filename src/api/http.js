@@ -8,7 +8,7 @@
 import axios from "axios";
 import settle from "axios/lib/core/settle";
 import buildURL from "axios/lib/helpers/buildURL.js";
-const { VITE_BASE_URL, VITE_TIME_OUT } = import.meta.env;
+const { VITE_BASE_URL = "https://shilai.zhiyi.cn/v1.6", VITE_TIME_OUT = 10 * 1000 } = import.meta.env;
 
 // 自定义适配器来适配uniapp语法
 axios.defaults.adapter = function (config) {

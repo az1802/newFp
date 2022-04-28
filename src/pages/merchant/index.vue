@@ -37,11 +37,11 @@ import {
   useCouponInfo,
   useFanpiaoInfo,
 } from "@hooks/merchantHooks";
-import HomeHeader from "./HomeHeader/HomeHeader.vue";
-import MealTypes from "./MealTypes/MealTypes.vue";
-import RecommendDish from "./RecommendDish/RecommendDish.vue";
-import HomeCouponList from "./HomeCouponList/HomeCouponList.vue";
-import HomeFanpiaoList from "./HomeFanpiaoList/HomeFanpiaoList.vue";
+// import HomeHeader from "./HomeHeader/HomeHeader.vue";
+// import MealTypes from "./MealTypes/MealTypes.vue";
+// import RecommendDish from "./RecommendDish/RecommendDish.vue";
+// import HomeCouponList from "./HomeCouponList/HomeCouponList.vue";
+// import HomeFanpiaoList from "./HomeFanpiaoList/HomeFanpiaoList.vue";
 
 import { ref, onBeforeMount, watch, unref } from "vue";
 import { handleQrcodeStr, navigateTo } from "@utils";
@@ -56,11 +56,11 @@ let merchantId = "",
 
 export default {
   components: {
-    HomeHeader,
-    MealTypes,
-    RecommendDish,
-    HomeCouponList,
-    HomeFanpiaoList,
+    // HomeHeader,
+    // MealTypes,
+    // RecommendDish,
+    // HomeCouponList,
+    // HomeFanpiaoList,
   },
   onLoad(options) {
     opts = options;
