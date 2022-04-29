@@ -40,6 +40,7 @@ export default {
       selCouponId: "",//使用券包的id
       isAgreeCouponAccord: true, //是否统一付费券包协议
       selRechargeInfo: {},
+      transactionType: "SELF_DISH_ORDER_PAYMENT"
     },
     orderFanpiaoPayInfo: {
       fanpiaoPaidFee: 0,

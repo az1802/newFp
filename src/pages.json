@@ -6,19 +6,19 @@
     {
       "path": "pages/home/home",
       "style": {
-        "navigationBarTitleText": "uni-app"
+        "navigationBarTitleText": "时来"
       }
     },
     {
       "path": "pages/order/order",
       "style": {
-        "navigationBarTitleText": "uni-app"
+        "navigationBarTitleText": "时来"
       }
     },
     {
       "path": "pages/mine/mine",
       "style": {
-        "navigationBarTitleText": "uni-app"
+        "navigationBarTitleText": "时来"
       }
     },
     {
