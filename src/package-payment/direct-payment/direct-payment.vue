@@ -26,6 +26,7 @@
           selCoupon.leastCost <= billFee
         "
         :buyCouponInfo="buyCouponInfo"
+        placeholder="请输入消费金额"
       />
       <FanpiaoPay
         :billFee="billFee"
