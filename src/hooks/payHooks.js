@@ -137,8 +137,11 @@ export function usePayOrder() {
         }
         return;
       }
-    } else if (payMethod === "WALLET" && orderInfo.billFee > userWallet.redPacketBalance) {
-      showToast('红包余额不足');
+    } else if (payMethod === "WALLET") {
+      console.log(orderInfo.billFee - (orderInfo.selCouponReduceCost || 0))
+      if ((orderInfo.billFee - (orderInfo.selCouponReduceCost || 0)) > userWallet.redPacketBalance) {
+        showToast('红包余额不足');
+      }
       return;
     } else if (payMethod === "MEMBER_PAY") {
       params.paidFee = Number(Number(orderInfo.billFee * parseFloat((100 - (orderInfo.phoneMemberDiscount || 0)) / 100)).toFixed(0));

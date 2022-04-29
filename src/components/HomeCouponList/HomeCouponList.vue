@@ -51,9 +51,7 @@
               class="operation"
               :class="disableShowCouponPackagePurchaseNumber ? 'only-buy' : ''"
             >
-              <div class="buy" @click="buyCoupon(merchantId, couponItem)">
-                抢购
-              </div>
+              <div class="buy" @click="buyCp(merchantId, couponItem)">抢购</div>
               <div
                 class="sell-count"
                 v-if="!disableShowCouponPackagePurchaseNumber"
@@ -72,7 +70,7 @@
 </template>
 <script>
 import { useCouponPay } from "@hooks/payHooks";
-import { fenToYuan } from "@utils";
+import { fenToYuan, showToast } from "@utils";
 export default {
   props: {
     merchantId: {
@@ -91,9 +89,13 @@ export default {
   components: {},
   setup() {
     const { buyCoupon } = useCouponPay();
+    async function buyCp(merchantId, couponItem) {
+      let payRes = await buyCoupon(merchantId, couponItem);
+      showToast(payRes ? "券包购买成功" : "券包购买失败");
+    }
     return {
       fenToYuan,
-      buyCoupon,
+      buyCp,
     };
   },
 };

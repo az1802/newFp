@@ -109,8 +109,8 @@ export default {
   position: relative;
   z-index: 10;
   .arrow {
-    .pos-tl-absolute(unset,4px);
-    padding: 6px;
+    .pos-tl-absolute(unset,0px);
+    padding: 10px;
     z-index: 1000;
   }
   .order-icon {

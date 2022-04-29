@@ -112,7 +112,8 @@ export async function switchTab(url) {
       success() {
         resolve(true)
       },
-      fail() {
+      fail(err) {
+        console.log('err: ', err);
         resolve(false)
       }
     })

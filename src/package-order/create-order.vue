@@ -79,6 +79,8 @@ export default {
   },
   onShow() {
     this.hasBuyFanpiao = getApp().globalData.hasBuyFanpiao || false;
+    this.resetBuyCouponInfo();
+    this.updateUserCoupons();
   },
   setup() {
     let {
@@ -128,16 +130,10 @@ export default {
       return orderInfoRes;
     }
 
-    onBeforeMount(async () => {
-      let merchantId;
-      if (pendingOrderId.value) {
-        // 获取订单相关信息 并且获取商户相关资源
-        let orderInfo = await getOrderInfo(pendingOrderId.value);
-        merchantId = orderInfo.merchantId;
-      } else {
+    async function updateUserCoupons(merchantId) {
+      if (!merchantId) {
         merchantId = unref(merchantInfo).merchantId;
       }
-      requestRecommendDishes(merchantId); //请求推荐菜品
       let userCoupons = (await requestUserMerchantCoupons(merchantId)) || []; //请求用户已有的商户券包
       // 默认设置用户可使用的券包
       let maxReduceCostCoupon = "";
@@ -150,7 +146,6 @@ export default {
           maxReduceCostCoupon = item;
         }
       });
-      console.log("maxReduceCostCoupon: ", maxReduceCostCoupon);
       if (maxReduceCostCoupon) {
         setOrderInfo({
           selCouponId: maxReduceCostCoupon.id,
@@ -162,7 +157,18 @@ export default {
           selCouponReduceCost: 0,
         });
       }
-
+    }
+    onBeforeMount(async () => {
+      let merchantId;
+      if (pendingOrderId.value) {
+        // 获取订单相关信息 并且获取商户相关资源
+        let orderInfo = await getOrderInfo(pendingOrderId.value);
+        merchantId = orderInfo.merchantId;
+      } else {
+        merchantId = unref(merchantInfo).merchantId;
+      }
+      requestRecommendDishes(merchantId); //请求推荐菜品
+      updateUserCoupons(merchantId);
       if (
         unref(orderInfo).mealType == "TAKE_OUT" &&
         !unref(orderInfo).selectedAddress.id
@@ -174,6 +180,11 @@ export default {
       }
     });
 
+    function resetBuyCouponInfo() {
+      setOrderInfo({
+        isBuyCouponPackage: false,
+      });
+    }
     // TODO 选中菜发生变化会重新弹窗
     let autoRecommendedDishes = computed(() => {
       return unref(recommendedDishes).filter((dishItem) => {
@@ -222,6 +233,7 @@ export default {
         selCouponId,
         selCouponReduceCost,
       } = unref(orderInfo);
+      console.log(unref(orderInfo));
       if (unref(pendingOrderId)) {
         res = billFee - paidFee;
       } else {
@@ -243,9 +255,9 @@ export default {
 
     const payLater = async function () {
       pendingOrderId.value = unref(orderInfo).orderId;
-      console.log("pendingOrderId: ", pendingOrderId);
       await getOrderInfo(pendingOrderId.value);
     };
+
     return {
       merchantInfo,
       selectedDishes,
@@ -261,6 +273,8 @@ export default {
         showReminderModal.value = true;
       },
       payLater,
+      resetBuyCouponInfo,
+      updateUserCoupons,
     };
   },
   data() {

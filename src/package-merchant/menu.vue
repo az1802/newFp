@@ -7,7 +7,7 @@
 -->
 <template>
   <div class="container">
-    <NavigationBar title="" showOrderIcon />
+    <NavigationBar title="" showOrderIcon @customBack="navBack" useCustomBack />
     <MenuHeader />
     <div class="menu-wrapper" :style="menuStyle">
       <MenuList :dishList="dishList" />
@@ -75,6 +75,7 @@ import {
   getStorage,
   reLaunch,
   handleStorageDishes,
+  switchTab,
 } from "@utils";
 
 let opts;
@@ -287,6 +288,18 @@ export default {
       await requestUserMerchantFanpiaoBalance(merchantId); //获取饭票余额
       await getUserMerchantInfo(merchantId); //获取该用户是否是商户的会员
     }
+    function navBack() {
+      console.log("back");
+      let pages = getCurrentPages();
+      console.log("pages: ", pages);
+      switchTab("/pages/home/home");
+      // if(pages.length>1){
+      //   switchTab("pages/home/home");
+
+      // }else{
+
+      // }
+    }
 
     return {
       dishList,
@@ -301,6 +314,7 @@ export default {
       orderInfo,
       resetUserMerchantInfo,
       resetDishModal,
+      navBack,
     };
   },
 };

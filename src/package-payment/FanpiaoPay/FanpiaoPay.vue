@@ -196,7 +196,8 @@ export default {
       if (
         !enableMarketing &&
         billFee > fanpiaoBalancePaidFee &&
-        fanpiaoBalance
+        fanpiaoBalance &&
+        payMethod != "FANPIAO_PAY"
       ) {
         //饭票存在余额不存在营销时提示余额不足
         showToast("饭票余额不足,请重新输入金额");

@@ -104,8 +104,8 @@ export function handleQrcodeStr(qrcodeStr) {
 }
 
 
-export function fenToYuan(price) {
-  return Math.abs(Number(price / 100).toFixed(2));
+export function fenToYuan(price = 0) {
+  return Math.abs(Number(parseFloat(price) / 100).toFixed(2));
 }
 
 export function yuanToFen(price) {

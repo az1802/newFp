@@ -339,7 +339,7 @@ export function useRequiredOrderItems() {
       let index = unref(selectedDishes).findIndex(item => {
         return item.name == "配送费";
       })
-      unref(selectedDishes).splice(index, 1)
+      index != -1 && unref(selectedDishes).splice(index, 1)
     }
 
     requireArr.forEach(requireItem => {

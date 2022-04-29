@@ -436,6 +436,7 @@ export default {
   .coupon-detail-wrapper {
     .box-size(calc(100% - 16px),100px,transparent);
     .flex-simple(space-between,center);
+    position: relative;
     padding: 0 5.01% 0 16.84%;
     background: url("https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/package-static/package-payment/directPayment/coupon-background.png")
       0 0/100% 100% no-repeat;

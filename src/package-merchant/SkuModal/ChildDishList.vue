@@ -58,9 +58,7 @@
               v-if="
                 dishItem.isMust &&
                 dishItem.status == 'NORMAL' &&
-                !dishSelMap[groupItem.id].childCountMap[
-                  groupItem.id + dishItem.id
-                ]
+                !dishSelMap[groupItem.id].childCountMap[dishItem.customId]
               "
             >
               必选
@@ -86,18 +84,15 @@
             <div v-else-if="groupItem.isFixed" class="fixed-operation">
               <div v-if="!dishItem.isSku" class="fixed-quantity">
                 {{
-                  dishSelMap[groupItem.id].childCountMap[
-                    groupItem.id + dishItem.id
-                  ] || 1
+                  dishSelMap[groupItem.id].childCountMap[dishItem.customId] || 1
                 }}
               </div>
               <div v-else class="mod-sku" @click="modSku(groupItem, dishItem)">
                 修改规格
                 <div class="num-tag">
                   {{
-                    dishSelMap[groupItem.id].childCountMap[
-                      groupItem.id + dishItem.id
-                    ] || 1
+                    dishSelMap[groupItem.id].childCountMap[dishItem.customId] ||
+                    1
                   }}
                 </div>
               </div>
@@ -170,7 +165,6 @@ export default {
           childAddPriceMap: {},
         };
         selChildDishes[key]?.forEach((item) => {
-          console.log("key: ", key, item.customId);
           if (!res[key].childCountMap[item.customId]) {
             res[key].childCountMap[item.customId] = 0;
           }

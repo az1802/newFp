@@ -53,7 +53,7 @@
         <div @click.stop="hide" class="glyph-box">
           <image
             class="glyph"
-            src="/static/Glyph.png"
+            src="@assets/Glyph.png"
             mode="aspectFill"
           ></image>
         </div>

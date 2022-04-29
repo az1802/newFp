@@ -1,5 +1,8 @@
 <template>
-  <div class="coupon-reduce-wrapper" v-if="userMerchantCoupons.length > 0">
+  <div
+    class="coupon-reduce-wrapper"
+    v-if="userMerchantCoupons.length > 0 && showUseCoupon"
+  >
     <div class="use-coupon">
       <div class="label">
         <p class="title"><span class="tag">券</span>优惠券</p>
@@ -60,7 +63,6 @@
 
     <div
       v-if="
-        showUseCoupon &&
         orderInfo.payType !== 'PAY_LATER' &&
         userMerchantCoupons.length > 0 &&
         selectedDishesTotalPrice < availableUseCoupon.leastCost
@@ -116,7 +118,6 @@ export default {
   },
   setup() {
     let { userMerchantCoupons } = useUserMerchantCoupon();
-    console.log("userMerchantCoupons: ", userMerchantCoupons);
 
     const { navigateTo } = useNavigate();
     const { setOrderInfo, orderInfo } = useOrder();

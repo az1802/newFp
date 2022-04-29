@@ -147,6 +147,7 @@ export function useUserMerchantCoupon() {
   async function requestUserMerchantCoupons(merchantId) {
     let res = await API.User.getUserMerchantCoupon(merchantId)
     setUserMerchantCoupons(res?.coupons || [])
+    // setUserMerchantCoupons([])
     return res.coupons;
   }
 
