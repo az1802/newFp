@@ -34,9 +34,7 @@ async function commonPay(data) {
       return false;
     }
   }
-
   return false;
-
 }
 
 

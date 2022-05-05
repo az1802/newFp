@@ -115,6 +115,11 @@ export default {
       await this.resetUserMerchantInfo();
     }
   },
+  onShareAppMessage() {
+    return {
+      title: this.merchantInfo.name,
+    };
+  },
   setup(props, context) {
     let dishList = reactive([]);
     let userInfo = reactive({});

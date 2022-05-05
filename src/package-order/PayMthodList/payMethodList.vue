@@ -11,6 +11,12 @@
 
     <div class="other-pay">
       <div
+        v-if="
+          merchantInfo.enableShilaiMemberCardPay &&
+          (merchantInfo.enableShilaiMemberCardRecharge ||
+            (!merchantInfo.enableShilaiMemberCardRecharge &&
+              userWallet.memberCardBalance != 0))
+        "
         class="member-stored-pay"
         @click="setPayMethod('SHILAI_MEMBER_CARD_PAY')"
       >
@@ -21,11 +27,15 @@
               class="icon"
             />
             <div class="pay-text">
-              <div class="main-">
+              <div class="main-text">
                 会员储值(余额:{{ userWallet.memberCardBalance / 100 }})
               </div>
               <!-- <div class="tooltip">17688479248 切换</div> -->
-              <div class="tooltip get-phone" @click.stop="stop" v-if="!phone">
+              <div
+                class="tooltip get-phone"
+                @click.stop="stop"
+                v-if="!phone && merchantInfo.isRamenJointProject"
+              >
                 绑定手机号<GetPhoneButton
                   class="get-phone-btn"
                   @success="getPhoneSuccess"
@@ -122,7 +132,7 @@ import {
   useUserMerchantMemberBalance,
   useUserPhone,
 } from "@hooks/userHooks";
-import { useRechargeInfo } from "@hooks/merchantHooks";
+import { useRechargeInfo, useMerchantInfo } from "@hooks/merchantHooks";
 import { stop, sleep } from "@utils";
 export default {
   props: {
@@ -144,7 +154,7 @@ export default {
     const { phone } = useUserPhone();
     const { userWallet, requestUserWallet } = useUserMerchantWallet();
     const { orderRechargeInfo, setOrderRechargeInfo } = useOrderRechargeInfo();
-
+    let { merchantInfo } = useMerchantInfo();
     function changeRecharge(rechargeItem) {
       let { selRechargeId } = unref(orderRechargeInfo);
       if (selRechargeId == rechargeItem.id) {
@@ -161,6 +171,7 @@ export default {
     }
 
     return {
+      merchantInfo,
       payMethod,
       setPayMethod,
       userWallet,

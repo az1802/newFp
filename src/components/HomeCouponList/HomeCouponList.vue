@@ -70,7 +70,7 @@
 </template>
 <script>
 import { useCouponPay } from "@hooks/payHooks";
-import { fenToYuan, showToast } from "@utils";
+import { fenToYuan, showToast, navigateTo } from "@utils";
 export default {
   props: {
     merchantId: {
@@ -90,8 +90,20 @@ export default {
   setup() {
     const { buyCoupon } = useCouponPay();
     async function buyCp(merchantId, couponItem) {
-      let payRes = await buyCoupon(merchantId, couponItem);
-      showToast(payRes ? "券包购买成功" : "券包购买失败");
+      let userId = uni.getStorageSync("userId") || "";
+      console.log("userId: ", userId);
+      if (!userId) {
+        navigateTo("MENU/LOGIN", {
+          from: "MERCHANT/HOME",
+          params: JSON.stringify({
+            merchantId,
+          }),
+        });
+        return "";
+      } else {
+        let payRes = await buyCoupon(merchantId, couponItem);
+        showToast(payRes ? "券包购买成功" : "券包购买失败");
+      }
     }
     return {
       fenToYuan,

@@ -10,6 +10,37 @@ import APT from "@api";
 // const sceneMock = "e162ac24e1a64dd783f8408741c910b1";
 // const merchantIdMock = "8ec573585d9645229fb01713e30a2a6d";
 
+export function parseQrcodeParams(q) {
+  let res = {};
+  if (q) {
+    //二合一码微信的处理模式
+    let url = decodeURIComponent(q);
+    let queryStrs = url.split("?")[1].split("&");
+    let queryParams = {};
+    queryStrs.forEach((str) => {
+      let queryPair = str.split("=");
+      queryParams[queryPair[0]] = queryPair[1];
+    });
+    res = queryParams
+  }
+  //#ifdef MP-ALIPAY
+  let qrCodeJson = my.getStorageSync({ key: "qrCode" }).data;
+  if (qrCodeJson) {
+    scene = qrCodeJson;
+    // 清除扫码留下的内容避免后续订单进入仍显示这家店铺
+    my.setStorageSync({
+      key: "qrCode",
+      data: "",
+    });
+    res = qrCodeJson
+  }
+  //#endif
+
+
+  return res;
+
+}
+
 
 async function qrcodeParams(q) {
   let url = decodeURIComponent(q), parseRes = {};

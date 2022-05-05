@@ -13,7 +13,14 @@
         购买须知 >
       </div>
     </div>
-    <div class="fanpiao-content" @click="setFanpiaoPayMethod">
+    <div
+      class="fanpiao-content"
+      v-if="
+        merchantInfo.enableFanpiao &&
+        !(merchantInfo.disableBuyFanpiao && userWallet.fanpiaoBalance == 0)
+      "
+      @click="setFanpiaoPayMethod"
+    >
       <div class="balance-wrapper">
         <div class="left">
           <div class="balance">
@@ -69,6 +76,7 @@ import { useNavigate } from "@hooks/commonHooks";
 import { useFanpiaoInfo } from "@hooks/merchantHooks";
 import { useUserMerchantWallet } from "@hooks/userHooks";
 import { onBeforeMount, ref, unref, computed, watch } from "vue";
+import { useMerchantInfo } from "@hooks/merchantHooks";
 import { calcRecommendFanpiao, calcFanpiaoDiscountPrice } from "@utils";
 
 export default {
@@ -88,7 +96,7 @@ export default {
     const { orderFanpiaoPayInfo, setOrderFanpiaoPayInfo, finalFanpiaoPaidFee } =
       useFanpiaoPayInfo();
     const { maxDiscountFanpiao, minDiscountFanpiao } = useFanpiaoInfo();
-
+    let { merchantInfo } = useMerchantInfo();
     watch(payMethod, (nval) => {
       if (nval != "FANPIAO_PAY") {
         setOrderFanpiaoPayInfo({
@@ -165,6 +173,7 @@ export default {
       orderFanpiaoPayInfo,
       setFanpiaoPayMethod,
       fanpiaoPayTooltipText,
+      merchantInfo,
     };
   },
 };

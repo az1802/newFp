@@ -44,7 +44,7 @@ import {
 // import HomeFanpiaoList from "./HomeFanpiaoList/HomeFanpiaoList.vue";
 
 import { ref, onBeforeMount, watch, unref } from "vue";
-import { handleQrcodeStr, navigateTo } from "@utils";
+import { handleQrcodeStr, navigateTo, parseQrcodeParams } from "@utils";
 import API from "@api";
 let merchantId = "",
   scene = "",
@@ -65,23 +65,10 @@ export default {
   onLoad(options) {
     opts = options;
     // // 二合一码参数解析
-    if (options.q) {
-      let queryParams = handleQrcodeStr(decodeURIComponent(options.q));
-      // ownTableId = queryParams.id;
-      merchantId = queryParams.merchantId;
+    let parseRes = parseQrcodeParams(options.q);
+    if (parseRes.scene || parseRes.merchantId) {
+      merchantId = parseRes.scene || parseRes.merchantId;
     }
-    //#ifdef MP-ALIPAY
-    let qrCodeJson = my.getStorageSync({ key: "qrCode" }).data;
-    if (qrCodeJson) {
-      // ownTableId = qrCodeJson.id;
-      merchantId = qrCodeJson.merchantId;
-      // 清除扫码留下的内容避免后续订单进入仍显示这家店铺
-      my.setStorageSync({
-        key: "qrCode",
-        data: "",
-      });
-    }
-    //#endif
 
     if (options.merchantId) {
       merchantId = options.merchantId;

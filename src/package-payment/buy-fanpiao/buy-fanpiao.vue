@@ -88,7 +88,7 @@
 import { useMerchantInfo, useFanpiaoInfo } from "@hooks/merchantHooks";
 import { useNavigate } from "@hooks/commonHooks";
 import { useFanpiaoPay } from "@hooks/payHooks";
-import { navigateTo } from "@utils";
+import { navigateTo, parseQrcodeParams } from "@utils";
 import {
   onBeforeMount,
   onBeforeUnmount,
@@ -104,6 +104,10 @@ export default {
   onLoad(options) {
     opts = options;
     merchantId = options.scene || options.merchantId || "";
+    let parseRes = parseQrcodeParams(options.q);
+    if (parseRes.scene || parseRes.merchantId) {
+      merchantId = parseRes.scene || parseRes.merchantId;
+    }
     let userId = uni.getStorageSync("userId") || "";
     if (!userId) {
       navigateTo("MENU/LOGIN", {
@@ -115,7 +119,7 @@ export default {
   },
   onShareAppMessage() {
     return {
-      title: this.merchantName,
+      title: this.merchantInfo.name,
     };
   },
   setup() {

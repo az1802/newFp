@@ -42,9 +42,7 @@
           class="operation"
           :class="disableShowFanpiaoPurchaseNumber ? 'only-buy' : ''"
         >
-          <div class="buy" @click="buyFanpiao(fanpiaoItem, merchantId)">
-            抢购
-          </div>
+          <div class="buy" @click="buyFp(fanpiaoItem, merchantId)">抢购</div>
           <div class="sell-count" v-if="!disableShowFanpiaoPurchaseNumber">
             {{
               (fanpiaoCountArr[index] || 0) +
@@ -89,7 +87,20 @@ export default {
       navigateTo,
       fanpiaoCountArr,
       fenToYuan,
-      buyFanpiao,
+      buyFp(fanpiaoItem, merchantId) {
+        let userId = uni.getStorageSync("userId") || "";
+        if (!userId) {
+          navigateTo("MENU/LOGIN", {
+            from: "MERCHANT/HOME",
+            params: JSON.stringify({
+              merchantId,
+            }),
+          });
+          return "";
+        } else {
+          buyFanpiao(fanpiaoItem, merchantId);
+        }
+      },
     };
   },
 };

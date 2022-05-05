@@ -70,7 +70,13 @@ import {
 import { useDirectPay } from "@hooks/payHooks";
 import { useSystemInfo, useNavigate } from "@hooks/commonHooks";
 import { useDirectPaySelCoupon } from "@hooks/directPayHooks";
-import { calcRecommendFanpiao, showToast, sleep, switchTab } from "@utils";
+import {
+  calcRecommendFanpiao,
+  showToast,
+  sleep,
+  switchTab,
+  parseQrcodeParams,
+} from "@utils";
 
 import { onBeforeMount, ref, unref, computed, watchEffect, watch } from "vue";
 let merchantId;
@@ -78,6 +84,10 @@ export default {
   components: { FxAmountInput, FanpiaoPay, CouponPay },
   async onLoad(opts) {
     merchantId = opts.merchantId || opts.scene;
+    let parseRes = parseQrcodeParams(opts.q);
+    if (parseRes.scene || parseRes.merchantId) {
+      merchantId = parseRes.scene || parseRes.merchantId;
+    }
   },
   setup() {
     let { statusBarHeight } = useSystemInfo();
