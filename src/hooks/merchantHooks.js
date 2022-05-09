@@ -75,7 +75,7 @@ export function useFanpiaoInfo() {
       return;
     }
     let res = await getFanpiaoList(merchantId)
-    setFanpiaoList(res);
+    setFanpiaoList(res || []);
   }
   async function requestFanpiaoPlatformRecords() {
     let res = await getFanpiaoPlatformRecords()

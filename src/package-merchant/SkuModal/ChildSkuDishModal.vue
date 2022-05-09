@@ -173,10 +173,12 @@ export default {
         selGroupChilDish.push(dishInfo);
       } else {
         //修改
+        console.log("index: ", index);
+
         let index = selGroupChilDish.findIndex((item) => {
           return item.customId == dishInfo.customId;
         });
-        if (index != -1) {
+        if (index == -1) {
           selGroupChilDish.push(dishInfo);
         } else {
           selGroupChilDish.splice(index, 1, dishInfo);

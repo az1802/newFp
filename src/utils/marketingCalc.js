@@ -21,9 +21,9 @@ export function calcRecommendFanpiao(fanpiaoList = [], billFee = 0, fanpiaoPaidF
   if (needPaidFee <= 0) {
     recommendFanpiaoList = [] //不需要推荐饭票
   } else {
-    recommendFanpiaoList = fanpiaoList.filter(({ totalValue, discount }) => {
+    recommendFanpiaoList = fanpiaoList.filter && fanpiaoList.filter(({ totalValue, discount }) => {
       return (totalValue / (1 - discount / 100)) > needPaidFee;
-    })
+    }) || []
   }
 
   return recommendFanpiaoList;

@@ -329,7 +329,7 @@ export default {
         this.logInfo = res;
         this.merchantId = (res.base && res.base.merchantId) || "";
         this.scanCodeStatus = "NEED_BUY_FANPIAO"; //显示购买饭票页面
-        this.navigateToBuyFanpiao(0);
+        this.navigateToBuyFanpiao();
       } else {
         showToast("服务出错,请尝试重新扫码");
         return;
@@ -379,6 +379,10 @@ export default {
           }
           break;
         case "WECHAT_PAY":
+          if (!res.signData) {
+            showToast("饭票购买失败，请稍后再试");
+            return;
+          }
           const {
             timeStamp,
             nonceStr,
@@ -564,10 +568,13 @@ export default {
           arr.push(item.merchantId);
         });
       }
-      if (!arr.includes(this.merchantId) || userMerchantBalance === 0) {
-        this.navigate(
-          `${this.$routes.payment.BUY_FANPIAO}?merchantId=${this.merchantId}&billFee=0&avtiveIndex=${fanpiaoIndex}&from=home`
-        );
+      if (!arr.includes(this.merchantId) || userMerchantBalance === 0 || 1) {
+        navigateTo("MARKETING/FANPIAO_QRCODE", {
+          merchantId: this.merchantId,
+        });
+        // navigateTo("MARKETING/BUY_FANPIAO", {
+        //   merchantId: this.merchantId,
+        // });
       }
     },
   },

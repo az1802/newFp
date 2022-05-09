@@ -40,7 +40,7 @@
               ? 'merchant-fanpiao-item-right'
               : 'merchant-fanpiao-item-left'
           "
-          @click="buyFanpiao(fanpiaoItem, merchantId)"
+          @click="buyFp(fanpiaoItem, merchantId)"
         >
           <div class="price">
             {{ fanpiaoItem.totalValue / 100 }}
@@ -101,6 +101,10 @@ export default {
       navigateTo,
       buyFanpiao,
       userMerchantFanpiaoBalance,
+      async buyFp(fanpiaoItem) {
+        await buyFanpiao(fanpiaoItem, merchantId);
+        await requestUserMerchantFanpiaoBalance(merchantId);
+      },
     };
   },
   onHide() {

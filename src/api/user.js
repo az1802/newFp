@@ -102,7 +102,7 @@ export async function getUserOwnCouponList(params) {
 }
 export async function getUserMerchantCoupon(merchantId) {
   let url = `${URLS.USER_MERCHANT_COUPON}/${merchantId}`;
-  let res = await http.get(url);
+  let res = await http.get(url) || {};
   return res;
 }
 export async function getAliUserPhone(data) {

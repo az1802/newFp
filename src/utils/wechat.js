@@ -9,6 +9,7 @@ import API from '@api';
 
 export async function wechatPay(signData) {
   return new Promise((resolve, reject) => {
+    if (!signData) { resolve(false) }
     const {
       timeStamp,
       nonceStr,

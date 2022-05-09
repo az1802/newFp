@@ -67,7 +67,7 @@ import {
   calcFanpiaoDiscountPrice,
 } from "@utils";
 
-import { onBeforeMount, computed, unref } from "vue";
+import { onBeforeMount, computed, unref, onBeforeUnmount } from "vue";
 export default {
   components: { PayMthodList },
   setup() {
@@ -142,6 +142,9 @@ export default {
       genRecommendRechargeList();
     });
 
+    onBeforeUnmount(() => {
+      setPayMethod("WECHAT_PAY");
+    });
     const showBillFee = computed(() => {
       let { billFee } = unref(orderInfo),
         pm = unref(payMethod);
