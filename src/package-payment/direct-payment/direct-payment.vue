@@ -15,6 +15,7 @@
       <FxAmountInput
         @change="amountChange"
         @confirm="confirmPay"
+        :isPaying="isPaying"
         :actuallyPaid="
           payMethod == 'FANPIAO_PAY' ? fanpiaoActuallyPaid : actuallyPaid
         "
@@ -116,7 +117,8 @@ export default {
       fanpiaoActuallyPaid = ref(0),
       needBuyCoupon = ref(false),
       buyCouponInfo = ref({}),
-      isAgreeRules = ref(true);
+      isAgreeRules = ref(true),
+      isPaying = ref(false);
 
     onBeforeMount(async () => {
       await signUp();
@@ -237,6 +239,9 @@ export default {
         await showToast("请输入正确的金额，最小单位为分");
         return;
       }
+      if (unref(isPaying)) {
+        return;
+      }
 
       let pm = unref(payMethod);
       let payRes,
@@ -270,7 +275,6 @@ export default {
           params.paidFee = unref(fanpiaoActuallyPaid);
         }
       } else if (pm == "COUPON_PAY") {
-        let par;
         if (unref(selCoupon)?.id) {
           let { id, reduceCost = 0 } = unref(selCoupon);
           params.couponId = id;
@@ -287,7 +291,9 @@ export default {
           params.transactionType = "DIRECT_PAY_WITH_COUPON_PACKAGE_PURCHASE";
         }
       }
+      isPaying.value = true;
       payRes = await directPay(params);
+      isPaying.value = false;
       if (payRes) {
         switchTab("/pages/order/order");
       }
@@ -313,6 +319,7 @@ export default {
       isAgreeRules,
       buyCouponInfo,
       fanpiaoBalancePaidFee,
+      isPaying,
     };
   },
 };

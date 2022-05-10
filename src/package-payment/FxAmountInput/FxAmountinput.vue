@@ -165,7 +165,11 @@
             >
               <!-- <image class="key-cell-icon" src="/static/backspace.png" mode="aspectFill"></image> -->
             </view>
-            <view class="key-confirm" @click.stop="_handleConfirmKey">
+            <view
+              class="key-confirm"
+              @click.stop="_handleConfirmKey"
+              :class="[isPaying ? 'disabled' : '']"
+            >
               {{ confirmText }}</view
             >
           </div>
@@ -181,6 +185,10 @@ import { throttle } from "@utils";
 export default {
   name: "keyBoard",
   props: {
+    isPaying: {
+      default: false,
+      type: Boolean,
+    },
     confirmText: {
       default: "付款",
       type: String,
@@ -694,6 +702,10 @@ export default {
   justify-content: center;
   align-items: center;
   margin-bottom: 6px;
+
+  &.disabled {
+    opacity: 0.5;
+  }
 }
 
 .key-cell-icon {

@@ -273,6 +273,10 @@ export default {
         });
         childDishes.push(...groupChildDishes);
       }
+      // childDishes = JSON.parse(JSON.stringify(childDishes));
+      // childDishes.forEach((item) => {
+      //   delete item.attrList;
+      // });
 
       Object.assign(dishInfo, {
         attrs,

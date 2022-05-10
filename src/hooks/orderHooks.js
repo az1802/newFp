@@ -65,6 +65,20 @@ export function useOrder() {
       appointmentTime: orderInfoTemp.takeAwayTime || '',
       discountAmountPrice: 0,
     }
+    orderArgs.dishList = JSON.parse(JSON.stringify(orderArgs.dishList));
+    if (orderArgs.dishList) {
+      orderArgs.dishList.forEach(dishItem => {
+        if (dishItem.childDishes && dishItem.childDishes.length > 0) {
+          dishItem.childDishGroups.forEach(groupItem => {
+            if (groupItem.childDishes && groupItem.childDishes.length > 0) {
+              groupItem.childDishes.forEach(groupChildDishItem => {
+                groupChildDishItem.quantity = (groupChildDishItem.quantity * dishItem.quantity);
+              })
+            }
+          })
+        }
+      })
+    }
     if (mealType == "TAKE_OUT") {
       orderArgs.shippingAddressId = selectedAddress.id;
       orderArgs.shippingFee = shippingFee;

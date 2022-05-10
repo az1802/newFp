@@ -144,6 +144,14 @@ export default {
 
     onBeforeUnmount(() => {
       setPayMethod("WECHAT_PAY");
+      setOrderFanpiaoPayInfo({
+        selFanpiaoId: "",
+        selFanpiaoInfo: {},
+      });
+      setOrderRechargeInfo({
+        selRechargeId: "",
+        selRechargeInfo: {},
+      });
     });
     const showBillFee = computed(() => {
       let { billFee } = unref(orderInfo),

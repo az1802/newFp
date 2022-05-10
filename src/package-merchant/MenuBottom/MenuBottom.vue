@@ -143,6 +143,8 @@ export default {
         return;
       }
 
+      // 隐藏购物车
+      toggleShowCartModal(false);
       // TODO 多人点餐
 
       navigateTo("ORDER/CREATE_ORDER");
