@@ -45,6 +45,7 @@ export default {
     orderFanpiaoPayInfo: {
       fanpiaoPaidFee: 0,
       fanpiaoRemainPaidFee: 0,
+      fanpiaoNoDiscountPaidFee: 0,
       recommendFanpiaoList: [],
       selFanpiaoId: "",
       selFanpiaoInfo: "",
@@ -60,11 +61,12 @@ export default {
       let { payMethod, } = state;
       let { fanpiaoPaidFee,
         fanpiaoRemainPaidFee,
+        fanpiaoNoDiscountPaidFee,
         selFanpiaoId,
         selFanpiaoInfo } = state.orderFanpiaoPayInfo
       if (payMethod == "FANPIAO_PAY") {
         if (fanpiaoRemainPaidFee > 0 && selFanpiaoId) { //根据选择的饭票进行最终扣除饭票价格的计算
-          return fanpiaoPaidFee + (fanpiaoRemainPaidFee * (1 - (selFanpiaoInfo?.discount || 0) / 100));
+          return fanpiaoPaidFee + ((fanpiaoRemainPaidFee - fanpiaoNoDiscountPaidFee) * (1 - (selFanpiaoInfo?.discount || 0) / 100)) + fanpiaoNoDiscountPaidFee;
         } else if ((fanpiaoRemainPaidFee > 0 && !selFanpiaoId)) {
           return state.orderInfo.billFee;
         } else {//余额够

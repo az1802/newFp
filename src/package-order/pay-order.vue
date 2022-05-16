@@ -34,7 +34,10 @@
       />
     </scroll-view>
     <div class="bottom">
-      <div class="tooltip" v-if="payMethod !== 'FANPIAO_PAY'">
+      <div
+        class="tooltip"
+        v-if="payMethod !== 'FANPIAO_PAY' && fanpiaoPayTooltipText !== '0.00元'"
+      >
         <div class="text">单单减!本单再减{{ fanpiaoPayTooltipText }}</div>
         <div class="btn" @click="toggleFanpiaoPay">点我立减</div>
       </div>
@@ -108,6 +111,7 @@ export default {
       setOrderFanpiaoPayInfo({
         fanpiaoPaidFee: res.paidFee,
         fanpiaoRemainPaidFee: remainPaidFee,
+        fanpiaoNoDiscountPaidFee: res.remainNoDiscountFee,
         recommendFanpiaoList: recommendFanpiaoList || [],
       });
     }
@@ -259,8 +263,11 @@ export default {
     }
 
     let fanpiaoPayTooltipText = computed(() => {
-      let { recommendFanpiaoList, fanpiaoRemainPaidFee } =
-        unref(orderFanpiaoPayInfo);
+      let {
+        recommendFanpiaoList,
+        fanpiaoRemainPaidFee,
+        fanpiaoNoDiscountPaidFee,
+      } = unref(orderFanpiaoPayInfo);
       let { billFee } = unref(orderInfo);
 
       if (unref(orderFanpiaoPayInfo).fanpiaoRemainPaidFee <= 0) {
@@ -277,10 +284,14 @@ export default {
         return "";
       }
       let minDiscountPrice = Number(
-        ((minFanpiaoDiscount || 0) * (billFee || 0)) / 10000
+        ((minFanpiaoDiscount || 0) *
+          (billFee - fanpiaoNoDiscountPaidFee || 0)) /
+          10000
       ).toFixed(2);
       let maxDiscountPrice = Number(
-        ((maxFanpiaoDiscount || 0) * (billFee || 0)) / 10000
+        ((maxFanpiaoDiscount || 0) *
+          (billFee - fanpiaoNoDiscountPaidFee || 0)) /
+          10000
       ).toFixed(2);
       return minDiscountPrice != maxDiscountPrice
         ? `${minDiscountPrice}-${maxDiscountPrice}元`
