@@ -31,11 +31,7 @@
                 会员储值(余额:{{ userWallet.memberCardBalance / 100 }})
               </div>
               <!-- <div class="tooltip">17688479248 切换</div> -->
-              <div
-                class="tooltip get-phone"
-                @click.stop="stop"
-                v-if="!phone && merchantInfo.isRamenJointProject"
-              >
+              <div class="tooltip get-phone" @click.stop="stop" v-if="!phone">
                 绑定手机号<GetPhoneButton
                   class="get-phone-btn"
                   @success="getPhoneSuccess"

@@ -92,7 +92,7 @@ import { useDish } from "@hooks/menuHooks";
 import { useUserMerchantFanpiaoBalance } from "@hooks/userHooks";
 import { useRecommendedCoupon, usePay } from "@hooks/payHooks";
 import { useFanpiaoInfo, useMerchantInfo } from "@hooks/merchantHooks";
-import { fenToYuan, showToast } from "@utils";
+import { fenToYuan, showToast, newShowConfirmModal } from "@utils";
 
 import { ref, unref, computed } from "vue";
 export default {
@@ -118,6 +118,7 @@ export default {
     const { maxDiscountFanpiao } = useFanpiaoInfo();
     const { userMerchantFanpiaoBalance } = useUserMerchantFanpiaoBalance();
     const { merchantInfo } = useMerchantInfo();
+    let forceCreate = false;
     // const totalPrice = computed(() => {});
     async function buyCouponAndPay() {
       let { isAgreeCouponAccord, selCouponId, pendingOrderId, paidFee } =
@@ -200,7 +201,23 @@ export default {
       if (pendingOrderId) {
         orderId = pendingOrderId;
       } else {
-        orderId = await createOrder();
+        orderId = await createOrder({
+          forceCreate: forceCreate,
+        });
+      }
+
+      if (orderId && orderId.confirmOrder) {
+        let isConfirmRes = await newShowConfirmModal({
+          content: "已有相同金额订单是否确认下单",
+          cancelText: "取消下单",
+          confirmText: "确认下单",
+        });
+        if (isConfirmRes) {
+          forceCreate = true;
+          confirmOrder();
+        }
+
+        return;
       }
 
       if (!orderId) {

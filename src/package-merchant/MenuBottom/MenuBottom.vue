@@ -79,7 +79,7 @@
       </div>
       <div
         class="get-phone-wrapper"
-        v-if="merchantInfo.enforcePhoneRegistration && !phone"
+        v-if="merchantInfo.enforcePhoneRegistration && !phone && forceGetPhone"
         @click.stop="stop"
       >
         <GetPhoneButton
@@ -100,16 +100,22 @@ import {
 import { useNavigate } from "@hooks/commonHooks";
 import { useFanpiaoInfo, useMerchantInfo } from "@hooks/merchantHooks";
 import { useOrder } from "@hooks/orderHooks";
-import { useUserMerchantCoupon, useUserPhone } from "@hooks/userHooks";
-import { unref, computed } from "vue";
-import { fenToYuan, showToast } from "@utils";
+import {
+  useUserMerchantCoupon,
+  useUserPhone,
+  useUserInfo,
+} from "@hooks/userHooks";
+import { unref, computed, ref } from "vue";
+import { fenToYuan, showToast, sleep } from "@utils";
 
 export default {
   setup() {
     const { showCartModal, toggleShowCartModal } = useCart();
     const { toggleShowScanModal } = useScanModal();
     const { merchantInfo } = useMerchantInfo();
-    const { phone } = useUserPhone();
+    const { phone, setPhone } = useUserPhone();
+    const { getUserMerchantInfo } = useUserInfo();
+
     const {
       selectedDishes,
       selectedDishesTotalQuantity,
@@ -121,6 +127,10 @@ export default {
     const { navigateTo } = useNavigate();
     const { userMerchantCoupons } = useUserMerchantCoupon();
     const { showAddOrderModal, toggleShowAddOrderModal } = useAddOrderModal();
+    let forceRegisterPhone = getApp().globalData.forceRegisterPhone;
+    let forceGetPhone = ref(
+      forceRegisterPhone === undefined ? true : forceRegisterPhone
+    );
     function createOrder() {
       let { mealType } = unref(orderInfo);
       console.log("mealType: ", mealType, unref(canOrder));
@@ -206,10 +216,23 @@ export default {
       canOrder,
       merchantInfo,
       phone,
+      forceGetPhone,
       stop() {
         return false;
       },
-      getPhoneSuccess() {},
+      async getPhoneSuccess(phone) {
+        if (!phone) {
+          showToast("授权手机号失败");
+          forceGetPhone.value = false;
+          getApp().globalData.forceRegisterPhone = false;
+        } else {
+          setPhone(phone);
+          forceGetPhone.value = false;
+          getApp().globalData.forceRegisterPhone = false;
+          await sleep(1000);
+          getUserMerchantInfo(unref(merchantInfo).merchantId);
+        }
+      },
     };
   },
 };
@@ -253,7 +276,7 @@ export default {
     position: relative;
     .get-phone-wrapper {
       position: absolute;
-      left: 0;
+      width: 108px;
       right: 12px;
       top: 0;
       bottom: 0;

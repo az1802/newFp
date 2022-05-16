@@ -22,13 +22,30 @@
             class="avatar"
           />
         </div>
-        <p class="user-name">
-          {{
-            userInfo.userId || userId
-              ? userInfo.nickName || userInfo.nickname
-              : "立即登录"
-          }}
-        </p>
+        <div class="info-wrapper">
+          <div class="user-name">
+            {{
+              userInfo.userId || userId
+                ? userInfo.nickName || userInfo.nickname
+                : "立即登录"
+            }}
+          </div>
+          <div
+            class="phone-wrapper"
+            v-if="!phone && (userInfo.userId || userId)"
+          >
+            授权手机号
+            <div class="get-phone-wrapper" @click.stop="stop">
+              <GetPhoneButton
+                class="get-phone-btn"
+                @success="getPhoneSuccess"
+              ></GetPhoneButton>
+            </div>
+          </div>
+          <div v-else class="phone-number">
+            {{ phone || "" }}
+          </div>
+        </div>
       </div>
     </div>
     <div class="count-container">
@@ -76,24 +93,33 @@
 
 <script type="text/ecmascript-6">
 import { useNavigate } from "@hooks/commonHooks";
-import { useUserInfo, useUserStats } from "@hooks/userHooks";
+import { useUserInfo, useUserStats, useUserPhone } from "@hooks/userHooks";
 import { computed, onBeforeMount } from "vue";
+import { showToast } from "@utils";
+import API from "@api";
 
 export default {
   setup() {
     const { navigateTo } = useNavigate();
-    const { userInfo, requestUserInfo } = useUserInfo();
-    let userId = uni.getStorageSync("userId");
+    const { userInfo, requestUserInfo, getUserMerchantInfo } = useUserInfo();
+    const { phone, setPhone } = useUserPhone();
+
     const { stats, requestUserStats } = useUserStats();
+    let userId = uni.getStorageSync("userId");
     onBeforeMount(() => {
       requestUserInfo();
       requestUserStats();
+      API.User.getUserQrcode().then((res) => {
+        if (res && res.phone) {
+          setPhone(res.phone);
+        }
+      });
     });
 
     async function goToDirectPay() {
-      navigateTo("MENU/MENU", {
-        scene: "fea8ae786d044c9eb42bfb288ec53ffd",
-      });
+      // navigateTo("MENU/MENU", {
+      //   scene: "fea8ae786d044c9eb42bfb288ec53ffd",
+      // });
       // navigateTo("MARKETING/DIRECT_PAYMENT", {
       //   merchantId: "8ec573585d9645229fb01713e30a2a6d",
       // });
@@ -104,6 +130,15 @@ export default {
       stats,
       userId,
       goToDirectPay,
+      phone,
+      getPhoneSuccess(phone) {
+        if (phone) {
+          setPhone(phone);
+          showToast("授权手机号成功");
+        } else {
+          showToast("授权手机号失败,请重新授权");
+        }
+      },
     };
   },
 };
@@ -152,10 +187,43 @@ export default {
         }
       }
 
-      .user-name {
+      .info-wrapper {
+        display: flex;
+        align-items: center;
         margin-top: 7.5px;
-        font-size: 16px;
-        color: white;
+
+        .user-name {
+          height: 20px;
+          line-height: 20px;
+          font-size: 16px;
+          color: white;
+        }
+
+        .phone-wrapper {
+          position: relative;
+          background: #E6E6E6;
+          width: 70px;
+          height: 20px;
+          line-height: 20px;
+          text-align: center;
+          font-size: 12px;
+          color: #666;
+          border-radius: 3px;
+          margin-left: 6px;
+
+          .get-phone-wrapper {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+          }
+        }
+
+        .phone-number {
+          color: white;
+          margin-left: 10px;
+        }
       }
     }
   }

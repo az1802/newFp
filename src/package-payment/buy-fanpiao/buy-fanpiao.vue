@@ -142,7 +142,9 @@ export default {
     onBeforeMount(async () => {
       if (merchantId) {
         await requestMerchantInfo(merchantId);
-        await requestFanpiaoList(merchantId);
+        if (!unref(merchantInfo).disableBuyFanpiao) {
+          await requestFanpiaoList(merchantId);
+        }
       }
       await requestFanpiaoPlatformRecords();
       timeOutId = setInterval(() => {

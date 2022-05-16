@@ -48,7 +48,7 @@ export function useOrder() {
   const { selectedDishes } = useState("menu", ["selectedDishes"])
   const { setPayMethod, setOrderInfo } = useMutations("order", ["setPayMethod", "setOrderInfo"]);
   const { phone } = useState('user', ['phone']);
-  async function createOrder() {
+  async function createOrder(args = {}) {
 
     let orderInfoTemp = unref(orderInfo);
     let { mealType, selectedAddress, shippingFee } = orderInfoTemp;
@@ -64,6 +64,7 @@ export function useOrder() {
       phone: orderInfoTemp.phone || unref(phone),
       appointmentTime: orderInfoTemp.takeAwayTime || '',
       discountAmountPrice: 0,
+      ...args
     }
     orderArgs.dishList = JSON.parse(JSON.stringify(orderArgs.dishList));
     if (orderArgs.dishList) {
@@ -85,9 +86,12 @@ export function useOrder() {
     }
 
     let res = await API.Order.createOrder(unref(merchantInfo).merchantId, orderArgs);;
-    console.log('res: ', res);
-    if (!res?.orderId && res.errmsg) {
+    if (!res?.orderId && (res.errcode != 220012 && res.errmsg)) {
       showToast(res.errmsg)
+    } else if (res.errcode == 220012) {
+      return {
+        confirmOrder: true
+      }
     }
     return res?.orderId;
   }

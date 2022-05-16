@@ -74,6 +74,25 @@ export async function showConfirmModal(title = '', content = "") {
   })
 }
 
+export async function newShowConfirmModal({ title = '', content = '', cancaelText = '取消', confirmText = "确定" }) {
+  return new Promise(resolve => {
+    uni.showModal({
+      title,
+      content,
+      cancaelText,
+      confirmText,
+      icon: 'none',
+      duration: 1500,
+      success({ confirm, cancal }) {
+        resolve(confirm);
+      },
+      fail() {
+        resolve(false);
+      }
+    })
+  })
+}
+
 
 export async function copyInfo(msg) {
   return new Promise((resolve, reject) => {

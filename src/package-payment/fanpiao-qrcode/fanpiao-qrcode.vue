@@ -60,7 +60,7 @@
   </div>
 </template>
 <script>
-import { computed, onBeforeMount, ref } from "vue";
+import { computed, onBeforeMount, ref, unref } from "vue";
 import { useMerchantInfo, useFanpiaoInfo } from "@hooks/merchantHooks";
 import { useFanpiaoPay } from "@hooks/payHooks";
 import { useUserMerchantFanpiaoBalance } from "@hooks/userHooks";
@@ -87,9 +87,11 @@ export default {
 
     const { buyFanpiao } = useFanpiaoPay();
 
-    onBeforeMount(() => {
-      requestMerchantInfo(merchantId);
-      requestFanpiaoList(merchantId);
+    onBeforeMount(async () => {
+      await requestMerchantInfo(merchantId);
+      if (!unref(merchantInfo).disableBuyFanpiao) {
+        await requestFanpiaoList(merchantId);
+      }
       requestUserMerchantFanpiaoBalance(merchantId);
     });
 

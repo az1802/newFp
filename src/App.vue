@@ -19,7 +19,7 @@ export default {
     allDishes: [],
     hasJumpedToCreateOrder: false,
     resetUserMerchantInfo: false,
-
+    forceRegisterPhone: true,
     // dishSrollTops: [],
     // categoryScrollTops: [],
   },

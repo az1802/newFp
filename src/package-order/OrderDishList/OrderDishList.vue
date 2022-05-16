@@ -200,6 +200,8 @@ export default {
           .name {
             .bold-font(16px,#333130);
             .line-center(16px);
+            .no-wrap();
+            max-width: 53vw;
             .arrow-right {
               .box-size(12px,12px,transparent);
               &.down {
