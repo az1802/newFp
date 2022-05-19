@@ -1,34 +1,39 @@
 <template>
   <div class="pay-bill">
     <div class="head-info">
-      <div :style="{ height: statusBarHeight + 'px' }"></div>
+      <div
+        class="head-placeholder"
+        :style="{ height: statusBarHeight + 'px' }"
+      ></div>
       <div class="merchant-info">
         <img :src="merchantInfo.logoUrl" alt="" class="img" />
         <div class="name">{{ merchantInfo.name }}</div>
       </div>
     </div>
-
-    <div class="amount-wrapper">
-      <div class="title">
-        消费金额<span class="iconfont icon-Delete"></span>
+    <div class="page-content">
+      <div class="amount-wrapper">
+        <div class="title">
+          消费金额<span class="iconfont icon-Delete"></span>
+        </div>
+        <FxAmountInput
+          @change="amountChange"
+          @confirm="confirmPay"
+          :isPaying="isPaying"
+          :actuallyPaid="
+            payMethod == 'FANPIAO_PAY' ? fanpiaoActuallyPaid : actuallyPaid
+          "
+          :fanpiaoMoney="fanpiaoPayAndFanpiaoBalance"
+          :selCoupon="selCoupon"
+          :showCouponReducest="
+            payMethod == 'COUPON_PAY' &&
+            selCoupon &&
+            selCoupon.leastCost <= billFee
+          "
+          :buyCouponInfo="buyCouponInfo"
+          :discountPrice="discountPrice"
+          placeholder="请输入消费金额"
+        />
       </div>
-      <FxAmountInput
-        @change="amountChange"
-        @confirm="confirmPay"
-        :isPaying="isPaying"
-        :actuallyPaid="
-          payMethod == 'FANPIAO_PAY' ? fanpiaoActuallyPaid : actuallyPaid
-        "
-        :fanpiaoMoney="fanpiaoPayAndFanpiaoBalance"
-        :selCoupon="selCoupon"
-        :showCouponReducest="
-          payMethod == 'COUPON_PAY' &&
-          selCoupon &&
-          selCoupon.leastCost <= billFee
-        "
-        :buyCouponInfo="buyCouponInfo"
-        placeholder="请输入消费金额"
-      />
       <FanpiaoPay
         :billFee="billFee"
         v-model:payMethod="payMethod"
@@ -38,6 +43,7 @@
         :needBuyFanpiao="needBuyFanpiao"
         :fanpiaoBalance="userMerchantFanpiaoBalance"
         :fanpiaoBalancePaidFee="fanpiaoBalancePaidFee"
+        v-model:isAgreeFanpiaoRules="isAgreeFanpiaoRules"
       />
       <CouponPay
         :billFee="billFee"
@@ -118,6 +124,7 @@ export default {
       needBuyCoupon = ref(false),
       buyCouponInfo = ref({}),
       isAgreeRules = ref(true),
+      isAgreeFanpiaoRules = ref(true),
       isPaying = ref(false);
 
     onBeforeMount(async () => {
@@ -142,7 +149,9 @@ export default {
       billFee.value = (val || 0) * 100;
     }
 
-    watch(billFee, (newBillFee) => {
+    watch([billFee, payMethod], (newVal) => {
+      let [newBillFee, newPayMethod] = newVal;
+      console.log("newBillFee: ", unref(fanpiaoBalancePaidFee), newBillFee);
       //开启饭票营销且余额不足时
       if (
         unref(fanpiaoBalancePaidFee) < newBillFee &&
@@ -156,6 +165,7 @@ export default {
         );
         needBuyFanpiao.value = true;
         recommendFanpiaoList.value = calcRes;
+        console.log("calcRes: ", calcRes);
         if (unref(selFanpiao).id) {
           if (
             calcRes.findIndex((item) => item.id == unref(selFanpiao).id) === -1
@@ -254,6 +264,10 @@ export default {
         };
       if (pm == "FANPIAO_PAY") {
         if (unref(needBuyFanpiao) && unref(selFanpiao)?.id) {
+          if (!unref(isAgreeFanpiaoRules)) {
+            showToast("请阅读并同意《购买饭票协议》");
+            return;
+          }
           let { id, sellPrice } = unref(selFanpiao);
           params.fanpiaoCategoryId = id;
           params.paidFee = sellPrice;
@@ -299,6 +313,41 @@ export default {
       }
     }
 
+    const discountPrice = computed(() => {
+      if (unref(billFee) == 0) {
+        return 0;
+      }
+      if (unref(payMethod) == "FANPIAO_PAY") {
+        if (!unref(needBuyFanpiao)) {
+          return (
+            unref(billFee) -
+            (unref(userMerchantFanpiaoBalance) -
+              unref(fanpiaoPayAndFanpiaoBalance))
+          );
+        } else if (unref(needBuyFanpiao) && unref(selFanpiao).id) {
+          return (
+            unref(billFee) -
+            (unref(userMerchantFanpiaoBalance) +
+              (unref(selFanpiao).totalValue || 0) -
+              unref(fanpiaoPayAndFanpiaoBalance))
+          );
+        } else {
+          return 0;
+        }
+      } else if (unref(payMethod) == "COUPON_PAY") {
+        let { reduceCost = 0, id, leastCost } = unref(selCoupon);
+        if (unref(buyCouponInfo) && unref(buyCouponInfo).id) {
+          return unref(buyCouponInfo).couponCost;
+        } else if (id && reduceCost) {
+          return reduceCost;
+        } else {
+          return 0;
+        }
+      } else {
+        return 0;
+      }
+    });
+
     return {
       statusBarHeight,
       couponList,
@@ -317,9 +366,11 @@ export default {
       userMerchantCoupons,
       selCoupon,
       isAgreeRules,
+      isAgreeFanpiaoRules,
       buyCouponInfo,
       fanpiaoBalancePaidFee,
       isPaying,
+      discountPrice,
     };
   },
 };
@@ -327,20 +378,20 @@ export default {
 <style lang="less" scoped>
 @import "@design/index.less";
 .pay-bill {
-  .box-size(100vw,unset,white);
+  .box-size(100vw,unset,#F5F5F5);
   min-height: 100vh;
   position: relative;
+  .page-content {
+    .box-size(100%,unset,F5F5F5);
+    padding: 0 17px;
+  }
   .head-info {
-    height: 200px;
-    background: linear-gradient(
-      180deg,
-      #f25643 0%,
-      #ef663f 62%,
-      rgba(235, 123, 58, 0.16) 100%
-    );
-    backdrop-filter: blur(10px);
+    .head-placeholder {
+      background: white;
+    }
     .merchant-info {
       height: 44px;
+      background: white;
       display: flex;
       align-items: center;
       justify-content: flex-start;
@@ -349,29 +400,25 @@ export default {
         width: 24px;
         border-radius: 100%;
         margin: 0 8px 0 16px;
+        background: #f5f5f5;
       }
       .name {
         font-size: 17px;
-        color: white;
+        color: #03081a;
         font-weight: bold;
       }
     }
   }
   .amount-wrapper {
-    position: absolute;
-    top: 104px;
-    left: 16px;
-    right: 16px;
-    min-height: 330px;
-    background: white;
-    border-radius: 24px;
-    padding: 0 32px;
-    z-index: 100;
-    box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.15);
+    .box-size(100%,94px,white);
+    padding: 18.5px 17px 0 17px;
+    margin: 12px auto 12px auto;
+    border-radius: 8px;
+    border: 1px solid #ffa951;
     .title {
-      .line-center(20px);
-      padding: 24px 0 16px 0;
-      .normal-font(14px,rgba(0,0,0,0.6));
+      .line-center(14px);
+      .normal-font(14px,#F68B1C);
+      margin-bottom: 14.5px;
     }
   }
 }

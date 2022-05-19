@@ -59,34 +59,26 @@
         </div>
         <div class="money-content">
           <div class="content">
-            <div class="text" v-if="!buyCouponInfo || !buyCouponInfo.id">
-              实付金额:
-            </div>
-            <div
-              class="buy-coupon-info"
-              v-if="buyCouponInfo && buyCouponInfo.id"
-            >
-              <img
-                src="https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/package-static/package-payment/directPayment/money-icon.png"
-                alt=""
-                class="money-icon"
-              />
-              <div class="text">含特惠券包¥{{ buyCouponInfo.price / 100 }}</div>
+            <div class="text" v-if="discountPrice">
+              已优惠¥{{ discountPrice / 100 }}
             </div>
             <div class="icon">￥</div>
             <div class="money">
               {{ parseFloat((actuallyPaid || 0) / 100).toFixed(2) }}
             </div>
           </div>
-          <div class="hint-text" v-if="fanpiaoMoney">
+          <div class="fanpiao-balance" v-if="fanpiaoMoney">
             预估饭票余额￥{{ fanpiaoMoney / 100 }}
           </div>
-          <div class="hint-text" v-if="showCouponReducest && selCoupon.id">
+          <div class="fanpiao-balance" v-if="buyCouponInfo && buyCouponInfo.id">
+            含券包{{ buyCouponInfo.price / 100 }}
+          </div>
+          <!-- <div class="hint-text" v-if="showCouponReducest && selCoupon.id">
             优惠￥{{ selCoupon.reduceCost / 100 }}
           </div>
           <div class="hint-text" v-if="buyCouponInfo && buyCouponInfo.id">
             优惠￥{{ buyCouponInfo.couponCost / 100 }}
-          </div>
+          </div> -->
         </div>
       </div>
       <div class="keyboard-content">
@@ -163,7 +155,6 @@
               class="key-cell key-cell2 item-key-cell"
               @click.stop="_handleKeyPress('delete')"
             >
-              <!-- <image class="key-cell-icon" src="/static/backspace.png" mode="aspectFill"></image> -->
             </view>
             <view
               class="key-confirm"
@@ -190,11 +181,11 @@ export default {
       type: Boolean,
     },
     confirmText: {
-      default: "付款",
+      default: "确定",
       type: String,
     },
     btnColor: {
-      default: "#F25643",
+      default: "#F68B1C",
       type: String,
     },
     txtColor: {
@@ -226,6 +217,10 @@ export default {
       default: true,
     },
     actuallyPaid: {
+      default: 0,
+      type: Number,
+    },
+    discountPrice: {
       default: 0,
       type: Number,
     },
@@ -437,10 +432,8 @@ export default {
   display: flex;
   justify-content: flex-start;
   align-items: flex-end;
-  padding: 0px 0 16px 0;
   box-sizing: initial;
   color: #1B1B1B;
-  border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
 
   text {
     font-size: 24px;
@@ -465,11 +458,12 @@ export default {
   width: 100%;
   height: 30px;
   position: relative;
+  margin-top: 6px;
 
   .placeholder {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: -3px;
+    left: 8px;
     width: 100%;
     color: #c0c4cc;
     display: flex;
@@ -551,6 +545,8 @@ export default {
     padding: 0 16px;
     box-sizing: border-box;
     height: 60px;
+    background: white;
+    border-top: 1px solid #d0d0d0;
 
     .glyph-box {
       width: 50px;
@@ -566,23 +562,32 @@ export default {
 
       .content {
         line-height: 28px;
+        display: flex;
 
         .text {
           display: inline-block;
-          font-size: 14px;
-          color: rgba(0, 0, 0, 0.8);
+          height: 18px;
+          padding: 0 4.5px;
+          line-height: 18px;
+          background: #FFEEEB;
+          border-radius: 3px;
+          font-size: 11px;
+          color: #FE4A26;
+          align-self: center;
+          margin-right: 5px;
         }
 
         .icon {
           display: inline-block;
-          font-size: 14px;
-          color: #F25643;
+          font-size: 17px;
+          color: #333333;
+          font-weight: bold;
         }
 
         .money {
           display: inline-block;
           font-size: 24px;
-          color: #F25643;
+          color: #333333;
           font-weight: bold;
         }
 
@@ -608,6 +613,13 @@ export default {
             color: rgba(121, 74, 7, 1);
           }
         }
+      }
+
+      .fanpiao-balance {
+        font-size: 11px;
+        color: #999999;
+        line-height: 15px;
+        margin-top: -2px;
       }
 
       .hint-text {
@@ -692,11 +704,12 @@ export default {
 
 .key-confirm {
   flex: 1;
-  background: #F25643;
-  box-shadow: 0px 1px 0px 0px rgba(242, 86, 67, 0.4);
+  background: #18C109;
+  // box-shadow: 0px 1px 0px 0px rgba(242, 86, 67, 0.4);
   border-radius: 4px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.6);
+  // color: rgba(255, 255, 255, 0.6);
+  color: white;
   font-size: 16px;
   display: flex;
   justify-content: center;
@@ -715,8 +728,8 @@ export default {
 
 .key-cell:active {
   color: white;
-  background: #F25643;
-  box-shadow: 0px 1px 0px 0px rgba(242, 86, 67, 0.6);
+  background: #D1F3CE;
+  // box-shadow: 0px 1px 0px 0px rgba(242, 86, 67, 0.6);
   opacity: 0.8;
 }
 

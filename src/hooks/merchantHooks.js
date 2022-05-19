@@ -47,6 +47,8 @@ export function useMerchantInfo() {
     // 处理必选菜
     if (dishesRes.requiredOrderItems?.length > 0) {
       setRequiredOrderItems(dishesRes.requiredOrderItems);
+    } else {
+      setRequiredOrderItems([])
     }
     if (dishesRes.minimalBillFee) {
       setOrderInfo({
@@ -314,7 +316,6 @@ export function useRequiredOrderItems() {
           quantity = peopleCount
         }
         let temp = Object.assign({}, item, { isRequired: true, quantity, minSel: quantity })
-        console.log('temp: ', temp);
         requireArr.push(temp);
       })
     }
