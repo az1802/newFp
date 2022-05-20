@@ -74,10 +74,11 @@ export function useFanpiaoInfo() {
   const { fanpiaoList, fanpiaoUserAvaterList, fanpiaoUserNum } = useState("merchant", ['fanpiaoList', "fanpiaoUserAvaterList", 'fanpiaoUserNum']);
   async function requestFanpiaoList(merchantId) {
     if (!merchantId) {
-      return;
+      return [];
     }
     let res = await getFanpiaoList(merchantId)
     setFanpiaoList(res || []);
+    return res;
   }
   async function requestFanpiaoPlatformRecords() {
     let res = await getFanpiaoPlatformRecords()
@@ -106,17 +107,19 @@ export function useCouponInfo() {
 
   async function requestCouponList(merchantId) {
     if (!merchantId) {
-      return;
+      return [];
     }
     let res = await getCouponList(merchantId);
     if (!res.couponPackages) {
-      return;
+      return [];
     }
     for (let key in res.couponPackages) {
       res.couponPackages[key].availableFee = parseFloat(key)
       res.couponPackages[key].couponCost = res.couponPackages[key]?.coupons[0]?.reduceCost || 0;
     }
-    setCouponList(Object.values(res.couponPackages));
+    let couponList = Object.values(res.couponPackages)
+    setCouponList(couponList);
+    return couponList
   }
 
   return { couponList, setCouponList, requestCouponList }

@@ -71,9 +71,7 @@ export default {
     _checkUpdateManager() {
       //检查更新
       const updateManager = uni.getUpdateManager();
-      updateManager.onCheckForUpdate((res) => {
-        console.log(res);
-      });
+      updateManager.onCheckForUpdate((res) => {});
 
       updateManager.onUpdateReady(() => {
         uni

@@ -288,15 +288,12 @@ export default {
 
     async function resetUserMerchantInfo() {
       let { merchantId } = unref(merchantInfo);
-      console.log("重新请求用户和商户相关的信息");
       await requestUserMerchantCoupons(merchantId);
       await requestUserMerchantFanpiaoBalance(merchantId); //获取饭票余额
       await getUserMerchantInfo(merchantId); //获取该用户是否是商户的会员
     }
     function navBack() {
-      console.log("back");
       let pages = getCurrentPages();
-      console.log("pages: ", pages);
       switchTab("/pages/home/home");
       // if(pages.length>1){
       //   switchTab("pages/home/home");

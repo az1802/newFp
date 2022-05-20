@@ -133,7 +133,6 @@ export default {
     );
     function createOrder() {
       let { mealType } = unref(orderInfo);
-      console.log("mealType: ", mealType, unref(canOrder));
       if (unref(selectedDishes).length == 0) {
         showToast("请先点菜");
         return;

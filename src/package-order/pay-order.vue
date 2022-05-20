@@ -96,7 +96,6 @@ export default {
         orderId,
         unref(orderInfo).billFee
       );
-      console.log("res: ", res);
 
       let remainPaidFee = res.remainDiscountFee + res.remainNoDiscountFee;
       let recommendFanpiaoList = [];
@@ -245,7 +244,6 @@ export default {
         tempOrderInfo,
         unref(userWallet)
       );
-      console.log("payOrder res: ", res);
 
       readyPay = true;
       if (!res) {

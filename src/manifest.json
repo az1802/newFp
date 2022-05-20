@@ -70,10 +70,10 @@
       //   "version": "1.1.2",
       //   "provider": "wxaae6519cee98d824"
       // },
-      "love-feast": {
-        "version": "latest",
-        "provider": "wxaed6df68ded6342b"
-      }
+      // "love-feast": {
+      //   "version": "latest",
+      //   "provider": "wxaed6df68ded6342b"
+      // }
     }
 
   },

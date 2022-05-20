@@ -1,33 +1,9 @@
 <template>
   <div class="fanpiao-pay-wrapper">
-    <div
-      class="tooltip-wrapper"
-      v-if="
-        !fanpiaoBalance && recommendFanpiaoList?.length > 0 && enableMarketing
-      "
-    >
-      <div class="text" v-if="!selFanpiao.id">
-        饭票价低至
-        <div class="val">{{ fanpiaoMinPay / 100 }}</div>
-        元
-      </div>
-      <div class="text" v-else>
-        享饭票价
-        <div class="val">{{ fanpiaoMinPay / 100 }}</div>
-        元
-      </div>
-    </div>
-    <div
-      class="fanpiao-pay-module"
-      v-if="fanpiaoBalance"
-      @click="toggleFanpiaoPayMethod"
-    >
+    <div class="fanpiao-pay-module" @click="toggleFanpiaoPayMethod">
       <div
         class="fanpiao-content-bg"
-        :class="[
-          payMethod == 'FANPIAO_PAY' ? 'active' : '',
-          showBuyFanpiaoList ? 'border-bottom-1px' : '',
-        ]"
+        :class="[payMethod == 'FANPIAO_PAY' ? 'active' : '']"
       >
         <div class="label">
           <img
@@ -60,19 +36,21 @@
       </div>
     </div>
 
-    <div class="fabpiao-list-wrapper" v-if="showBuyFanpiaoList && billFee">
-      <div
-        class="need-buy-tooltip"
-        v-if="fanpiaoBalance && recommendFanpiaoList?.length > 0"
-      >
-        余额不足，建议购买饭票
+    <div
+      class="fabpiao-list-wrapper"
+      v-if="enableMarketing && recommendFanpiaoList.length > 0"
+    >
+      <div class="tooltip" v-if="!billFee">
+        购买饭票本单享受
+        <div class="text">{{ minFanpiaoDiscount / 10 }}折</div>
       </div>
+      <div class="tooltip need-buy-fanpiao" v-else>余额不足，建议购买饭票</div>
       <scroll-view scroll-x class="fanpiao-list">
         <div
           class="fanpiao-item-wrapper"
           v-for="fanpiaoItem in recommendFanpiaoList"
           :key="fanpiaoItem.id"
-          @click="changeSelFanpiao(fanpiaoItem)"
+          @click.stop="changeSelFanpiao(fanpiaoItem)"
         >
           <div
             class="fanpiao-item"
@@ -84,7 +62,10 @@
               src="https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/package-static/package-payment/directPayment/couponRadioChecked_3.png"
             />
             <div class="discount">
-              整单享{{ 10 - fanpiaoItem.discount / 10 }}折
+              整单享<span class="text">{{
+                10 - fanpiaoItem.discount / 10
+              }}</span
+              >折
             </div>
             <div class="sell-price">
               {{ fanpiaoItem.totalValue / 100 }}
@@ -183,19 +164,33 @@ export default {
     });
 
     function changeSelFanpiao(fanpiaoItem) {
-      let { fanpiaoBalance, recommendFanpiaoList, selFanpiao } = props;
-      if (
-        !fanpiaoBalance &&
-        recommendFanpiaoList.length > 0 &&
-        selFanpiao.id == fanpiaoItem.id
-      ) {
-        emit("update:payMethod", "WECHAT_PAY");
-        emit("update:selFanpiao", {});
-        return;
+      // console.log("fanpiaoItem: ", fanpiaoItem);
+      let { fanpiaoBalance, recommendFanpiaoList, selFanpiao, billFee } = props;
+      if (!billFee) {
+        if (
+          recommendFanpiaoList.length > 0 &&
+          selFanpiao.id == fanpiaoItem.id
+        ) {
+          emit("update:payMethod", "WECHAT_PAY");
+          emit("update:selFanpiao", {});
+          return;
+        } else {
+          emit("update:payMethod", "FANPIAO_PAY");
+          emit("update:selFanpiao", fanpiaoItem);
+        }
+      } else {
+        if (
+          !fanpiaoBalance &&
+          recommendFanpiaoList.length > 0 &&
+          selFanpiao.id == fanpiaoItem.id
+        ) {
+          emit("update:payMethod", "WECHAT_PAY");
+          emit("update:selFanpiao", {});
+          return;
+        }
+        emit("update:payMethod", "FANPIAO_PAY");
+        emit("update:selFanpiao", fanpiaoItem);
       }
-
-      emit("update:payMethod", "FANPIAO_PAY");
-      emit("update:selFanpiao", fanpiaoItem);
     }
 
     function toggleFanpiaoPayMethod() {
@@ -223,7 +218,7 @@ export default {
         payMethod == "FANPIAO_PAY" ? "WECHAT_PAY" : "FANPIAO_PAY";
       emit("update:payMethod", newPayMethod);
 
-      if (!selFanpiao.id && recommendFanpiaoList.length > 0) {
+      if (!selFanpiao.id && recommendFanpiaoList.length > 0 && billFee) {
         //默认选择第一个
         emit("update:selFanpiao", recommendFanpiaoList[0]);
       } else if (selFanpiao.id && billFee > fanpiaoBalancePaidFee) {
@@ -235,6 +230,19 @@ export default {
       emit("update:isAgreeFanpiaoRules", !unref(isAgreeFanpiaoRules));
     }
 
+    const minFanpiaoDiscount = computed(() => {
+      let { recommendFanpiaoList } = props;
+
+      let m = 0;
+      recommendFanpiaoList?.forEach((item) => {
+        if (item.discount > m) {
+          m = item.discount;
+        }
+      });
+
+      return 100 - m;
+    });
+
     return {
       fanpiaoMinPay,
       changeSelFanpiao,
@@ -242,6 +250,7 @@ export default {
       navigateTo,
       showBuyFanpiaoList,
       toggleAgreeRules,
+      minFanpiaoDiscount,
     };
   },
 };
@@ -272,9 +281,6 @@ export default {
   .fanpiao-content-bg {
     .box-size(100%,44px);
     .flex-simple(space-between,center);
-    &.border-bottom-1px {
-      border-bottom: 1px solid #ededed;
-    }
     .label {
       .flex-simple(flex-start,center);
       .img {
@@ -315,10 +321,18 @@ export default {
   }
 }
 .fabpiao-list-wrapper {
-  .need-buy-tooltip {
+  border-top: 1px solid #ededed;
+  .tooltip {
     .line-center(18.5px);
     .normal-font(13px,#333333);
     padding: 12px 0 4.5px 0;
+    &.need-buy-fanpiao {
+      color: #fe4a26;
+    }
+    .text {
+      display: inline-block;
+      color: #fe4a26;
+    }
   }
   .fanpiao-list {
     max-height: 107px;
@@ -350,17 +364,21 @@ export default {
           .line-center(16.5px);
           .bold-font(12px,#B06D0B);
           margin-top: 8.5px;
+          .text {
+            display: inline-block;
+            color: #fe4a26;
+          }
         }
         .sell-price {
           .line-center(18px);
-          .bold-font(16px,#FE4A26);
-          margin-top: 5.5px;
-          .price-symbol();
+          .bold-font(22px,#FE4A26);
+          margin-top: 6.5px;
+          .price-symbol(14px,#FE4A26);
         }
         .sell-count {
           .line-center(14px);
           .bold-font(10px,#CD8620);
-          margin-top: 9.5px;
+          margin-top: 7.5px;
         }
       }
     }

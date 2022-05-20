@@ -51,7 +51,6 @@
         v-model:selCoupon="selCoupon"
         v-model:buyCouponInfo="buyCouponInfo"
         :enableMarketing="merchantInfo.enableNumberPlatePayWithCouponPackage"
-        :enableFanpiaoMarketing="merchantInfo.enableNumberPlatePayWithFanpiao"
         :userMerchantCoupons="userMerchantCoupons"
         :couponList="couponList"
         v-model:isAgreeRules="isAgreeRules"
@@ -133,15 +132,19 @@ export default {
       // 请求商户的饭票余额和用户券包
       requestUserMerchantFanpiaoBalance(merchantId);
       requestFanpiaoBalancePaidFee(merchantId);
-      requestUserMerchantCoupons(merchantId).then((coupons) => {
-        setSelCoupon(coupons[0] || {});
-      });
+      let userCoupons = await requestUserMerchantCoupons(merchantId);
+      setSelCoupon(userCoupons[0] || {});
 
       if (res.enableNumberPlatePayWithFanpiao) {
-        requestFanpiaoList(merchantId);
+        requestFanpiaoList(merchantId).then(
+          (fanpiaoList) => (recommendFanpiaoList.value = fanpiaoList)
+        );
       }
       if (res.enableNumberPlatePayWithCouponPackage) {
-        requestCouponList(merchantId);
+        let couponList = await requestCouponList(merchantId);
+        if (userCoupons.length == 0) {
+          buyCouponInfo.value = couponList[0];
+        }
       }
     });
 
@@ -151,7 +154,7 @@ export default {
 
     watch([billFee, payMethod], (newVal) => {
       let [newBillFee, newPayMethod] = newVal;
-      console.log("newBillFee: ", unref(fanpiaoBalancePaidFee), newBillFee);
+
       //开启饭票营销且余额不足时
       if (
         unref(fanpiaoBalancePaidFee) < newBillFee &&
@@ -165,7 +168,6 @@ export default {
         );
         needBuyFanpiao.value = true;
         recommendFanpiaoList.value = calcRes;
-        console.log("calcRes: ", calcRes);
         if (unref(selFanpiao).id) {
           if (
             calcRes.findIndex((item) => item.id == unref(selFanpiao).id) === -1
@@ -174,6 +176,12 @@ export default {
             selFanpiao.value = recommendFanpiaoList.value[0] || {};
           }
         }
+      } else if (!newBillFee) {
+        recommendFanpiaoList.value = unref(fanpiaoList);
+        // selFanpiao.value = {};
+        needBuyFanpiao.value = false;
+        fanpiaoActuallyPaid.value = 0;
+        fanpiaoPayAndFanpiaoBalance.value = 0;
       } else {
         recommendFanpiaoList.value = [];
         needBuyFanpiao.value = false;
@@ -186,7 +194,7 @@ export default {
     watch(
       [billFee, selFanpiao, payMethod],
       async ([newBillFee, newSelFanpiao, newPayMethod]) => {
-        if (newPayMethod !== "FANPIAO_PAY") {
+        if (newPayMethod !== "FANPIAO_PAY" || !newBillFee) {
           fanpiaoActuallyPaid.value = 0;
           fanpiaoPayAndFanpiaoBalance.value = 0;
           return;

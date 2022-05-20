@@ -146,9 +146,11 @@ export function useUserMerchantCoupon() {
 
   async function requestUserMerchantCoupons(merchantId) {
     let res = await API.User.getUserMerchantCoupon(merchantId)
-    setUserMerchantCoupons(res?.coupons || [])
-    // setUserMerchantCoupons([])
-    return res.coupons;
+    let coupons = res?.coupons || [];
+    // let coupons = [];
+    setUserMerchantCoupons(coupons || [])
+    return coupons;
+
   }
 
   return {
@@ -292,7 +294,9 @@ export function useUserMerchantFanpiaoBalance() {
       billFee,
       noDiscountFee: 0
     });
+    // 用户饭票余额可支付的金额
     fanpiaoBalancePaidFee.value = billFee - res.remainFee;
+    // fanpiaoBalancePaidFee.value = 0;
     return res;
   }
 

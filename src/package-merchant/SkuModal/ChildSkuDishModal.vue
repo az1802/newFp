@@ -165,7 +165,6 @@ export default {
       dishInfo.supplyCondiments = supplyCondiments;
 
       let selGroupChilDish = unref(selChildDishes)[dishInfo.groupId];
-      console.log("dishInfo: ", selGroupChilDish, dishInfo);
 
       if (!dishInfo.isFixed) {
         //非固定组直接做增加处理
@@ -173,7 +172,6 @@ export default {
         selGroupChilDish.push(dishInfo);
       } else {
         //修改
-        console.log("index: ", index);
 
         let index = selGroupChilDish.findIndex((item) => {
           return item.customId == dishInfo.customId;

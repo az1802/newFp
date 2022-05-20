@@ -136,7 +136,6 @@ export function usePayOrder() {
         return;
       }
     } else if (payMethod === "WALLET") {
-      console.log(orderInfo.billFee - (orderInfo.selCouponReduceCost || 0))
       if ((orderInfo.billFee - (orderInfo.selCouponReduceCost || 0)) > userWallet.redPacketBalance) {
         showToast('红包余额不足');
         return;

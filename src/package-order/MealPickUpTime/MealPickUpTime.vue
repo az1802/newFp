@@ -162,7 +162,6 @@ export default {
           unref(multiArray)[0][index[0]].value +
           ":" +
           unref(multiArray)[1][index[1]].value;
-        console.log("takeawayTime: ", takeawayTime);
         // emit("update:time", takeawayTime);
         setOrderInfo({
           takeAwayTime: takeawayTime,

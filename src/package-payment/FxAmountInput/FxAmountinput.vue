@@ -704,7 +704,7 @@ export default {
 
 .key-confirm {
   flex: 1;
-  background: #18C109;
+  background: #FC9428;
   // box-shadow: 0px 1px 0px 0px rgba(242, 86, 67, 0.4);
   border-radius: 4px;
   font-weight: 500;
@@ -728,7 +728,7 @@ export default {
 
 .key-cell:active {
   color: white;
-  background: #D1F3CE;
+  background: #FBD1A4;
   // box-shadow: 0px 1px 0px 0px rgba(242, 86, 67, 0.6);
   opacity: 0.8;
 }

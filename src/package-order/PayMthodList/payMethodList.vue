@@ -12,10 +12,8 @@
     <div class="other-pay">
       <div
         v-if="
-          merchantInfo.enableShilaiMemberCardPay &&
-          (merchantInfo.enableShilaiMemberCardRecharge ||
-            (!merchantInfo.enableShilaiMemberCardRecharge &&
-              userWallet.memberCardBalance != 0))
+          merchantInfo.enableShilaiMemberCardRecharge ||
+          userWallet.memberCardBalance != 0
         "
         class="member-stored-pay"
         @click="setPayMethod('SHILAI_MEMBER_CARD_PAY')"

@@ -1,11 +1,9 @@
 <template>
   <div
     class="coupon-pay-wrapper"
-    :class="[enableFanpiaoMarketing ? 'border-top-1px' : '']"
     v-if="
-      billFee != 0 &&
-      (userMerchantCoupons.length > 0 ||
-        (couponList.length > 0 && enableMarketing))
+      userMerchantCoupons.length > 0 ||
+      (couponList.length > 0 && enableMarketing)
     "
   >
     <div
@@ -217,10 +215,6 @@ export default {
       default: "",
     },
     enableMarketing: {
-      type: Boolean,
-      default: false,
-    },
-    enableFanpiaoMarketing: {
       type: Boolean,
       default: false,
     },
@@ -444,7 +438,7 @@ export default {
 }
 .buy-coupon-info {
   padding: 10px 0 8px;
-
+  border-top: 1px solid #ededed;
   .coupon-detail-wrapper {
     .box-size(268px,80px,white);
     .flex-simple(space-between,center);

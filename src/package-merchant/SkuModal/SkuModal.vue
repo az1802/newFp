@@ -167,7 +167,6 @@ export default {
             if (childDishGroup.isFixed) {
               //固定分组中加入
               tempDish.quantity = tempDish.quantityIncrement;
-              console.log(tempDish.addPrice);
               tempDish.childDishGroupInfo = {
                 groupIndex: childGroupIndex,
                 groupId: childDishGroup.id,

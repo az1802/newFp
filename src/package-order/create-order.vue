@@ -124,9 +124,9 @@ export default {
       });
 
       // TODO 此处便于测试才会加载相关资源 默认点餐页面该资源已经被加载
-      await requestMerchantInfo(orderInfoRes.merchantId);
-      requestFanpiaoList(orderInfoRes.merchantId);
-      requestCouponList(orderInfoRes.merchantId);
+      // await requestMerchantInfo(orderInfoRes.merchantId);
+      // requestFanpiaoList(orderInfoRes.merchantId);
+      // requestCouponList(orderInfoRes.merchantId);
       return orderInfoRes;
     }
 
@@ -233,7 +233,6 @@ export default {
         selCouponId,
         selCouponReduceCost,
       } = unref(orderInfo);
-      console.log(unref(orderInfo));
       if (unref(pendingOrderId)) {
         res = billFee - paidFee;
       } else {
