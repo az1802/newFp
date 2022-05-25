@@ -179,11 +179,20 @@ export default {
     });
 
     let totalPrice = computed(() => {
-      let res = unref(skuDishInfo).price || 0;
+      let foodPrice = unref(skuDishInfo).price;
+      let res = foodPrice || 0;
+      let foodName = unref(skuDishInfo).name || "";
+      let attrDishMap = getApp().globalData.attrDishMap || {};
 
       selAttrIds.forEach((id) => {
+        let addPrice = attrMap[id].reprice;
+        let foodAttrId = foodName + id;
+        if (foodAttrId in attrDishMap) {
+          //处理规格属性价格
+          addPrice = attrDishMap[foodAttrId].price - foodPrice;
+        }
         //处理属性的加价
-        res += attrMap[id].reprice;
+        res += addPrice;
       });
 
       for (let key in selCondiments) {

@@ -48,12 +48,34 @@ export function useOrder() {
   const { selectedDishes } = useState("menu", ["selectedDishes"])
   const { setPayMethod, setOrderInfo } = useMutations("order", ["setPayMethod", "setOrderInfo"]);
   const { phone } = useState('user', ['phone']);
+
+  function handleKeruyunSkuDish(selectedDishes) {
+    let attrDishMap = getApp().globalData.attrDishMap || {}
+    selectedDishes.forEach(dishInfo => {
+      dishInfo = unref(dishInfo)
+      if (dishInfo.attrs) {
+        dishInfo.attrs.forEach((attr) => {
+          let attrId = dishInfo.name + attr.id
+          if (attrId in attrDishMap) {
+            let realDish = attrDishMap[attrId]
+            dishInfo.id = realDish.id
+            dishInfo.originPrice = realDish.originPrice
+            dishInfo.marketPrice = realDish.marketPrice
+            dishInfo.discountPrice = realDish.discountPrice
+            dishInfo.price = realDish.price
+          }
+        })
+      }
+    })
+
+    return selectedDishes
+  }
   async function createOrder(args = {}) {
 
     let orderInfoTemp = unref(orderInfo);
     let { mealType, selectedAddress, shippingFee } = orderInfoTemp;
     let orderArgs = {
-      dishList: unref(selectedDishes),
+      dishList: handleKeruyunSkuDish(unref(selectedDishes)),
       mealType: orderInfoTemp.mealType,
       shippingAddressId: orderInfoTemp.id || '',
       shippingFee: orderInfoTemp.shippingFee || 0,

@@ -40,9 +40,17 @@
       class="fabpiao-list-wrapper"
       v-if="enableMarketing && recommendFanpiaoList.length > 0"
     >
-      <div class="tooltip" v-if="!billFee">
+      <div class="tooltip" v-if="!billFee && selFanpiao.id">
+        <div class="text">请在上方输入消费金额</div>
+      </div>
+      <div class="tooltip" v-else-if="!billFee && !selFanpiao.id">
         购买饭票本单享受
         <div class="text">{{ minFanpiaoDiscount / 10 }}折</div>
+      </div>
+      <div class="tooltip" v-else-if="billFee && selFanpiao.id">
+        本单折后低至
+        <div class="text">{{ (billFee - discountFanpiaoPrice) / 100 }}</div>
+        元
       </div>
       <div class="tooltip need-buy-fanpiao" v-else>余额不足，建议购买饭票</div>
       <scroll-view scroll-x class="fanpiao-list">
@@ -121,6 +129,10 @@ export default {
       default: {},
     },
     fanpiaoBalance: {
+      type: [Number, String],
+      default: 0,
+    },
+    discountFanpiaoPrice: {
       type: [Number, String],
       default: 0,
     },

@@ -41,7 +41,14 @@
         <div class="text">单单减!本单再减{{ fanpiaoPayTooltipText }}</div>
         <div class="btn" @click="toggleFanpiaoPay">点我立减</div>
       </div>
-      <div class="pay-btn" @click="payOrderInfo">{{ payText }}</div>
+      <div class="pay-btn" @click="payOrderInfo">
+        {{ payText }}
+        <GetPhoneButton
+          v-if="showGetPhoneButton"
+          class="get-phone-button"
+          @success="getPhoneSuccess"
+        ></GetPhoneButton>
+      </div>
     </div>
   </div>
 </template>
@@ -53,7 +60,11 @@ import {
   useFanpiaoPayInfo,
   useOrderRechargeInfo,
 } from "@hooks/orderHooks";
-import { useUserMerchantWallet, useUserInfo } from "@hooks/userHooks";
+import {
+  useUserMerchantWallet,
+  useUserInfo,
+  useUserPhone,
+} from "@hooks/userHooks";
 import {
   useFanpiaoInfo,
   useMerchantInfo,
@@ -68,6 +79,7 @@ import {
   navigateTo,
   sleep,
   calcFanpiaoDiscountPrice,
+  showToast,
 } from "@utils";
 
 import { onBeforeMount, computed, unref, onBeforeUnmount } from "vue";
@@ -88,6 +100,7 @@ export default {
       useUserMerchantWallet();
     const { requestMerchantRecharges, rechargeConfigs } = useRechargeInfo();
     const { payMethod, setPayMethod } = usePayMethod();
+    const { phone, setPhone } = useUserPhone();
 
     async function genRecommendFanpiaoList(merchantId) {
       let orderId = unref(orderInfo).orderId || unref(orderInfo).pendingOrderId;
@@ -228,8 +241,20 @@ export default {
       return resText;
     });
 
+    const showGetPhoneButton = computed(() => {
+      return (
+        unref(payMethod) === "FANPIAO_PAY" &&
+        unref(userWallet).fanpiaoBalance >= 50000 &&
+        !unref(phone) &&
+        0
+      );
+    });
     async function payOrderInfo() {
       if (!readyPay) {
+        return;
+      }
+      if (unref(showGetPhoneButton)) {
+        showToast("为保障你的饭票安全，请授权手机号", "none", 3000);
         return;
       }
       let tempOrderInfo = { ...unref(orderInfo) };
@@ -307,6 +332,13 @@ export default {
           });
       }
     }
+    async function getPhoneSuccess(phone) {
+      if (!phone) {
+        showToast("授权手机号失败");
+      } else {
+        setPhone(phone);
+      }
+    }
     return {
       merchantInfo,
       orderInfo,
@@ -320,6 +352,8 @@ export default {
       payText,
       toggleFanpiaoPay,
       fanpiaoPayTooltipText,
+      showGetPhoneButton,
+      getPhoneSuccess,
     };
   },
 };
@@ -360,8 +394,15 @@ export default {
     }
     .pay-btn {
       width: 100%;
+      position: relative;
       .common-btn(45px,#f25643,25px);
       .bold-font(18px,white);
+      ::v-deep.get-phone-button {
+        position: absolute;
+        left: 0;
+        .box-size(100%,100%,transparent);
+        opacity: 0;
+      }
     }
   }
 }

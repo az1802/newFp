@@ -685,7 +685,7 @@ export default {
         height: 44px;
         line-height: 44px;
 
-        .get-phone-btn {
+        >>>.get-phone-btn {
           position: absolute;
           left: 0;
           top: 0;

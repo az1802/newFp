@@ -36,6 +36,7 @@
       </div>
       <FanpiaoPay
         :billFee="billFee"
+        :discountFanpiaoPrice="discountPrice"
         v-model:payMethod="payMethod"
         v-model:selFanpiao="selFanpiao"
         :enableMarketing="merchantInfo.enableNumberPlatePayWithFanpiao"

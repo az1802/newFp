@@ -83,7 +83,7 @@
         @click.stop="stop"
       >
         <GetPhoneButton
-          class="get-phone-btn"
+          class="get-phone-button"
           @success="getPhoneSuccess"
         ></GetPhoneButton>
       </div>
@@ -131,10 +131,38 @@ export default {
     let forceGetPhone = ref(
       forceRegisterPhone === undefined ? true : forceRegisterPhone
     );
+    const availableUseCoupon = computed(() => {
+      let res = null;
+      unref(userMerchantCoupons).forEach((item) => {
+        if (item.leastCost < res || res === null) {
+          res = item;
+        }
+      });
+      return res;
+    });
+    const canUsedCoupon = computed(() => {
+      return (
+        unref(availableUseCoupon) &&
+        unref(availableUseCoupon).leastCost <= unref(selectedDishesTotalPrice)
+      );
+    });
+    const totalPrice = computed(() => {
+      return (
+        unref(selectedDishesTotalPrice) - unref(selectedDishesDiscountPrice)
+      );
+    });
+
+    const canOrder = computed(() => {
+      return unref(orderInfo).minimalBillFee <= unref(selectedDishesTotalPrice);
+    });
     function createOrder() {
       let { mealType } = unref(orderInfo);
       if (unref(selectedDishes).length == 0) {
         showToast("请先点菜");
+        return;
+      }
+      if (!unref(totalPrice)) {
+        showToast("账单金额为0,无法下单");
         return;
       }
       if (!unref(canOrder) && mealType == "TAKE_OUT") {
@@ -171,31 +199,6 @@ export default {
       ).toFixed(2);
 
       return max != min ? `${min}-${max}` : `${max}`;
-    });
-
-    const availableUseCoupon = computed(() => {
-      let res = null;
-      unref(userMerchantCoupons).forEach((item) => {
-        if (item.leastCost < res || res === null) {
-          res = item;
-        }
-      });
-      return res;
-    });
-    const canUsedCoupon = computed(() => {
-      return (
-        unref(availableUseCoupon) &&
-        unref(availableUseCoupon).leastCost <= unref(selectedDishesTotalPrice)
-      );
-    });
-    const totalPrice = computed(() => {
-      return (
-        unref(selectedDishesTotalPrice) - unref(selectedDishesDiscountPrice)
-      );
-    });
-
-    const canOrder = computed(() => {
-      return unref(orderInfo).minimalBillFee <= unref(selectedDishesTotalPrice);
     });
 
     return {
@@ -276,10 +279,11 @@ export default {
     .get-phone-wrapper {
       position: absolute;
       width: 108px;
-      right: 12px;
+      right: 0px;
       top: 0;
       bottom: 0;
-      .get-phone-button {
+      ::v-deep.get-phone-button {
+        position: absolute;
         .box-size(100%,100%,transparent);
         opacity: 0;
       }
