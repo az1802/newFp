@@ -146,16 +146,18 @@ export default {
           maxReduceCostCoupon = item;
         }
       });
-      if (maxReduceCostCoupon) {
-        setOrderInfo({
-          selCouponId: maxReduceCostCoupon.id,
-          selCouponReduceCost: maxReduceCostCoupon.reduceCost,
-        });
-      } else {
-        setOrderInfo({
-          selCouponId: "",
-          selCouponReduceCost: 0,
-        });
+      if (!unref(orderInfo).customSelCoupon) {
+        if (maxReduceCostCoupon) {
+          setOrderInfo({
+            selCouponId: maxReduceCostCoupon.id,
+            selCouponReduceCost: maxReduceCostCoupon.reduceCost,
+          });
+        } else {
+          setOrderInfo({
+            selCouponId: "",
+            selCouponReduceCost: 0,
+          });
+        }
       }
     }
     onBeforeMount(async () => {
@@ -178,6 +180,9 @@ export default {
           selectedAddress: addressList[0] || {},
         });
       }
+      setOrderInfo({
+        customSelCoupon: false,
+      });
     });
 
     function resetBuyCouponInfo() {

@@ -6,19 +6,22 @@
     {
       "path": "pages/home/home",
       "style": {
-        "navigationBarTitleText": "时来"
+        "enablePullDownRefresh": false,
+        "disableScroll": false,
+        "navigationBarTextStyle": "white",
+        "backgroundColor": "#F8F8F8"
       }
     },
     {
       "path": "pages/order/order",
       "style": {
-        "navigationBarTitleText": "时来"
+        "navigationBarTitleText": " "
       }
     },
     {
       "path": "pages/mine/mine",
       "style": {
-        "navigationBarTitleText": "时来"
+        "navigationBarTitleText": " "
       }
     },
     {
@@ -147,7 +150,12 @@
       "pages": [{
         "path": "wallet/wallet",
         "style": {
-          "disableScroll": false
+          "disableScroll": false,
+          "defaultTitle": "",
+          "navigationBarTitleText": " ",
+          "transparentTitle": "always", //支付宝
+          "titlePenetrate": "YES", //支付宝
+          "navigationStyle": "custom",
         }
       }, {
         "path": "coupon/coupon",
@@ -199,7 +207,13 @@
     }
   },
   "globalStyle": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "navigationBarTextStyle": "black",
     "navigationStyle": "custom",
+    "allowsBounceVertical": "NO",
+    "transparentTitle": "always",
+    "titlePenetrate": "YES"
   },
   "tabBar": {
     "color": "#666666",

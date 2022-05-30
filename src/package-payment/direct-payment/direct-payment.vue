@@ -271,6 +271,9 @@ export default {
           payMethod: "WECHAT_PAY",
           transactionType: "DIRECT_PAY",
         };
+      //#ifdef MP-ALIPAY
+      params.payMethod = "ALIPAY";
+      //#endif
       if (pm == "FANPIAO_PAY") {
         if (unref(needBuyFanpiao) && unref(selFanpiao)?.id) {
           if (!unref(isAgreeFanpiaoRules)) {

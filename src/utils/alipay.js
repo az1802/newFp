@@ -6,12 +6,12 @@
  * @FilePath: /new-fanpiao-uniapp/src/utils/alpay.js
  */
 import API from "@api";
-export async function aliPay({ tradeNO }) {
+export async function aliPay({ tradeNo }) {
   return new Promise((resolve, reject) => {
     my.tradePay({
-      tradeNO: tradeNO,
+      tradeNO: tradeNo,
       success: (res) => {
-        resolve(true)
+        resolve(res.resultCode == "9000")
       },
       fail: (err) => {
         reject(false)
@@ -57,7 +57,7 @@ export async function aliSignUp() {
   my.getAuthCode({
     scopes: "auth_base",
     success: async (res) => {
-      await this._signUpAlipay(res.authCode);
+      await _signUpAlipay(res.authCode);
     },
     fail: (res) => { },
     complete: (res) => { },
@@ -69,7 +69,7 @@ async function _signUpAlipay(authCode) {
     authCode = authCode.split('&')[0]
   }
   let data = { authCode: authCode, platform: "MINIPROGRAM", version: 1 };
-  let res = await API.Login.signUpAlipay({ data });
+  let res = await API.User.signUpAlipay(data);
   const { alipayProfile = {}, memberProfile, id } = res;
   if (id) {
     uni.setStorageSync("userId", id);

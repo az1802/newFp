@@ -123,7 +123,7 @@ import DishOperation from "../Common/DishOperation.vue";
 import { useSkuDish, useDish } from "@hooks/menuHooks";
 import { reactive, watch, watchEffect, ref, computed, toRaw, unref } from "vue";
 import { showToast, fenToYuan } from "@utils";
-import { cloneDeep } from "lodash";
+import { cloneDeep } from "@utils";
 export default {
   components: {
     DishOperation,

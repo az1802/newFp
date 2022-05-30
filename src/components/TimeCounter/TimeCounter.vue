@@ -122,6 +122,9 @@ export default {
       millisecond: 0,
     };
   },
+  unmounted() {
+    clearInterval(this.intervalTimeId);
+  },
   mounted() {
     this._initData(this.endDate);
   },
@@ -157,7 +160,7 @@ export default {
 
       let endTimes = endDate.getTime();
       let currentTimes = currentTime.getTime();
-      setInterval(() => {
+      this.intervalTimeId = setInterval(() => {
         let timesDifference = endTimes - new Date().getTime();
         this.millisecond = parseInt((timesDifference % 1000) / 100);
         this.second = parseInt(timesDifference / 1000) % 60;

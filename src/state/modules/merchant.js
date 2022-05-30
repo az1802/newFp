@@ -5,7 +5,7 @@
  * @LastEditTime: 2022-02-16 12:09:32
  * @FilePath: /new-fanpiao-uniapp/src/state/modules/merchant.js
  */
-import { maxBy, minBy } from "lodash";
+import { maxBy, minBy } from "@utils";
 export default {
   state: {
     merchantInfo: {

@@ -1,6 +1,8 @@
 <template>
   <div class="page">
+    <!-- #ifndef MP-ALIPAY -->
     <NavigationBar title="" position="fixed" />
+    <!-- #endif -->
     <img
       :src="merchantInfo.storeCoverPhotoUrls"
       class="cover-photo"

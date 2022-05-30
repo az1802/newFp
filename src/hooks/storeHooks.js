@@ -8,15 +8,24 @@
 import { computed } from 'vue'
 import { mapGetters, mapState, useStore, createNamespacedHelpers, mapMutations, mapActions } from 'vuex'
 
+const cacheStore = {};
 
-const useMapper = (mapper, mapFn, useComputed = false) => {
-
+const useMapper = (mapper, mapFn, moduleName, useComputed = false) => {
+  if (!cacheStore[moduleName]) {
+    cacheStore[moduleName] = {}
+  }
   const store = useStore()
   const storeStateFns = mapFn(mapper)
   const storeState = {}
   Object.keys(storeStateFns).forEach((keyFn) => {
-    const fn = storeStateFns[keyFn].bind({ $store: store })
-    storeState[keyFn] = useComputed && computed(fn) || fn
+    let fn;
+    if (cacheStore[moduleName][keyFn] && 0) {
+      storeState[keyFn] = cacheStore[moduleName][keyFn]
+    } else {
+      fn = storeStateFns[keyFn].bind({ $store: store })
+      storeState[keyFn] = useComputed && computed(fn) || fn
+      cacheStore[moduleName][keyFn] = storeState[keyFn]
+    }
   })
   return storeState
 }
@@ -28,7 +37,7 @@ export function useState(moduleName, mapper) {
   } else {
     mapper = moduleName
   }
-  return useMapper(mapper, mapperFn, true)
+  return useMapper(mapper, mapperFn, moduleName, true)
 }
 
 export function useGetters(moduleName, mapper) {
@@ -38,7 +47,7 @@ export function useGetters(moduleName, mapper) {
   } else {
     mapper = moduleName
   }
-  return useMapper(mapper, mapperFn, true)
+  return useMapper(mapper, mapperFn, moduleName, true)
 }
 
 export function useMutations(moduleName, mapper) {
@@ -49,7 +58,7 @@ export function useMutations(moduleName, mapper) {
     mapper = moduleName
   }
 
-  return useMapper(mapper, mapperFn)
+  return useMapper(mapper, mapperFn, moduleName)
 }
 
 export function useActions(moduleName, mapper) {
@@ -59,5 +68,5 @@ export function useActions(moduleName, mapper) {
   } else {
     mapper = moduleName
   }
-  return useMapper(mapper, mapperFn)
+  return useMapper(mapper, mapperFn, moduleName)
 }

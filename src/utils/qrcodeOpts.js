@@ -1,6 +1,6 @@
 
 import { showToast } from "@utils";
-import APT from "@api";
+import API from "@api";
 // const sceneMock = "5c0daef6ea47421c908047702b0a35a9";
 // const merchantIdMock = "1e543376139b474e97d38d487fa9fbe8";
 // 开发用正式环境
@@ -26,19 +26,21 @@ export function parseQrcodeParams(q) {
   //#ifdef MP-ALIPAY
   let qrCodeJson = my.getStorageSync({ key: "qrCode" }).data;
   if (qrCodeJson) {
-    scene = qrCodeJson;
+
     // 清除扫码留下的内容避免后续订单进入仍显示这家店铺
+    res = {
+      scene: qrCodeJson.scene,
+      merchantId: qrCodeJson.merchantId,
+      tableId: qrCodeJson.tableId,
+      id: qrCodeJson.id,
+    }
     my.setStorageSync({
       key: "qrCode",
       data: "",
     });
-    res = qrCodeJson
   }
   //#endif
-
-
   return res;
-
 }
 
 
@@ -100,6 +102,25 @@ export async function handleQrcodeParams(opts = mockOpts) {
   parseRes.merchantId = merchantId;
   parseRes.tableId = tableId;
   parseRes.tableName = tableName;
+  //#ifdef MP-ALIPAY
+  let qrCodeJson = my.getStorageSync({ key: "qrCode" }).data;
+  if (qrCodeJson) {
+    let { id, tableId } = qrCodeJson
+    if (id) {
+      scene = id;
+      parseRes.scene = scene;
+    } else if (tableId || merchantId) { //不存在id只存在tableId则需要去拿scene值
+      parseRes.tableId = parseRes.tableId || tableId;
+      parseRes.merchantId = parseRes.merchantId || merchantId;
+
+    }
+    // 清除扫码留下的内容避免后续订单进入仍显示这家店铺
+    my.setStorageSync({
+      key: 'qrCode',
+      data: ""
+    });
+  }
+  //#endif
   // 解析二维码参数
   if (q) {
     let parseQRes = await qrcodeParams(q);

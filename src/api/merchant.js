@@ -14,7 +14,6 @@
  */
 import URLS from './urls'
 import http from './http';
-import { reduceRight } from 'lodash';
 
 // import catalogScene from '@mockData/catalogScene.js'
 // import dishCategory from '@mockData/dishCategory.js'

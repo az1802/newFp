@@ -6,6 +6,48 @@
  * @FilePath: /new-fanpiao-uniapp/src/utils/common.js
  */
 
+export function upperFirst(word) {
+  if (!word) return word;
+  return word.slice(0, 1).toUpperCase() + word.slice(1)
+}
+
+
+export function cloneDeep(obj) {
+  let res = {};
+  for (let key in obj) {
+    if (typeof obj[key] == 'object') {
+      res[key] = cloneDeep(obj[key])
+    } else {
+      res[key] = obj[key];
+    }
+  }
+
+  return res
+}
+export function maxBy(arr, fn) {
+  let maxVal = -1, maxItem;
+  arr.forEach(item => {
+    if (fn(item) > maxVal) {
+      maxVal = fn(item);
+      maxItem = item
+
+    }
+  })
+
+  return maxItem || '';
+
+}
+export function minBy(arr, fn) {
+  let minVal = 100, minItem;
+  arr.forEach(item => {
+    if (fn(item) < minVal) {
+      minVal = fn(item);
+      minItem = item;
+    }
+  })
+  return minItem || '';
+}
+
 
 export async function sleep(time) {
   return new Promise(resolve => {

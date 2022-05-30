@@ -57,7 +57,7 @@
 <script>
 import { useNavigate } from "@hooks/commonHooks";
 import { useFanpiaoPay } from "@hooks/payHooks";
-import { fenToYuan } from "@utils";
+import { fenToYuan, showToast } from "@utils";
 const fanpiaoCountArr = [20, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; //饭票数量初始化
 export default {
   props: {
@@ -87,7 +87,7 @@ export default {
       navigateTo,
       fanpiaoCountArr,
       fenToYuan,
-      buyFp(fanpiaoItem, merchantId) {
+      async buyFp(fanpiaoItem, merchantId) {
         let userId = uni.getStorageSync("userId") || "";
         if (!userId) {
           navigateTo("MENU/LOGIN", {
@@ -98,7 +98,8 @@ export default {
           });
           return "";
         } else {
-          buyFanpiao(fanpiaoItem, merchantId);
+          let payRes = await buyFanpiao(fanpiaoItem, merchantId);
+          showToast(payRes ? "饭票购买成功" : "饭票购买失败");
         }
       },
     };

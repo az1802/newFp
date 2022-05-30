@@ -119,6 +119,7 @@ export default {
       font-size: 19px;
       color: white;
       background: rgba(227, 81, 63, 0.5);
+      line-height: 25px;
 
       &.active {
         background: rgba(227, 81, 63, 1);

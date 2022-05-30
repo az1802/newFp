@@ -21,7 +21,6 @@ axios.defaults.adapter = function (config) {
       header: config.headers,
       data: config.data,
       dataType: config.dataType,
-      responseType: config.responseType,
       sslVerify: config.sslVerify,
       complete: function complete(response) {
         response = {
@@ -42,7 +41,7 @@ const baseConfig = {
   baseURL: VITE_BASE_URL,
   timeout: VITE_TIME_OUT,
   headers: {
-    test: "sunj",
+    // test: "sunj"
   },
   transformResponse(data) {
     return data;
@@ -78,6 +77,7 @@ http.interceptors.response.use(function (response) {
 
 // 设置通用请求头
 http.setHeaders = (headers) => {
+  console.log('headers: ', headers);
   for (const key in headers) {
     http.defaults.headers[key] = headers[key];
   }

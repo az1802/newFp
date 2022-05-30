@@ -326,8 +326,10 @@ export default {
 
 .container {
   .box-size(100vw,100vh);
+  .pos-tr-absolute(0px,0px);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   .header {
     height: 150px;
     flex-shrink: 0;

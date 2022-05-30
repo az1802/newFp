@@ -7,7 +7,6 @@
  */
 import URLS from './urls'
 import http from './http';
-import { reduceRight } from 'lodash';
 
 
 

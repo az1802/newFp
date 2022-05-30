@@ -5,7 +5,6 @@ import { useUserLogin, useUserInfo } from '@hooks/userHooks'
 import { useDish } from '@hooks/menuHooks';
 import API from "@api";
 import { wechatPay, aliPay, showToast, sleep } from '@utils';
-import { zip } from 'lodash';
 
 async function getTransactionId(args) {
   let res = await API.Order.pay(args);
@@ -322,6 +321,8 @@ export function useDirectPay(payMethod, params) {
     }
     if (params.payMethod == "WECHAT_PAY") {
       payRes = await wechatPay(res.signData);
+    } else if (params.payMethod == "ALIPAY") {
+      payRes = await aliPay(res);
     } else if (params.payMethod == "FANPIAO_PAY") {
       if (res.errcode != 0) {
         showToast(res.errmsg);

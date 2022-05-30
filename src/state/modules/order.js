@@ -7,7 +7,12 @@
  */
 export default {
   state: {
+    //#ifdef MP-WEIXIN
     payMethod: "WECHAT_PAY",//支付方式
+    //#endif
+    //#ifdef MP-ALIPAY
+    payMethod: "ALIPAY",//支付方式
+    //#endif
     orderId: "",
     orderInfo: {
       pendingOrderId: "",
@@ -38,6 +43,7 @@ export default {
       isBuyCouponPackage: false, //是否开启券包合并支付
       selCouponReduceCost: 0, //使用券包的价格
       selCouponId: "",//使用券包的id
+      customSelCoupon: false,
       isAgreeCouponAccord: true, //是否统一付费券包协议
       selRechargeInfo: {},
       transactionType: "SELF_DISH_ORDER_PAYMENT"

@@ -24,7 +24,7 @@ export function useUserInfo() {
     }
     let res = await API.User.getUserInfo();
     if (res) {
-      const { alipayProfile = {}, memberProfile, id, wechatProfile } = res.user;
+      const { alipayProfile = {}, memberProfile, id, wechatProfile = {} } = res.user;
       let userInfoData = {
         userId: res.id,
         avatarUrl: wechatProfile.headimgurl || memberProfile.headimgurl,

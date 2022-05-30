@@ -20,6 +20,7 @@
   </div>
 </template>
 <script>
+import http from "@api/http";
 import API from "@api";
 import { getUserInfo, showToast } from "@utils";
 export default {
@@ -78,7 +79,7 @@ export default {
       }
       let data = { authCode: authCode, platform: "MINIPROGRAM" };
       let res = await API.User.signUpAlipay(data);
-      const { alipayProfile = {}, memberProfile, id } = res.data;
+      const { alipayProfile = {}, memberProfile, id } = res;
 
       uni.setStorageSync("userId", id);
       let useInfo = alipayProfile || memberProfile || {};
@@ -87,7 +88,7 @@ export default {
         useInfo.nickName = useInfo.nickname;
       }
       uni.setStorageSync("userInfo", useInfo);
-      API.User.setUserHeader(id);
+      http.setHeaders({ userId: id });
       return;
     },
     async aliLogin(e) {

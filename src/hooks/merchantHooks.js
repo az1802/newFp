@@ -21,7 +21,7 @@ const {
 
 
 export function useMerchantInfo() {
-  const { setMerchantInfo } = useMutations("merchant", ["setMerchantInfo", "merchantInfo"]);
+  const { setMerchantInfo } = useMutations("merchant", ["setMerchantInfo"]);
   const { setPackagingBoxConfig, setRequiredOrderItems } = useMutations("menu", ["setPackagingBoxConfig", "setRequiredOrderItems"]);
   const { merchantInfo } = useState("merchant", ['merchantInfo']);
   const { setOrderInfo } = useMutations('order', ['setOrderInfo'])
@@ -97,7 +97,6 @@ export function useFanpiaoInfo() {
     ]),
     requestFanpiaoList,
     setFanpiaoList,
-    requestFanpiaoList,
     requestFanpiaoPlatformRecords,
   }
 }
@@ -212,11 +211,27 @@ export function useMerchantOrderRecord(merchantId) {
 
   const orderList = ref([]), fanpiaoList = ref([]), couponList = ref([]), moreOrder = {}, moreFanpiao = {}, moreCoupon = {};
 
-  let orderParams = {}, fanpiaoParams = {}, couponParams = {};
-  async function getOrderRecordList(first = true) {
+  // 调整请求参数
+  let orderParams = {
+    hasMore: true
+  }, fanpiaoParams = {
+    hasMore: true
+  }, couponParams = {
+    hasMore: true
+  };
+  async function getOrderRecordList() {
+    if (!orderParams.hasMore) {
+      return;
+    }
     let res = await API.Merchant.getOrderRecordList(merchantId, orderParams) || { orders: [] };
     let { hasMore, latestTime, orders = [] } = res;
-    orderList.value = orderList.value.concat(orders);
+    let arrTemp = []
+    orders?.forEach(newItem => {
+      if (orderList.value.findIndex(item => item.id === newItem.id) == -1) {
+        arrTemp.push(newItem);
+      }
+    })
+    orderList.value = orderList.value.concat(arrTemp);
     if (hasMore) {
       orderParams = {
         hasMore,
@@ -226,23 +241,40 @@ export function useMerchantOrderRecord(merchantId) {
 
   }
 
-  async function getFanpiaoRecordList(first = true) {
+  async function getFanpiaoRecordList() {
+    if (!fanpiaoParams.hasMore) {
+      return;
+    }
     let res = await API.Merchant.getFanpiaoRecordList(merchantId, fanpiaoParams) || { fanpiaos: [] };
     let { hasMore, latestTime, fanpiaos = [] } = res;
-    fanpiaoList.value = fanpiaoList.value.concat(fanpiaos);
+    let arrTemp = []
+    fanpiaos?.forEach(newItem => {
+      if (fanpiaoList.value.findIndex(item => item.id === newItem.id) == -1) {
+        arrTemp.push(newItem);
+      }
+    })
+    fanpiaoList.value = fanpiaoList.value.concat(arrTemp);
     if (hasMore) {
       fanpiaoParams = {
         hasMore,
         latestTime
       }
     }
-
   }
 
-  async function getCouponRecordList(first = true) {
+  async function getCouponRecordList() {
+    if (!couponParams.hasMore) {
+      return;
+    }
     let res = await API.Merchant.getCouponRecordList(merchantId, couponParams) || { couponPackages: [] };
     let { hasMore, latestTime, couponPackages = [] } = res;
-    couponList.value = couponList.value.concat(couponPackages);
+    let arrTemp = []
+    couponPackages?.forEach(newItem => {
+      if (couponList.value.findIndex(item => item.id === newItem.id) == -1) {
+        arrTemp.push(newItem);
+      }
+    })
+    couponList.value = couponList.value.concat(arrTemp);
     if (hasMore) {
       couponParams = {
         hasMore,

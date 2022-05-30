@@ -8,7 +8,6 @@
 
 
 // 将所有的接口请求都通过这个统一输出
-import { upperFirst, camelCase } from 'lodash'
 
 const requireApiModules = import.meta.globEager('./(?!urls|http|test)*.js')
 const hooks = {}

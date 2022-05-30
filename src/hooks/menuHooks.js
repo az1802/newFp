@@ -79,8 +79,9 @@ export function useSkuDish() {
 }
 
 export function useCart() {
-  const { selectedDishes } = useState("menu", [
+  const { selectedDishes, showCartModal } = useState("menu", [
     "selectedDishes",
+    "showCartModal"
   ])
   const { toggleShowCartModal, addCartDish, reduceCartDish, saveSelectedDishesStorage } = useMutations("menu", [
     "toggleShowCartModal",
@@ -90,9 +91,8 @@ export function useCart() {
   ])
 
   return {
-    ...useState("menu", [
-      "showCartModal",
-    ]),
+    selectedDishes,
+    showCartModal,
     toggleShowCartModal,
     addCartDish(...args) {
       addCartDish(...args);

@@ -62,7 +62,7 @@ export default {
       //#ifdef MP-ALIPAY
       // 支付宝模式的参数解析
       if (options?.query?.qrCode) {
-        this.qrCodeJson = handleQrcodeStr(options.query.qrCode);
+        let qrCodeJson = handleQrcodeStr(options.query.qrCode);
         my.setStorageSync({
           key: "qrCode",
           data: qrCodeJson,

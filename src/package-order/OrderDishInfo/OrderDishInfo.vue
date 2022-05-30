@@ -116,10 +116,13 @@ export default {
       margin-left: 12px;
       align-self: flex-end;
       .normal-font(14px,#333);
+      line-height: 20px;
       .num {
         .bold-font(20px,#333);
         .price-symbol(12px,#333);
         margin-left: 6px;
+        line-height: 20px;
+        height: 20px;
       }
     }
   }

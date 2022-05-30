@@ -15,12 +15,14 @@
       position: position,
     }"
   >
+    <!-- #ifdef MP-WEIXIN -->
     <div class="arrow" v-if="showArrow" @click="back">
       <span
         class="iconfont icon-dajiantouzuo"
         :style="{ color: iconColor }"
       ></span>
     </div>
+    <!-- #endif -->
     <div class="order-icon" v-if="showOrderIcon" @click="viewMerchantOrder">
       <img
         src="https://shilai-images.oss-cn-shenzhen.aliyuncs.com/staticImgs/common/icon-order_02.png"
@@ -106,15 +108,23 @@ export default {
   .flex-center();
   height: 44px;
   background: white;
-  position: relative;
+  position: fixed;
   z-index: 10;
+  width: 100%;
+  top: 0;
+  left: 0;
   .arrow {
     .pos-tl-absolute(unset,0px);
     padding: 10px;
     z-index: 1000;
   }
   .order-icon {
+    /* #ifdef MP-WEXIN */
     .pos-tl-absolute(unset,40px);
+    /* #endif */
+    /* #ifndef MP-WEXIN */
+    .pos-tl-absolute(unset,50px);
+    /* #endif */
     z-index: 1000;
     .box-size(100%,40px);
     .flex-simple(flex-start,center);

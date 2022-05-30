@@ -151,7 +151,7 @@ export default {
         curImgIndex.value += 1;
       }, 2000);
     });
-    onBeforeUnmount(() => {
+    onUnmounted(() => {
       clearTimeout(timeOutId);
     });
     watch(curImgIndex, (nval) => {

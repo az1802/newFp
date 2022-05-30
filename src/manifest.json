@@ -78,7 +78,15 @@
 
   },
   "mp-alipay": {
-    "usingComponents": true
+    "usingComponents": true,
+    "navigationStyle": "custom",
+    "allowsBounceVertical": "NO",
+    "defaultTitle": "",
+    "component2": true,
+    "navigationBarTitleText": " ",
+    "transparentTitle": "always", //支付宝
+    "titlePenetrate": "YES", //支付宝
+
   },
   "mp-baidu": {
     "usingComponents": true

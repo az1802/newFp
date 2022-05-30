@@ -7,7 +7,6 @@
  */
 import menuStore from './menu'
 
-import { camelCase } from 'lodash'
 const modules = {};
 
 (function genModules() {

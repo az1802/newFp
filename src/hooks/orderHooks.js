@@ -274,8 +274,14 @@ export function useOrderDetail() {
     if (orderInfoRes) {
       transformDetailDishList(orderInfoRes)
       let curBatchNum = 1;
-
+      let dishListMap = {} //处理套餐的总价
       orderInfoRes.dishList.forEach((item, index) => {
+        if (!item.isChildDish) {
+          dishListMap[item.uuid] = item;
+        } else if (item.parentUuid && dishListMap[item.parentUuid]) {
+          dishListMap[item.parentUuid].totalFee += item.totalFee;
+        }
+
         if (index > 0) {
           if (item.batchNumber != curBatchNum) {
             curBatchNum = item.batchNumber;

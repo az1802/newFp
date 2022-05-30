@@ -65,7 +65,7 @@
               class="coupon-item"
               v-for="(fanpiaoItem, index) in fanpiaoList"
               :key="index"
-              @click="buyFanpiao(fanpiaoItem)"
+              @click="buyFp(fanpiaoItem)"
             >
               <div class="coupon-item-left">
                 <div class="text1">{{ (100 - fanpiaoItem.discount) / 10 }}</div>
@@ -112,6 +112,7 @@ import { useFanpiaoOpenScreen } from "@hooks/merchantHooks";
 import { useFanpiaoPay } from "@hooks/payhooks";
 import { useNavigate } from "@hooks/commonHooks";
 import { computed, watch, ref, onBeforeMount, unref, watchEffect } from "vue";
+import { showToast } from "@utils";
 
 export default {
   setup() {
@@ -140,7 +141,10 @@ export default {
       disableShowFanpiaoPurchaseNumber: false,
       fanpiaoCountArr: [0, 0, 0, 0, 0, 0, 0, 0, 0],
       fanpiaoSalesBoostFactor: 1,
-      buyFanpiao,
+      async buyFp(fanpiaoItem) {
+        let payRes = await buyFanpiao(fanpiaoItem);
+        payRes && showToast("饭票购买成功");
+      },
       navigateTo,
     };
   },
