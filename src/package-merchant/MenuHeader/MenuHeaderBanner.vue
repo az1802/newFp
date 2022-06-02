@@ -21,6 +21,7 @@
       <div class="time-box">
         <div class="text">距结束</div>
         <TimeCounter
+          :isStop="bannerTimeCounterStopStatus"
           mode="dragon-boat-festival"
           customStartText=""
           :isMini="true"
@@ -38,8 +39,10 @@
 import { useFanpiaoInfo, useMerchantInfo } from "@hooks/merchantHooks";
 import { useNavigate } from "@hooks/commonHooks";
 import { computed, unref } from "vue";
+import { useTimeCounterStopStatus } from "@hooks/marketHooks";
 export default {
   setup() {
+    const { bannerTimeCounterStopStatus } = useTimeCounterStopStatus();
     const { maxDiscountFanpiao, fanpiaoList } = useFanpiaoInfo();
     const { merchantInfo } = useMerchantInfo();
     const { navigateTo } = useNavigate();
@@ -56,6 +59,7 @@ export default {
       return Number((100 - discount) / 10).toFixed(1);
     });
     return {
+      bannerTimeCounterStopStatus,
       merchantInfo,
       maxDiscountFanpiao,
       navigateTo,

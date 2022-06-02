@@ -336,8 +336,5 @@ export function handleStorageDishes(storageDishes, dishMap) {
     }
   })
 
-  console.log('validSelectedDishes: ', validSelectedDishes);
-
-
   return validSelectedDishes
 }

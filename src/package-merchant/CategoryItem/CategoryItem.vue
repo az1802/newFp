@@ -8,7 +8,7 @@
 <template>
   <div class="category-item" :class="[active ? 'active' : '']">
     {{ category.name }}
-    <div v-show="categoryCountMap[category.id]" class="quantity">
+    <div v-if="categoryCountMap[category.id]" class="quantity">
       {{ categoryCountMap[category.id] }}
     </div>
   </div>

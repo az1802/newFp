@@ -157,9 +157,9 @@ export default {
   setup(props, { emit }) {
     function changeSelectedCoupon() {
       if (props.selectedCouponId == props.coupon.id) {
-        emit("check", "");
+        emit("checkCoupon", {});
       } else {
-        emit("check", props.coupon);
+        emit("checkCoupon", props.coupon);
       }
     }
     return {

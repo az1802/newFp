@@ -21,7 +21,11 @@
         <div class="coupon-list-wtapper">
           <div v-if="!buyRecordList.length" class="time-counter-wrapper">
             <div class="text">超值饭票限时抢购</div>
-            <TimeCounter customStartText=" " mode="fanpiao" />
+            <!-- <TimeCounter
+              customStartText=" "
+              mode="fanpiao"
+              :isStop="openScreenTimeCounterStopStatus"
+            /> -->
           </div>
           <div class="buy-record-list" v-if="buyRecordList.length">
             <div class="record-item">
@@ -113,9 +117,15 @@ import { useFanpiaoPay } from "@hooks/payhooks";
 import { useNavigate } from "@hooks/commonHooks";
 import { computed, watch, ref, onBeforeMount, unref, watchEffect } from "vue";
 import { showToast } from "@utils";
+import { useTimeCounterStopStatus } from "@hooks/marketHooks";
 
 export default {
   setup() {
+    const {
+      setBannerTimeCounterStatus,
+      setOpenScreenTimeCounterStatus,
+      openScreenTimeCounterStopStatus,
+    } = useTimeCounterStopStatus();
     let {
       showFanpiaoOpenScreenModal,
       toggleShowFanpiaoOpenScreenModal,
@@ -125,8 +135,11 @@ export default {
     let { buyFanpiao } = useFanpiaoPay();
     let { navigateTo } = useNavigate();
     let buyRecordList = ref([]);
+    let isStopTimeCounter = ref(true);
 
     watch(showFanpiaoOpenScreenModal, async (nval) => {
+      setOpenScreenTimeCounterStatus(!nval);
+      setBannerTimeCounterStatus(nval);
       if (nval && unref(buyRecordList).length == 0) {
         let res = await requestBuyFanpiaoRecord();
         buyRecordList.value = res;
@@ -134,6 +147,7 @@ export default {
     });
 
     return {
+      openScreenTimeCounterStopStatus,
       showFanpiaoOpenScreenModal,
       toggleShowFanpiaoOpenScreenModal,
       buyRecordList,

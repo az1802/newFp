@@ -108,7 +108,7 @@ import { useUserMerchantCoupon } from "@hooks/userHooks";
 import { useNavigate } from "@hooks/commonHooks";
 import { useDish } from "@hooks/menuHooks";
 import { computed, ref, unref } from "vue";
-import { navigateBack } from "@utils";
+import { navigateBack, navigateTo } from "@utils";
 export default {
   props: {
     showUseCoupon: {
@@ -119,7 +119,6 @@ export default {
   setup() {
     let { userMerchantCoupons } = useUserMerchantCoupon();
 
-    const { navigateTo } = useNavigate();
     const { setOrderInfo, orderInfo } = useOrder();
     const { recommendedCoupon, userAvailableMerchantCoupon } =
       useRecommendedCoupon();

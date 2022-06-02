@@ -10,7 +10,7 @@
     <div
       class="discount-tooltip"
       v-if="
-        selectedDishesTotalQuantity &&
+        totalQuantity &&
         !userMerchantCoupons.length &&
         !merchantInfo.disableBuyFanpiao
       "
@@ -23,7 +23,7 @@
     <div
       class="discount-tooltip"
       v-if="
-        selectedDishesTotalQuantity &&
+        totalQuantity &&
         userMerchantCoupons.length &&
         availableUseCoupon.leastCost > selectedDishesTotalPrice
       "
@@ -44,8 +44,8 @@
       <div class="cart-info">
         <div class="cart-icon">
           <span class="iconfont icon-gouwuchekong"></span>
-          <div class="count" v-if="selectedDishesTotalQuantity">
-            {{ selectedDishesTotalQuantity }}
+          <div class="count" v-if="totalQuantity">
+            {{ totalQuantity }}
           </div>
         </div>
         <div class="total-price-wrapper">
@@ -53,9 +53,9 @@
             <div class="finaly-price">
               ¥{{ fenToYuan(totalPrice - availableUseCoupon.reduceCost) }}
             </div>
-            <div class="origin-price">¥{{ fenToYuan(totalPrice) }}</div>
+            <div class="origin-price">¥{{ totalPrice / 100 }}</div>
           </div>
-          <div class="price" v-else>¥{{ fenToYuan(totalPrice) }}</div>
+          <div class="price" v-else>¥{{ totalPrice / 100 }}</div>
           <div class="use-coupon-tooltip" v-if="canUsedCoupon">
             本单可使用优惠券
           </div>
@@ -105,12 +105,11 @@ import {
   useUserPhone,
   useUserInfo,
 } from "@hooks/userHooks";
-import { unref, computed, ref } from "vue";
+import { unref, computed, ref, watch } from "vue";
 import { fenToYuan, showToast, sleep } from "@utils";
-
 let updateTimeOutId;
 export default {
-  setup() {
+  setup(props, context) {
     const { showCartModal, toggleShowCartModal } = useCart();
     const { toggleShowScanModal } = useScanModal();
     const { merchantInfo } = useMerchantInfo();
@@ -202,10 +201,10 @@ export default {
       return max != min ? `${min}-${max}` : `${max}`;
     });
 
-    // let totalQuantity = ref(unref(selectedDishesTotalQuantity) || 0);
+    let totalQuantity = ref(unref(selectedDishesTotalQuantity) || 0);
 
     return {
-      // totalQuantity,
+      totalQuantity,
       orderInfo,
       toggleShowCartModal,
       showCartModal,
@@ -243,7 +242,8 @@ export default {
   },
   watch: {
     selectedDishesTotalQuantity(nval) {
-      setTimeout(() => {
+      this.totalQuantity = nval;
+      updateTimeOutId = setTimeout(() => {
         this.$forceUpdate && this.$forceUpdate();
       }, 30);
     },
@@ -256,7 +256,7 @@ export default {
 @cartHeight: 50px;
 
 .menu-bottom-container {
-  .box-size(100vw,50px,transparent);
+  .box-size(100%,50px,transparent);
   flex-shrink: 0;
   padding: 0 12px;
   position: fixed;

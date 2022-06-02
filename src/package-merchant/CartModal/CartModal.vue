@@ -8,7 +8,7 @@
 <template>
   <div
     class="modal-wrapper"
-    v-show="showCartModal"
+    v-if="showCartModal"
     @click="toggleShowCartModal(false)"
   >
     <div class="cart-container" @click.stop="noop">
@@ -61,12 +61,17 @@
 import { noop, fenToYuan } from "@utils";
 import { useCart, useDish, useSkuDish } from "@hooks/menuHooks";
 import { useMerchantInfo } from "@hooks/merchantHooks";
-import { unref } from "vue";
+import { unref, watch } from "vue";
 export default {
   setup() {
-    const { showCartModal, toggleShowCartModal, addCartDish, reduceCartDish } =
-      useCart();
-    const { selectedDishes, addDish, reduceDish, resetSelDishes } = useDish();
+    const {
+      showCartModal,
+      toggleShowCartModal,
+      addCartDish,
+      reduceCartDish,
+      selectedDishes,
+    } = useCart();
+    const { addDish, reduceDish, resetSelDishes } = useDish();
     const { genDishDescribeText, calcSkuDishPrice } = useSkuDish();
     const { merchantInfo } = useMerchantInfo();
     function clearCart() {
@@ -130,7 +135,7 @@ export default {
       .info {
         .flex-between(column);
         flex: 1;
-        width: calc(100vw - 114px);
+        width: calc(100vw - 184px);
         .name {
           .bold-font(17px,#333);
           .describe-text {

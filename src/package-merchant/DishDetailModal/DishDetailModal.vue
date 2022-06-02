@@ -1,6 +1,7 @@
 <template>
   <div
     class="detail-modal"
+    v-if="showDishDetailModal"
     :class="showDishDetailModal ? 'fade-modal-enter-active' : 'hide'"
     @touchmove.stop="stop"
     @click.stop="hideModal"
@@ -79,7 +80,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { ref, computed, unref } from "vue";
+import { ref, computed, unref, watch } from "vue";
 import { useDishDetail, useDish, useSkuDish } from "@hooks/menuHooks";
 
 import { getDishInfoById } from "@utils";
@@ -89,10 +90,23 @@ export default {
     let { showDishDetailModal, curDishDetail, toggleShowDishDetailModal } =
       useDishDetail();
     let { setCurSkuDish, toggleShowSkuModal } = useSkuDish();
-    let quantity = computed(() => {
-      let dishId = unref(curDishDetail).id;
-      return unref(dishCountMap)[dishId] || 0;
-    });
+
+    let quantity = ref(unref(dishCountMap)[unref(curDishDetail).id] || 0);
+    watch(
+      [dishCountMap, curDishDetail],
+      ([nval, newCurDish]) => {
+        let dishId = unref(newCurDish).id;
+        if (nval[dishId] !== undefined) {
+          quantity.value = nval[dishId] || 0;
+        } else {
+          quantity.value = 0;
+        }
+      },
+      {
+        immediate: true,
+      }
+    );
+
     return {
       curDishDetail,
       showDishDetailModal,

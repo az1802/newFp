@@ -304,6 +304,7 @@ export default {
     .normal-font(14px,#333);
     text-align: center;
     border-radius: 4px;
+    margin-bottom: 10px;
     .cuIcon-unfold {
       font-size: 10px;
       margin-left: 6px;

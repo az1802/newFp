@@ -78,6 +78,8 @@ import {
   switchTab,
 } from "@utils";
 
+import { useTimeCounterStopStatus } from "@hooks/marketHooks";
+
 let opts;
 
 export default {
@@ -107,7 +109,11 @@ export default {
     }
     opts = options;
   },
+  onHide() {
+    this.setBannerTimeCounterStatus(true);
+  },
   async onShow() {
+    this.setBannerTimeCounterStatus(false);
     // 当支付成功返回的时候需要重新请求用户相关的信息
     let resetUserMerchantInfo = getApp().globalData.resetUserMerchantInfo;
     if (resetUserMerchantInfo) {
@@ -129,6 +135,7 @@ export default {
 
     const { requestMerchantInfo, requestMerchantDishes, merchantInfo } =
       useMerchantInfo();
+    const { setBannerTimeCounterStatus } = useTimeCounterStopStatus();
     const { getUserMerchantInfo } = useUserInfo();
     const { statusBarHeight, screenWidth } = useSystemInfo();
     const { requestFanpiaoList } = useFanpiaoInfo();
@@ -317,6 +324,7 @@ export default {
       resetUserMerchantInfo,
       resetDishModal,
       navBack,
+      setBannerTimeCounterStatus,
     };
   },
 };

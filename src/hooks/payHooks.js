@@ -331,13 +331,13 @@ export function useDirectPay(payMethod, params) {
       payRes = true;
     }
     await showToast(payRes ? "买单成功" : "买单失败，请重试");
-    await sleep(2000);
-
+    let waitTime = 2000
+    //#ifdef MP-ALIPAY
+    waitTime = 500;
+    //#endif
+    await sleep(waitTime);
     return payRes;
   }
-
-
-
 
   return {
     directPay

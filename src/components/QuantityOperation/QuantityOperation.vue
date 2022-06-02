@@ -7,13 +7,13 @@
 -->
 <template>
   <div class="quantity-operation">
-    <span v-if="num" class="iconfont icon-jian" @click.stop="reduce"></span>
+    <div v-if="num" class="iconfont icon-jian" @click.stop="reduce"></div>
     <div v-if="num" class="num">{{ num }}</div>
-    <span
+    <div
       class="iconfont icon-jia"
       :class="[disableAdd ? 'disabled' : '']"
       @click.stop="add"
-    ></span>
+    ></div>
   </div>
 </template>
 <script>
@@ -49,10 +49,11 @@ export default {
 @import "@design/index.less";
 .quantity-operation {
   .flex-simple(flex-end,center,inline-flex);
-  width: 60px;
+  width: 75px;
   .icon-jian,
   .icon-jia {
     .normal-font(24px,#f25643);
+    display: inline-block;
     padding: 0 2px;
     &.disabled {
       opacity: 0.5;

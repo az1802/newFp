@@ -24,7 +24,11 @@
         <div class="flash-sale">
           <div class="time-limit">
             <div class="text">距结束</div>
-            <TimeCounter customStartText=" " :show-day="false" />
+            <TimeCounter
+              customStartText=" "
+              :show-day="false"
+              :isStop="buyFanpiaoTimeCounterStopStatus"
+            />
           </div>
         </div>
         <div
@@ -97,6 +101,7 @@ import {
   unref,
   ref,
 } from "vue";
+import { useTimeCounterStopStatus } from "@hooks/marketHooks";
 let merchantId = "",
   opts;
 export default {
@@ -117,6 +122,12 @@ export default {
       return "";
     }
   },
+  onShow() {
+    this.setBuyFanpiaoTimeCounterStatus(false);
+  },
+  onHide() {
+    this.setBuyFanpiaoTimeCounterStatus(true);
+  },
   onShareAppMessage() {
     return {
       title: this.merchantInfo.name,
@@ -125,6 +136,8 @@ export default {
   setup() {
     let { navigateTo, navigateBack } = useNavigate();
     let { merchantInfo, requestMerchantInfo } = useMerchantInfo();
+    const { buyFanpiaoTimeCounterStopStatus, setBuyFanpiaoTimeCounterStatus } =
+      useTimeCounterStopStatus();
     let {
       fanpiaoList,
       requestFanpiaoPlatformRecords,
@@ -187,6 +200,8 @@ export default {
       buyFanpiao,
       navigateTo,
       buy,
+      buyFanpiaoTimeCounterStopStatus,
+      setBuyFanpiaoTimeCounterStatus,
     };
   },
 };

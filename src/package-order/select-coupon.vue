@@ -4,26 +4,28 @@
     <scroll-view class="coupon-list" scroll-y>
       <div
         v-for="(couponItem, index) in avaiableMerchantCoupons"
-        :key="index"
+        :key="couponItem.id"
         class="coupon-wrapper"
       >
         <MerchantCouponItem
+          :key="couponItem.id"
           type="checkbox"
           couponType="package"
           :coupon="couponItem"
-          @check="changeSelCoupon"
+          @checkCoupon="changeSelCoupon"
           :showUsed="false"
           :showCheck="true"
-          :selectedCouponId="selCouponInfo && selCouponInfo.id"
+          :selectedCouponId="selCouponInfo.id"
         ></MerchantCouponItem>
       </div>
-      <p class="title" v-show="disabledCoupons[0]">不可用券</p>
+      <p class="title" v-if="disabledCoupons[0]">不可用券</p>
       <div
         v-for="(couponItem, index) in disabledCoupons"
-        :key="index"
+        :key="couponItem.id"
         class="coupon-wrapper"
       >
         <MerchantCouponItem
+          :key="couponItem.id"
           type="checkbox"
           couponType="package"
           :coupon="couponItem"
@@ -39,7 +41,7 @@
       </div>
       <div
         class="coupon-placeholder-wrapper"
-        v-show="
+        v-if="
           avaiableMerchantCoupons.length == 0 && disabledCoupons.length == 0
         "
       >
@@ -54,7 +56,7 @@
     <div class="fix-bottom-wrapper">
       <div class="tooltip-text">
         {{
-          selCouponInfo && selCouponInfo.reduceCost
+          selCouponInfo.reduceCost
             ? "优惠券立减¥" + selCouponInfo.reduceCost / 100
             : ""
         }}
@@ -65,13 +67,12 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { onBeforeMount, ref, computed, unref } from "vue";
+import { onBeforeMount, ref, computed, unref, reactive } from "vue";
 import { useUserMerchantCoupon } from "@hooks/userHooks";
 import { useOrder } from "@hooks/orderHooks";
 import { useDish } from "@hooks/menuHooks";
 import { useNavigate } from "@hooks/commonHooks";
 import { useDirectPaySelCoupon } from "@hooks/directPayHooks";
-
 let merchantId, from, billFee;
 export default {
   onLoad(opts) {
@@ -111,54 +112,55 @@ export default {
       });
     });
 
-    let selCouponInfo;
+    let selCouponInfo = reactive({
+      id: "",
+      reduceCost: "",
+    });
     if (from == "directPay") {
       let { id = "", reduceCost = 0 } = unref(selCoupon) || {};
-      selCouponInfo = ref({
-        id,
-        reduceCost,
-      });
+      selCouponInfo.id = id;
+      selCouponInfo.reduceCost = reduceCost;
     } else {
       let { selCouponId = "", selCouponReduceCost = "" } =
         unref(orderInfo) || {};
-      selCouponInfo = ref({
-        id: selCouponId,
-        reduceCost: selCouponReduceCost,
-      });
+      selCouponInfo.id = selCouponId;
+      selCouponInfo.reduceCost = selCouponReduceCost;
     }
 
     function changeSelCoupon(coupon) {
-      if (!coupon) {
-        selCouponInfo.value = "";
+      if (!coupon.id) {
+        selCouponInfo.id = "";
+        selCouponInfo.reduceCost = 0;
       } else {
-        selCouponInfo.value = coupon;
+        selCouponInfo.id = coupon.id;
+        selCouponInfo.reduceCost = coupon.reduceCost;
       }
     }
 
     function selectCoupon() {
-      let selInfo = unref(selCouponInfo);
-
       if (from == "directPay") {
-        if (!selInfo) {
+        if (!selCouponInfo.id) {
           toogleAutoSelCoupon(false);
           setSelCoupon({});
         } else {
           toogleAutoSelCoupon(true);
           setSelCoupon({
-            id: selInfo.id,
-            reduceCost: selInfo.reduceCost,
+            id: selCouponInfo.id,
+            reduceCost: selCouponInfo.reduceCost,
           });
         }
       } else {
-        if (!selInfo) {
+        if (!selCouponInfo.id) {
           setOrderInfo({
             selCouponReduceCost: 0, //使用券包的价格
             selCouponId: "", //使用券包的id
+            customSelCoupon: true,
           });
         } else {
           setOrderInfo({
-            selCouponReduceCost: selInfo.reduceCost, //使用券包的价格
-            selCouponId: selInfo.id, //使用券包的id
+            selCouponReduceCost: selCouponInfo.reduceCost, //使用券包的价格
+            selCouponId: selCouponInfo.id, //使用券包的id
+            customSelCoupon: true,
           });
         }
       }

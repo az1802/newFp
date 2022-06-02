@@ -112,6 +112,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    isStop: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
@@ -120,21 +124,43 @@ export default {
       min: 0,
       second: 0,
       millisecond: 0,
+      intervalTimeId: "",
     };
   },
   unmounted() {
     clearInterval(this.intervalTimeId);
   },
   mounted() {
+    //#ifndef MP-ALIPAY
     this._initData(this.endDate);
+    //#endif
+    //#ifdef MP-ALIPAY
+    if (!this.isStop) {
+      this._initData(this.endDate);
+    }
+    //#endif
   },
   watch: {
     endDate(nval, oval) {
-      nval && this._initData(parseFloat(nval));
+      if (nval && !this.isStop) {
+        this._initData(parseFloat(nval));
+      } else {
+        clearInterval(this.intervalTimeId);
+      }
+    },
+    isStop(nval) {
+      //#ifdef MP-ALIPAY
+      if (nval) {
+        clearInterval(this.intervalTimeId);
+      } else {
+        this._initData(this.endDate);
+      }
+      //#endif
     },
   },
   methods: {
     _initData(endDate) {
+      clearInterval(this.intervalTimeId);
       let currentTime = new Date();
       let day = currentTime.getDay(),
         date = currentTime.getDate();
@@ -160,14 +186,23 @@ export default {
 
       let endTimes = endDate.getTime();
       let currentTimes = currentTime.getTime();
+      let intervaltime = 100;
+      //#ifdef MP-ALIPAY
+      intervaltime = 500;
+      //#endif
       this.intervalTimeId = setInterval(() => {
+        //#ifdef MP-ALIPAY
+        if (this.isStop) {
+          return;
+        }
+        //#endif
         let timesDifference = endTimes - new Date().getTime();
         this.millisecond = parseInt((timesDifference % 1000) / 100);
         this.second = parseInt(timesDifference / 1000) % 60;
         this.min = parseInt(timesDifference / (1000 * 60)) % 60;
         this.hour = parseInt(timesDifference / (1000 * 60 * 60)) % 24;
         this.day = parseInt(timesDifference / (1000 * 60 * 60 * 24));
-      }, 100);
+      }, intervaltime);
     },
   },
 };

@@ -50,6 +50,7 @@ import OrderRemarks from "./OrderRemarks/OrderRemarks.vue";
 import RecommendationModal from "./RecommendationModal/RecommendationModal.vue";
 import PayReminderModal from "./PayReminderModal/PayReminderModal.vue";
 import { getStorage } from "@utils";
+import { useTimeCounterStopStatus } from "@hooks/marketHooks";
 
 import { useDish } from "@hooks/menuHooks";
 import {
@@ -81,8 +82,13 @@ export default {
     this.hasBuyFanpiao = getApp().globalData.hasBuyFanpiao || false;
     this.resetBuyCouponInfo();
     this.updateUserCoupons();
+    this.setCreateOrderTimeCounterStatus(false);
+  },
+  onHide() {
+    this.setCreateOrderTimeCounterStatus(true);
   },
   setup() {
+    const { setCreateOrderTimeCounterStatus } = useTimeCounterStopStatus();
     let {
       selectedDishes,
       selectedDishesTotalPrice,
@@ -279,6 +285,7 @@ export default {
       payLater,
       resetBuyCouponInfo,
       updateUserCoupons,
+      setCreateOrderTimeCounterStatus,
     };
   },
   data() {

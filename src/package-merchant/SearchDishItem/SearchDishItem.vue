@@ -95,6 +95,7 @@
       @reduce="reduce"
       @selSku="showSkuDish"
       :quantity="dishQuantity"
+      :key="dish.id + 'search'"
     />
   </div>
 </template>
@@ -177,18 +178,15 @@ export default {
     });
 
     let dishQuantity = ref(unref(dishCountMap)[dish.id] || 0);
-    watch(
-      dishCountMap,
-      (nval) => {
-        if (
-          (nval[dish.id] !== undefined || dishQuantity.value != 0) &&
-          dishQuantity.value != nval[dish.id]
-        ) {
-          dishQuantity.value = nval[dish.id] || 0;
-        }
-      },
-      { deep: true }
-    );
+
+    watch(dishCountMap, (nval) => {
+      if (
+        (nval[dish.id] !== undefined || dishQuantity.value != 0) &&
+        dishQuantity.value != nval[dish.id]
+      ) {
+        dishQuantity.value = nval[dish.id] || 0;
+      }
+    });
 
     return {
       showPlaceHolder,
@@ -297,7 +295,7 @@ export default {
   .info {
     .flex-between(column);
     flex: 1;
-    width: calc(100% - 96px);
+    width: calc(100% - 86px);
     .name {
       width: 100%;
       .text-wrapper {

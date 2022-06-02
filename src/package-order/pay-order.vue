@@ -159,7 +159,12 @@ export default {
     });
 
     onBeforeUnmount(() => {
+      //#ifdef MP-WEIXIN
       setPayMethod("WECHAT_PAY");
+      //#endif
+      //#ifdef MP-ALIPAY
+      setPayMethod("ALIPAY");
+      //#endif
       setOrderFanpiaoPayInfo({
         selFanpiaoId: "",
         selFanpiaoInfo: {},
@@ -275,7 +280,12 @@ export default {
         return;
       }
       await sleep(1000);
+      //#ifdef MP-WEIXIN
       setPayMethod("WECHAT_PAY");
+      //#endif
+      //#ifdef MP-ALIPAY
+      setPayMethod("ALIPAY");
+      //#endif
       resetSelDishes([]);
       resetOrder();
       // 跳转到支付成功野蛮

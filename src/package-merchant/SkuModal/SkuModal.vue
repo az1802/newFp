@@ -6,7 +6,11 @@
  * @FilePath: /new-fanpiao-uniapp/src/package-menu/SkuModal/SkuModal.vue
 -->
 <template>
-  <div class="modal-wrapper" v-show="showSkuModal">
+  <div
+    v-if="showSkuModalComputed"
+    class="sku-modal-wrapper"
+    :class="[showSkuModalComputed ? '' : 'hide']"
+  >
     <div
       class="container"
       :class="[skuDishInfo.childDishGroups.length > 0 ? 'higher' : '']"
@@ -20,24 +24,26 @@
         />
         <div class="info">
           <div class="name">{{ skuDishInfo.name }}</div>
-          <div class="price">{{ fenToYuan(totalPrice) }}</div>
+          <div class="price">
+            {{ fenToYuan(totalPrice) }}
+          </div>
         </div>
       </div>
       <scroll-view class="other-info" scroll-y="true">
         <AttrGroupList
-          v-show="skuDishInfo.attrList.length > 0"
+          v-if="skuDishInfo.attrList.length > 0"
           :attrGroupList="skuDishInfo.attrList"
           v-model:selAttrIds="selAttrIds"
         />
         <SupplyCondimentList
-          v-show="skuDishInfo.supplyCondiments.length > 0"
+          v-if="skuDishInfo.supplyCondiments.length > 0"
           :condimentList="skuDishInfo.supplyCondiments"
           :selCondiments="selCondiments"
           :selectionType="skuDishInfo.selectionType"
           :selCondimentsCount="selCondimentsCount"
         />
         <ChildDishList
-          v-show="skuDishInfo.childDishGroups.length > 0"
+          v-if="skuDishInfo.childDishGroups.length > 0"
           :childDishGroups="skuDishInfo.childDishGroups"
           :selChildDishes="selChildDishes"
           :skuDishInfo="skuDishInfo"
@@ -50,10 +56,10 @@
       >
         选好了
       </div>
-      <span
+      <div
         class="iconfont icon-guanbi2"
-        @click="toggleShowSkuModal(false)"
-      ></span>
+        @click.stop="toggleShowSkuModal(false)"
+      ></div>
     </div>
   </div>
 </template>
@@ -65,6 +71,7 @@ import { useSkuDish, useDish } from "@hooks/menuHooks";
 import { reactive, watch, watchEffect, ref, computed, toRaw, unref } from "vue";
 import { showToast, fenToYuan, checkChildDishGroupCount } from "@utils";
 
+let _this;
 export default {
   components: {
     AttrGroupList,
@@ -72,6 +79,9 @@ export default {
     ChildDishList,
   },
   props: {},
+  beforeMount() {
+    _this = this;
+  },
   setup(props) {
     let selAttrIds = reactive([]);
     let selCondiments = reactive({});
@@ -86,7 +96,7 @@ export default {
       selectionType: {},
     });
 
-    const {
+    let {
       curSkuDish,
       showSkuModal,
       toggleShowSkuModal,
@@ -341,35 +351,59 @@ export default {
       return res;
     });
 
+    let showSkuModalComputed = ref(unref(showSkuModal));
+
+    watch(showSkuModal, (nval) => {
+      showSkuModalComputed.value = nval;
+    });
     return {
       selAttrIds,
       selCondiments,
       selChildDishes,
       skuDishInfo,
-      showSkuModal,
+      showSkuModalComputed,
       totalPrice,
       fenToYuan,
       toggleShowSkuModal,
       selCondimentsCount,
       selOK,
       canAddComboDish,
-      skuDishInfo,
-      skuDishInfo,
     };
+  },
+  watch: {
+    showSkuModalComputed(nval) {
+      if (nval) {
+        setTimeout(() => {
+          this.$forceUpdate();
+        }, 40);
+      }
+    },
   },
 };
 </script>
 <style lang="less" scoped>
 @import "@design/index.less";
+.sku-modal-wrapper {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 999;
+  background: rgba(0, 0, 0, 0.5);
+  &.hide {
+    display: none;
+  }
+}
 .container {
   .box-size(100%,500px);
   .pos-bl-absolute();
   border-radius: 10px 10px 0 0;
   padding: 20px 0px 30px 0px;
   &.higher {
-    height: max(70%, 700px);
+    height: max(70%, 600px);
     .other-info {
-      height: calc(max(70%, 700px) - 50px - 100px - 45px);
+      height: calc(max(70%, 600px) - 50px - 100px - 45px);
     }
   }
   .dish-info {
@@ -400,6 +434,8 @@ export default {
   .icon-guanbi2 {
     .pos-tr-absolute(20px,20px);
     .normal-font(24px,#ccc);
+    display: inline-block;
+    z-index: 10;
   }
   .sel-ok-btn {
     .box-size(100%,45px);

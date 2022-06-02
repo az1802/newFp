@@ -25,7 +25,7 @@
           <text class="cuIcon-search" @click="changeSearchText"></text>
         </div>
       </div>
-      <DishItem
+      <SearchDishItem
         v-for="dishItem in searchDishList"
         :dish="dishItem"
         :key="dishItem.id + searchStr"
@@ -39,7 +39,7 @@
       />
       <div style="height: 140px"></div>
     </scroll-view>
-    <MenuBottom />
+    <SearchMenuBottom />
     <SkuModal />
     <ChildSkuDishModal />
     <CartModal />
@@ -49,8 +49,9 @@
 import SkuModal from "./SkuModal/SkuModal.vue";
 import CartModal from "./CartModal/CartModal.vue";
 import MenuBottom from "./MenuBottom/MenuBottom.vue";
+import SearchMenuBottom from "./SearchMenuBottom/SearchMenuBottom.vue";
 import ChildSkuDishModal from "./SkuModal/ChildSkuDishModal.vue";
-import DishItem from "./DishItem/DishItem.vue";
+import SearchDishItem from "./SearchDishItem/SearchDishItem.vue";
 import {
   useMerchantInfo,
   useFanpiaoInfo,
@@ -58,9 +59,20 @@ import {
   useFanpiaoOpenScreen,
 } from "@hooks/merchantHooks";
 import { useDish, useSearchDish } from "@hooks/menuHooks";
-
 export default {
-  components: { SkuModal, CartModal, ChildSkuDishModal, MenuBottom, DishItem },
+  components: {
+    SkuModal,
+    CartModal,
+    ChildSkuDishModal,
+    SearchDishItem,
+    MenuBottom,
+    SearchMenuBottom,
+  },
+  onShow() {
+    //#ifndef MP-ALIPAY
+    my.hideBackHome();
+    //#endif
+  },
   setup() {
     const { merchantInfo } = useMerchantInfo();
     const { searchStr, setSearchStr, searchDishList } = useSearchDish();
@@ -84,6 +96,7 @@ export default {
     padding: 0 12px;
   }
   .search-wrapper {
+    position: relative;
     .search-text {
       .box-size(calc(100%),36px,#F8F8F8);
       margin: 0 auto 12px auto;
@@ -91,7 +104,9 @@ export default {
       border-radius: 18px;
       position: relative;
       .text {
+        width: calc(100% - 70px);
         .line-center(36px);
+        background: transparent;
       }
       .close-icon {
         .pos-tr-absolute(9px,50px);
@@ -100,7 +115,7 @@ export default {
       }
     }
     .right {
-      .pos-tr-absolute(0,1px);
+      .pos-tr-absolute(0,10px);
       .flex-simple(flex-start,center);
       height: 36px;
       .vertical-line {

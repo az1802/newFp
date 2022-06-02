@@ -30,6 +30,7 @@
             :isNoBg="true"
             :show-day="false"
             mode="fanpiao-new"
+            :is-stop="createOrderTimeCounterStopStatus"
           />
         </div>
       </div>
@@ -93,6 +94,7 @@ import { useUserMerchantFanpiaoBalance } from "@hooks/userHooks";
 import { useRecommendedCoupon, usePay } from "@hooks/payHooks";
 import { useFanpiaoInfo, useMerchantInfo } from "@hooks/merchantHooks";
 import { fenToYuan, showToast, newShowConfirmModal } from "@utils";
+import { useTimeCounterStopStatus } from "@hooks/marketHooks";
 
 import { ref, unref, computed } from "vue";
 export default {
@@ -104,6 +106,7 @@ export default {
     },
   },
   setup(props, { emit }) {
+    const { createOrderTimeCounterStopStatus } = useTimeCounterStopStatus();
     const {
       selectedDishesTotalPrice,
       selectedDishesDiscountPrice,
@@ -275,6 +278,7 @@ export default {
       recommendedCoupon,
       minFanpiaoPrice,
       userMerchantFanpiaoBalance,
+      createOrderTimeCounterStopStatus,
     };
   },
 };

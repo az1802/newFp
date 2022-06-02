@@ -6,7 +6,7 @@
  * @FilePath: /new-fanpiao-uniapp/src/package-menu/SkuModal/SkuModal.vue
 -->
 <template>
-  <div class="modal-wrapper" v-show="showChildSkuDishModal">
+  <div class="modal-wrapper" v-if="showChildSkuDishModal">
     <div class="container higher">
       <div class="dish-info">
         <img
@@ -22,12 +22,12 @@
       </div>
       <scroll-view class="other-info" scroll-y="true">
         <AttrGroupList
-          v-show="curChildSkuDish.attrList.length > 0"
+          v-if="curChildSkuDish.attrList.length > 0"
           :attrGroupList="curChildSkuDish.attrList"
           v-model:selAttrIds="selAttrIds"
         />
         <SupplyCondimentList
-          v-show="curChildSkuDish.supplyCondiments.length > 0"
+          v-if="curChildSkuDish.supplyCondiments.length > 0"
           :condimentList="curChildSkuDish.supplyCondiments"
           :selCondiments="selCondiments"
           :selectionType="curChildSkuDish.selectionType"
@@ -35,10 +35,7 @@
         />
       </scroll-view>
       <div class="sel-ok-btn" @click="selOk">选好了</div>
-      <span
-        class="iconfont icon-guanbi2"
-        @click="toggleShowChildSkuModal(false)"
-      ></span>
+      <div class="iconfont icon-guanbi2" @click.stop="closeModal"></div>
     </div>
   </div>
 </template>
@@ -77,8 +74,6 @@ export default {
       condimentMap = {};
     }
     watch(curChildSkuDish, (nval) => {
-      console.log("nval: ", nval);
-
       //重置组建内部数据以及选中默认的属性和加料
       resetData();
       nval.attrList.forEach((attrGroupItem) => {
@@ -196,7 +191,19 @@ export default {
       toggleShowChildSkuModal,
       selCondimentsCount,
       selOk,
+      closeModal() {
+        toggleShowChildSkuModal(false);
+      },
     };
+  },
+  watch: {
+    showChildSkuDishModal(nval) {
+      if (nval) {
+        setTimeout(() => {
+          this.$forceUpdate();
+        }, 40);
+      }
+    },
   },
 };
 </script>
@@ -211,9 +218,9 @@ export default {
   border-radius: 10px 10px 0 0;
   padding: 20px 12px 30px 12px;
   &.higher {
-    height: max(70%, 700px);
+    height: max(70%, 600px);
     .other-info {
-      height: calc(max(70%, 700px) - 50px - 100px - 45px);
+      height: calc(max(70%, 600px) - 50px - 100px - 45px);
     }
   }
   .dish-info {
@@ -242,6 +249,8 @@ export default {
   .icon-guanbi2 {
     .pos-tr-absolute(20px,20px);
     .normal-font(24px,#ccc);
+    display: inline-block;
+    z-index: 1000;
   }
   .sel-ok-btn {
     .box-size(100%,45px);

@@ -9,7 +9,7 @@
   <div class="container">
     <div class="sku" v-if="isSku" @click.stop="showSkuDish">
       选规格
-      <div v-show="quantity" class="quantity">{{ quantity }}</div>
+      <div v-if="quantity" class="quantity">{{ quantity }}</div>
     </div>
     <QuantityOperation
       v-else
