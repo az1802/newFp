@@ -1,11 +1,14 @@
 <template>
   <view class="keyboard-main" :style="{ height: height + 'px' }">
     <view class="input-icon-box">
-      <text class="input-icon" :style="{ fontSize: fontSize + 'px' }">{{
+      <text class="input-icon" :style="{ fontSize: iconFontSize + 'px' }">{{
         currency
       }}</text>
     </view>
-    <view class="keyboard-content" :style="{ height: height + 'px' }">
+    <view
+      class="keyboard-content"
+      :style="{ height: height + 'px', marginLeft: '-16px' }"
+    >
       <view
         class="placeholder"
         :style="{
@@ -176,6 +179,10 @@ import { throttle } from "@utils";
 export default {
   name: "keyBoard",
   props: {
+    iconFontSize: {
+      type: [String, Number],
+      default: 20,
+    },
     isPaying: {
       default: false,
       type: Boolean,
@@ -206,7 +213,7 @@ export default {
     },
     fontSize: {
       type: [String, Number],
-      default: 30,
+      default: 34.5,
     },
     isBold: {
       type: Boolean,
@@ -450,7 +457,7 @@ export default {
     font-weight: 600;
     position: absolute;
     left: 0;
-    bottom: -4px;
+    bottom: 2px;
   }
 }
 

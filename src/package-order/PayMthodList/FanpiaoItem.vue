@@ -58,7 +58,7 @@ export default {
   .discount-info {
     .box-size(63.5%,100%,transparent);
     .flex-simple(center,center);
-    .normal-font(16px,rgba(0,0,0,0.8));
+    .normal-font(15px,rgba(0,0,0,0.8));
     .discount-number {
       .bold-font(16px,#F25643);
     }

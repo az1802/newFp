@@ -15,6 +15,26 @@
         <div class="title">
           消费金额<span class="iconfont icon-Delete"></span>
         </div>
+        <div
+          class="fanpiao-input-tooltip"
+          @click="toggleFanpiaoPayMethod"
+          v-if="billFee && recommendFanpiaoList.length > 0"
+        >
+          <div class="split-line"></div>
+          <div class="price-info-wrapper">
+            <div
+              class="unuse-fanpiao"
+              v-if="recommendFanpiaoList.length > 0 && !selFanpiao.id"
+            >
+              点我享{{ (100 - recommendFanpiaoList[0].discount) / 10 }}折 >
+            </div>
+            <div class="use-fanpiao" v-else>饭票价</div>
+            <div class="price-info">
+              <div class="fanpiao-price">{{ fanpiaoMarketPrice }}</div>
+              <div class="origin-price">¥{{ billFee / 100 }}</div>
+            </div>
+          </div>
+        </div>
         <FxAmountInput
           @change="amountChange"
           @confirm="confirmPay"
@@ -41,6 +61,7 @@
         v-model:selFanpiao="selFanpiao"
         :enableMarketing="merchantInfo.enableNumberPlatePayWithFanpiao"
         :recommendFanpiaoList="recommendFanpiaoList"
+        :fanpiaoList="allFanpiaoList"
         :needBuyFanpiao="needBuyFanpiao"
         :fanpiaoBalance="userMerchantFanpiaoBalance"
         :fanpiaoBalancePaidFee="fanpiaoBalancePaidFee"
@@ -125,7 +146,9 @@ export default {
       buyCouponInfo = ref({}),
       isAgreeRules = ref(true),
       isAgreeFanpiaoRules = ref(true),
-      isPaying = ref(false);
+      isPaying = ref(false),
+      fanpiaoMarketPrice = ref(0),
+      allFanpiaoList = ref([]);
 
     onBeforeMount(async () => {
       await signUp();
@@ -137,9 +160,10 @@ export default {
       setSelCoupon(userCoupons[0] || {});
 
       if (res.enableNumberPlatePayWithFanpiao) {
-        requestFanpiaoList(merchantId).then(
-          (fanpiaoList) => (recommendFanpiaoList.value = fanpiaoList)
-        );
+        requestFanpiaoList(merchantId).then((fanpiaoList) => {
+          recommendFanpiaoList.value = fanpiaoList;
+          allFanpiaoList.value = fanpiaoList;
+        });
       }
       if (res.enableNumberPlatePayWithCouponPackage) {
         let couponList = await requestCouponList(merchantId);
@@ -151,6 +175,38 @@ export default {
 
     function amountChange(val) {
       billFee.value = (val || 0) * 100;
+    }
+
+    async function calcFanpiaoMarketPirce(newBillFee, newSelFanpiao) {
+      if (unref(fanpiaoBalancePaidFee) >= newBillFee && newBillFee != "") {
+        //饭票足够支付 不显示饭票价
+        // console.log("饭票余额足够");
+        // let calcRes = await calcFanpiaoPaidBill(merchantId, newBillFee);
+        // fanpiaoMarketPrice.value = (calcRes?.paidFee || 0) / 100;
+      } else if (unref(recommendFanpiaoList).length > 0 && !newSelFanpiao.id) {
+        let fanpiaoInfo = unref(recommendFanpiaoList)[0];
+        let res = parseFloat(
+          (newBillFee * (1 - fanpiaoInfo.discount / 100)) / 100
+        ).toFixed(2);
+        fanpiaoMarketPrice.value = res;
+      } else if (newSelFanpiao.id) {
+        let { discount = 0, sellPrice, totalValue, id } = newSelFanpiao;
+        let fanpiaoPaidBalanceTemp = parseFloat(
+          Math.round(
+            totalValue -
+              (newBillFee - unref(fanpiaoBalancePaidFee)) * (1 - discount / 100)
+          )
+        );
+
+        fanpiaoMarketPrice.value = parseFloat(
+          (unref(userMerchantFanpiaoBalance) +
+            (totalValue || 0) -
+            fanpiaoPaidBalanceTemp) /
+            100
+        ).toFixed(2);
+      } else {
+        fanpiaoMarketPrice.value = 0;
+      }
     }
 
     watch([billFee, payMethod], (newVal) => {
@@ -195,6 +251,10 @@ export default {
     watch(
       [billFee, selFanpiao, payMethod],
       async ([newBillFee, newSelFanpiao, newPayMethod]) => {
+        if (newBillFee) {
+          calcFanpiaoMarketPirce(newBillFee, newSelFanpiao);
+        }
+
         if (newPayMethod !== "FANPIAO_PAY" || !newBillFee) {
           fanpiaoActuallyPaid.value = 0;
           fanpiaoPayAndFanpiaoBalance.value = 0;
@@ -360,9 +420,20 @@ export default {
       }
     });
 
+    function toggleFanpiaoPayMethod() {
+      if (!billFee.value) {
+        return;
+      }
+      payMethod.value = "FANPIAO_PAY";
+      if (recommendFanpiaoList.value.length > 0) {
+        selFanpiao.value = recommendFanpiaoList.value[0];
+      }
+    }
+
     return {
       statusBarHeight,
       couponList,
+      allFanpiaoList,
       recommendFanpiaoList,
       needBuyFanpiao,
       merchantInfo,
@@ -383,6 +454,8 @@ export default {
       fanpiaoBalancePaidFee,
       isPaying,
       discountPrice,
+      fanpiaoMarketPrice,
+      toggleFanpiaoPayMethod,
     };
   },
 };
@@ -422,15 +495,59 @@ export default {
     }
   }
   .amount-wrapper {
-    .box-size(100%,94px,white);
-    padding: 18.5px 17px 0 17px;
+    .box-size(100%,82px,white);
+    padding: 14px 17px 0 17px;
     margin: 12px auto 12px auto;
     border-radius: 8px;
     border: 1px solid #ffa951;
+    position: relative;
     .title {
       .line-center(14px);
-      .normal-font(14px,#F68B1C);
-      margin-bottom: 14.5px;
+      .normal-font(14px,#FE5941);
+      margin-bottom: 7px;
+    }
+    .fanpiao-input-tooltip {
+      .pos-tr-absolute(13.5px,0);
+      .box-size(50%,53px);
+      padding: 0 0 0 30px;
+      z-index: 1000;
+      .split-line {
+        .box-size(1px,41px,#FFA951);
+        .pos-tl-absolute(7.5px,0);
+      }
+      .unuse-fanpiao,
+      .use-fanpiao {
+        display: inline-block;
+        .line-center(23px);
+        border-radius: 50px;
+        background-image: linear-gradient(90deg, #fe7e3b 0%, #fc5318 90%);
+        padding: 0 10px;
+        .bold-font(12px,#FFF4F2);
+      }
+      .price-info-wrapper {
+        .price-info {
+          .flex-simple(flex-start,center);
+          margin-top: 5.5px;
+          height: 24px;
+          .fanpiao-price {
+            .line-center(24px);
+            .bold-font(22px,#FF5544);
+            letter-spacing: 0;
+            margin-right: 7px;
+            &::before {
+              content: "¥";
+              font-size: 17px;
+              margin-right: 5px;
+            }
+          }
+          .origin-price {
+            .line-center(24px);
+            .bold-font(14px,#B9B9B9);
+            letter-spacing: 0;
+            text-decoration: line-through;
+          }
+        }
+      }
     }
   }
 }
