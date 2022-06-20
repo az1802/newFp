@@ -55,6 +55,9 @@ export async function getRecommendedDishes(merchantId) {
 export async function getFanpiaoList(merchantId) {
   let url = `${URLS.GET_FANPIAO_CATEGORIES}/${merchantId}`;
   let res = await http.get(url);
+  if (res.errcode == 0 && !(res && res.data)) {
+    res = []
+  }
   return res || [];
 }
 

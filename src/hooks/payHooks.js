@@ -261,6 +261,7 @@ export function useCouponPay() {
 }
 
 export function useFanpiaoPay() {
+  const { setFanpiaoList } = useMutations("merchant", ["setFanpiaoList"]);
   async function buyFanpiao(fanpiaoInfo, merchantId = uni.getStorageSync("merchantId")) {
     if (!uni.getStorageSync('userId')) { navigateTo("MENU/LOGIN"); return };
     let data = {
@@ -275,6 +276,15 @@ export function useFanpiaoPay() {
     data.payMethod = "ALIPAY";
     // #endif
     let payRes = await commonPay(data);
+    if (payRes) {
+      // 更新饭票
+      if (!merchantId) {
+        return payRes;
+      }
+      await sleep(1500)
+      let res = await API.Merchant.getFanpiaoList(merchantId)
+      setFanpiaoList(res || []);
+    }
     return payRes
 
   }

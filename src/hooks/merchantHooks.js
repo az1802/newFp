@@ -43,7 +43,7 @@ export function useMerchantInfo() {
     let dishesRes = await API.Merchant.getMerchantDishCategory(merchantId);
     // setPackagingBoxConfig({ //TODO 打包费模块暂时不处理
     //   packageBoxDishPrice: dishesRes.packagingBoxConfig?.dish?.price || 0
-    // }) 
+    // })
     // 处理必选菜
     if (dishesRes.requiredOrderItems?.length > 0) {
       setRequiredOrderItems(dishesRes.requiredOrderItems);
@@ -77,7 +77,7 @@ export function useFanpiaoInfo() {
       return [];
     }
     let res = await getFanpiaoList(merchantId)
-    setFanpiaoList(res || []);
+    setFanpiaoList(Array.isArray(res) ? res : []);
     return res;
   }
   async function requestFanpiaoPlatformRecords() {

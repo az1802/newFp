@@ -28,7 +28,11 @@
           购买须知
           <img src="@assets/arrow_right_white.png" alt="" class="img" />
         </div>
-        <img src="@assets/snow.png" class="snow-img" />
+        <img
+          v-if="fanpiaoList.length > 1"
+          src="@assets/snow.png"
+          class="snow-img"
+        />
       </div>
       <div class="merchant-fanpiao-wrapper">
         <div
@@ -60,7 +64,7 @@
   </div>
 </template>
 <script>
-import { computed, onBeforeMount, ref, unref } from "vue";
+import { computed, onBeforeMount, ref, unref, watch } from "vue";
 import { useMerchantInfo, useFanpiaoInfo } from "@hooks/merchantHooks";
 import { useFanpiaoPay } from "@hooks/payHooks";
 import { useUserMerchantFanpiaoBalance } from "@hooks/userHooks";
@@ -82,6 +86,9 @@ export default {
   setup() {
     let { merchantInfo, requestMerchantInfo } = useMerchantInfo();
     let { fanpiaoList, requestFanpiaoList } = useFanpiaoInfo();
+    watch(fanpiaoList, (nval) => {
+      // console.log("新的饭票", nval);
+    });
     const { userMerchantFanpiaoBalance, requestUserMerchantFanpiaoBalance } =
       useUserMerchantFanpiaoBalance();
 

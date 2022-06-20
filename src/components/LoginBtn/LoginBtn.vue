@@ -65,7 +65,7 @@ export default {
         return;
       }
       this.loginError = false;
-      // res.id = "047947c1-a5bb-4fd1-9258-42ee204f29e8"; //模拟陈波userId
+      // res.id = "238946b4-6374-4817-b67e-0995bff62b73"; //模拟陈波userId
       uni.setStorageSync("userId", res.id);
       uni.setStorageSync("wechatOpenid", res.wechatOpenid);
       API.User.setUserHeader(res.id);
