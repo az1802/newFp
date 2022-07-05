@@ -23,6 +23,7 @@ export default defineConfig({
       { find: '@', replacement: resolve(__dirname, 'src') },
       { find: '@components', replacement: resolve(__dirname, 'src/components') },
       { find: '@api', replacement: resolve(__dirname, 'src/api') },
+      { find: '@apiPos', replacement: resolve(__dirname, 'src/apiPos') },
       { find: '@utils', replacement: resolve(__dirname, 'src/utils') },
       { find: '@hooks', replacement: resolve(__dirname, 'src/hooks') },
       { find: '@state', replacement: resolve(__dirname, 'src/state') },

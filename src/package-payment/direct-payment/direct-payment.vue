@@ -82,32 +82,35 @@
   </div>
 </template>
 <script>
-import FxAmountInput from "../FxAmountInput/FxAmountinput.vue";
-import FanpiaoPay from "../FanpiaoPay/FanpiaoPay.vue";
-import CouponPay from "../CouponPay/CouponPay.vue";
+import FxAmountInput from '../FxAmountInput/FxAmountinput.vue';
+import FanpiaoPay from '../FanpiaoPay/FanpiaoPay.vue';
+import CouponPay from '../CouponPay/CouponPay.vue';
 import {
   useUserLogin,
   useUserMerchantFanpiaoBalance,
   useUserMerchantCoupon,
-} from "@hooks/userHooks";
+} from '@hooks/userHooks';
 import {
   useMerchantInfo,
   useFanpiaoInfo,
   useCouponInfo,
-} from "@hooks/merchantHooks";
-import { useDirectPay } from "@hooks/payHooks";
-import { useSystemInfo, useNavigate } from "@hooks/commonHooks";
-import { useDirectPaySelCoupon } from "@hooks/directPayHooks";
+} from '@hooks/merchantHooks';
+import { useDirectPay } from '@hooks/payHooks';
+import { useSystemInfo, useNavigate } from '@hooks/commonHooks';
+import { useDirectPaySelCoupon } from '@hooks/directPayHooks';
 import {
   calcRecommendFanpiao,
   showToast,
   sleep,
   switchTab,
   parseQrcodeParams,
-} from "@utils";
+} from '@utils';
 
-import { onBeforeMount, ref, unref, computed, watchEffect, watch } from "vue";
+import { onBeforeMount, ref, unref, computed, watchEffect, watch } from 'vue';
+// import httpPos from '@apiPos';
+import axios from 'axios';
 let merchantId;
+const PostBaseUrl= import.meta.env.VITE_POS_BASE_URL || "https://shilai-pos.zhiyi.cn/v1.6"
 export default {
   components: { FxAmountInput, FanpiaoPay, CouponPay },
   async onLoad(opts) {
@@ -135,9 +138,9 @@ export default {
     const { userMerchantCoupons, requestUserMerchantCoupons } =
       useUserMerchantCoupon();
 
-    const billFee = ref(""),
+    const billFee = ref(''),
       selFanpiao = ref({}),
-      payMethod = ref("WECHAT_PAY"),
+      payMethod = ref('WECHAT_PAY'),
       needBuyFanpiao = ref(false),
       recommendFanpiaoList = ref([]),
       fanpiaoPayAndFanpiaoBalance = ref(0),
@@ -160,7 +163,7 @@ export default {
       setSelCoupon(userCoupons[0] || {});
 
       if (res.enableNumberPlatePayWithFanpiao) {
-        requestFanpiaoList(merchantId).then((fanpiaoList) => {
+        requestFanpiaoList(merchantId).then(fanpiaoList => {
           recommendFanpiaoList.value = fanpiaoList;
           allFanpiaoList.value = fanpiaoList;
         });
@@ -178,7 +181,7 @@ export default {
     }
 
     async function calcFanpiaoMarketPirce(newBillFee, newSelFanpiao) {
-      if (unref(fanpiaoBalancePaidFee) >= newBillFee && newBillFee != "") {
+      if (unref(fanpiaoBalancePaidFee) >= newBillFee && newBillFee != '') {
         //饭票足够支付 不显示饭票价
         // console.log("饭票余额足够");
         // let calcRes = await calcFanpiaoPaidBill(merchantId, newBillFee);
@@ -209,13 +212,13 @@ export default {
       }
     }
 
-    watch([billFee, payMethod], (newVal) => {
+    watch([billFee, payMethod], newVal => {
       let [newBillFee, newPayMethod] = newVal;
 
       //开启饭票营销且余额不足时
       if (
         unref(fanpiaoBalancePaidFee) < newBillFee &&
-        newBillFee != "" &&
+        newBillFee != '' &&
         unref(merchantInfo).enableNumberPlatePayWithFanpiao
       ) {
         let calcRes = calcRecommendFanpiao(
@@ -227,7 +230,7 @@ export default {
         recommendFanpiaoList.value = calcRes;
         if (unref(selFanpiao).id) {
           if (
-            calcRes.findIndex((item) => item.id == unref(selFanpiao).id) === -1
+            calcRes.findIndex(item => item.id == unref(selFanpiao).id) === -1
           ) {
             //当金额变化导致之前选择推荐饭票不符合时自动推荐第一张饭票
             selFanpiao.value = recommendFanpiaoList.value[0] || {};
@@ -255,13 +258,13 @@ export default {
           calcFanpiaoMarketPirce(newBillFee, newSelFanpiao);
         }
 
-        if (newPayMethod !== "FANPIAO_PAY" || !newBillFee) {
+        if (newPayMethod !== 'FANPIAO_PAY' || !newBillFee) {
           fanpiaoActuallyPaid.value = 0;
           fanpiaoPayAndFanpiaoBalance.value = 0;
           return;
         }
         if (!newSelFanpiao.id) {
-          if (unref(fanpiaoBalancePaidFee) >= newBillFee && newBillFee != "") {
+          if (unref(fanpiaoBalancePaidFee) >= newBillFee && newBillFee != '') {
             //饭票足够支付
             let calcRes = await calcFanpiaoPaidBill(merchantId, unref(billFee));
             fanpiaoActuallyPaid.value = calcRes.paidFee;
@@ -287,17 +290,17 @@ export default {
       }
     );
 
-    watch(payMethod, (newPayMethod) => {
-      if (newPayMethod != "FANPIAO_PAY") {
+    watch(payMethod, newPayMethod => {
+      if (newPayMethod != 'FANPIAO_PAY') {
         needBuyFanpiao.value = false;
         selFanpiao.value = {};
       }
     });
     const actuallyPaid = computed(() => {
-      if (unref(payMethod) == "WECHAT_PAY") {
+      if (unref(payMethod) == 'WECHAT_PAY') {
         //考虑使用券包的情况
         return unref(billFee) || 0;
-      } else if (unref(payMethod) == "COUPON_PAY") {
+      } else if (unref(payMethod) == 'COUPON_PAY') {
         if (unref(buyCouponInfo)?.id) {
           let { price = 0, couponCost = 0 } = unref(buyCouponInfo);
           return (unref(billFee) || 0) - couponCost + price;
@@ -313,9 +316,12 @@ export default {
     });
 
     async function confirmPay() {
+      if (!unref(merchantInfo).merchantId) {
+        return;
+      }
       let reg1 = /(^[0-9]{1,6}$)|(^[0-9]{1,6}[\.]{1}[0-9]{1,2}$)/;
       if (!reg1.test((unref(billFee) || 0) / 100)) {
-        await showToast("请输入正确的金额，最小单位为分");
+        await showToast('请输入正确的金额，最小单位为分');
         return;
       }
       if (unref(isPaying)) {
@@ -328,60 +334,66 @@ export default {
           billFee: unref(billFee),
           merchantId,
           paidFee: unref(billFee),
-          payMethod: "WECHAT_PAY",
-          transactionType: "DIRECT_PAY",
+          payMethod: 'WECHAT_PAY',
+          transactionType: 'DIRECT_PAY',
         };
       //#ifdef MP-ALIPAY
-      params.payMethod = "ALIPAY";
+      params.payMethod = 'ALIPAY';
       //#endif
-      if (pm == "FANPIAO_PAY") {
+      if (pm == 'FANPIAO_PAY') {
         if (unref(needBuyFanpiao) && unref(selFanpiao)?.id) {
           if (!unref(isAgreeFanpiaoRules)) {
-            showToast("请阅读并同意《购买饭票协议》");
+            showToast('请阅读并同意《购买饭票协议》');
             return;
           }
           let { id, sellPrice } = unref(selFanpiao);
           params.fanpiaoCategoryId = id;
           params.paidFee = sellPrice;
           params.billFee = sellPrice;
-          params.transactionType = "FANPIAO_PURCHASE";
+          params.transactionType = 'FANPIAO_PURCHASE';
           params.otherActions = [
             {
               DIRECT_PAY_WITH_FANPIAO_PURCHASE: {
                 billFee: unref(billFee),
                 paidFee: unref(billFee),
                 merchantId: merchantId,
-                transactionType: "DIRECT_PAY",
-                payMethod: "FANPIAO_PAY", // 'WALLET' //
+                transactionType: 'DIRECT_PAY',
+                payMethod: 'FANPIAO_PAY', // 'WALLET' //
               },
             },
           ];
         } else {
-          params.payMethod = "FANPIAO_PAY";
+          params.payMethod = 'FANPIAO_PAY';
           params.paidFee = unref(fanpiaoActuallyPaid);
         }
-      } else if (pm == "COUPON_PAY") {
+      } else if (pm == 'COUPON_PAY') {
         if (unref(selCoupon)?.id) {
           let { id, reduceCost = 0 } = unref(selCoupon);
           params.couponId = id;
           params.paidFee = unref(billFee) - reduceCost;
         } else if (unref(buyCouponInfo)?.id) {
           if (!unref(isAgreeRules)) {
-            showToast("请阅读并同意《付费券包协议》");
+            showToast('请阅读并同意《付费券包协议》');
             return;
           }
           let { id, couponCost = 0, price = 0 } = unref(buyCouponInfo);
           params.couponPackageId = id;
           params.billFee = unref(billFee) + price;
           params.paidFee = unref(billFee) - couponCost + price;
-          params.transactionType = "DIRECT_PAY_WITH_COUPON_PACKAGE_PURCHASE";
+          params.transactionType = 'DIRECT_PAY_WITH_COUPON_PACKAGE_PURCHASE';
         }
       }
       isPaying.value = true;
       payRes = await directPay(params);
+      console.log('payRes: ', payRes);
       isPaying.value = false;
       if (payRes) {
-        switchTab("/pages/order/order");
+        switchTab('/pages/order/order');
+      } else if (
+        params.payMethod == 'WECHAT_PAY' ||
+        params.payMethod == 'ALIPAY'
+      ) {
+        speakerBroadcast(unref(billFee));
       }
     }
 
@@ -389,7 +401,7 @@ export default {
       if (unref(billFee) == 0) {
         return 0;
       }
-      if (unref(payMethod) == "FANPIAO_PAY") {
+      if (unref(payMethod) == 'FANPIAO_PAY') {
         if (!unref(needBuyFanpiao)) {
           return (
             unref(billFee) -
@@ -406,7 +418,7 @@ export default {
         } else {
           return 0;
         }
-      } else if (unref(payMethod) == "COUPON_PAY") {
+      } else if (unref(payMethod) == 'COUPON_PAY') {
         let { reduceCost = 0, id, leastCost } = unref(selCoupon);
         if (unref(buyCouponInfo) && unref(buyCouponInfo).id) {
           return unref(buyCouponInfo).couponCost;
@@ -424,10 +436,31 @@ export default {
       if (!billFee.value) {
         return;
       }
-      payMethod.value = "FANPIAO_PAY";
+      payMethod.value = 'FANPIAO_PAY';
       if (recommendFanpiaoList.value.length > 0) {
         selFanpiao.value = recommendFanpiaoList.value[0];
       }
+    }
+
+    async function speakerBroadcast(fee) {
+      const { merchantId, storeId, enableCancelPayBroadcast } =
+        unref(merchantInfo);
+      if (!enableCancelPayBroadcast) {
+        return;
+      }
+      let data = {
+        merchantId,
+        storeId,
+        fee,
+        type: 'CANCEL_PAY',
+      };
+      let res = await axios.request({
+        baseURL: PostBaseUrl,
+        url: '/speaker/voice-broadcast',
+        method: 'post',
+        data,
+      });
+      console.log('res: ', res);
     }
 
     return {
@@ -461,7 +494,7 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-@import "@design/index.less";
+@import '@design/index.less';
 .pay-bill {
   .box-size(100vw,unset,#F5F5F5);
   min-height: 100vh;
@@ -535,7 +568,7 @@ export default {
             letter-spacing: 0;
             margin-right: 7px;
             &::before {
-              content: "¥";
+              content: '¥';
               font-size: 17px;
               margin-right: 5px;
             }

@@ -5,10 +5,8 @@
  * @LastEditTime: 2022-02-18 18:11:09
  * @FilePath: /new-fanpiao-uniapp/src/api/order.js
  */
-import URLS from './urls'
+import URLS from './urls';
 import http from './http';
-
-
 
 export async function getOrderDetail(orderId) {
   let url = `${URLS.GET_COUPON_PACKAGE}/${orderId}`;
@@ -29,7 +27,7 @@ export async function addOrder(params) {
 }
 
 export async function pay(args) {
-  let url = URLS.PAYMENT_PREPAY
+  let url = URLS.PAYMENT_PREPAY;
   let res = await http.post(url, args);
   return res;
 }
@@ -57,13 +55,17 @@ export async function getCouponList(params = {}) {
 }
 
 export async function refundFanpiao(transactionId, args) {
-  const url = URLS.USER_REFUND_FANPIAO + `${transactionId}`
+  const url = URLS.USER_REFUND_FANPIAO + `${transactionId}`;
   let res = await http.post(url, args);
   return res;
 }
 
 export async function refundCoupon(transactionId, args) {
-  const url = URLS.USER_REFUND_COUPON + `${transactionId}`
+  const url = URLS.USER_REFUND_COUPON + `${transactionId}`;
   let res = await http.post(url, args);
   return res;
+}
+export async function syncOrder(id, args = {}) {
+  let url = URLS.SYNC_ORDER_INFO + id;
+  return request.post({ url, ...args });
 }

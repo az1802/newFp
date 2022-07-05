@@ -18,14 +18,20 @@
         <div class="amount">
           {{
             fanpiao.presentValue == 0
-              ? "已用完"
+              ? '已用完'
               : parseFloat(fanpiao.presentValue / 100)
           }}
         </div>
       </div>
     </div>
     <div class="operation">
-      <div class="buy-time">购买日期 : {{ buyTimeText }}</div>
+      <div>
+        <div class="id-text">
+          饭票ID:{{ fanpiao.id.slice(0, 6) }}
+          <div class="copy-btn" @click="copy(fanpiao)">复制</div>
+        </div>
+        <div class="buy-time">购买日期 : {{ buyTimeText }}</div>
+      </div>
       <div class="btn-group">
         <div
           class="refund-btn"
@@ -56,25 +62,26 @@
   </div>
 </template>
 <script>
-import API from "@api";
-import { showToast, showConfirmModal, formatTime } from "@utils";
-import { useRefund } from "@hooks/merchantHooks";
-import { useNavigate } from "@hooks/commonHooks";
-import { computed } from "vue";
+import API from '@api';
+import { showToast, showConfirmModal, formatTime } from '@utils';
+import { useRefund } from '@hooks/merchantHooks';
+import { useNavigate } from '@hooks/commonHooks';
+import { copyInfo } from '@utils';
+import { computed } from 'vue';
 export default {
-  name: "fanpiao-item",
+  name: 'fanpiao-item',
   props: {
     fanpiao: {
       type: Object,
       default: {
-        name: "",
-        buuyTime: "",
-        id: "",
-        merchantId: "",
-        merchantName: "",
-        presentValue: "", //余额
-        sellPrice: "",
-        totalValue: "",
+        name: '',
+        buuyTime: '',
+        id: '',
+        merchantId: '',
+        merchantName: '',
+        presentValue: '', //余额
+        sellPrice: '',
+        totalValue: '',
         balanceRefundApply: false,
         enableFanpiaoBalanceRefund: false,
       },
@@ -86,35 +93,40 @@ export default {
     const buyTimeText = computed(() => {
       return (
         (props?.fanpiao?.buyTime &&
-          formatTime(props.fanpiao.buyTime, "yyyy/MM/dd hh:mm")) ||
-        ""
+          formatTime(props.fanpiao.buyTime, 'yyyy/MM/dd hh:mm')) ||
+        ''
       );
     });
     const balanceRefundApply = computed(() => {
       return props.fanpiao.balanceRefundApply || false;
     });
     async function applyRefund(fanpiao) {
-      let confirm = await showConfirmModal("是否确定申请饭票退款");
+      let confirm = await showConfirmModal('是否确定申请饭票退款');
       if (confirm) {
         let res = await refundFanpiaoApply({
           fanpiaoId: fanpiao.id,
           merchantId: fanpiao.merchantId,
-          userId: "d4848915-b103-4e1a-abfd-a04886fa61e6",
+          userId: 'd4848915-b103-4e1a-abfd-a04886fa61e6',
         });
-        res && showToast("饭票退款申请成功");
+        res && showToast('饭票退款申请成功');
       }
     }
     function viewFanpiaoDetail(fanpiao) {
-      navigateTo("MINE/FANPIAO_TRANSACTION_DETAIL", {
+      navigateTo('MINE/FANPIAO_TRANSACTION_DETAIL', {
         merchantId: fanpiao.merchantId,
         fanpiaoId: fanpiao.id,
       });
+    }
+    function copy(fanpiaoInfo) {
+      console.log('fanpiaoInfo: ', fanpiaoInfo);
+      copyInfo(fanpiaoInfo.id && fanpiaoInfo.id.slice(0, 6));
     }
     return {
       applyRefund,
       viewFanpiaoDetail,
       buyTimeText,
       balanceRefundApply,
+      copy,
     };
   },
 };
@@ -195,6 +207,16 @@ export default {
     justify-content: space-between;
     padding: 0 12px;
 
+    .id-text{
+      margin-top:4px;
+      font-size:12px;
+      color: #666666;
+      display flex
+      .copy-btn{
+       color: #ed824f;
+       margin-left:7px;
+      }
+    }
     .buy-time {
       font-size: 12px;
       color: #666666;

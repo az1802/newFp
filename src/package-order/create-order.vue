@@ -5,7 +5,7 @@
  * @LastEditTime: 2022-02-18 18:28:39
  * @FilePath: /new-fanpiao-uniapp/src/package-order/create-order.vue
 -->
-<template >
+<template>
   <div class="create-order-container">
     <div class="a"></div>
     <NavigationBar title="" />
@@ -42,28 +42,29 @@
   </div>
 </template>
 <script>
-import TableInfo from "./TableInfo/TableInfo.vue";
-import OrderDishInfo from "./OrderDishInfo/OrderDishInfo.vue";
-import ConfirmOrder from "./ConfirmOrder/ConfirmOrder.vue";
-import CouponInfo from "./CouponInfo/CouponInfo.vue";
-import OrderRemarks from "./OrderRemarks/OrderRemarks.vue";
-import RecommendationModal from "./RecommendationModal/RecommendationModal.vue";
-import PayReminderModal from "./PayReminderModal/PayReminderModal.vue";
-import { getStorage } from "@utils";
-import { useTimeCounterStopStatus } from "@hooks/marketHooks";
+import TableInfo from './TableInfo/TableInfo.vue';
+import OrderDishInfo from './OrderDishInfo/OrderDishInfo.vue';
+import ConfirmOrder from './ConfirmOrder/ConfirmOrder.vue';
+import CouponInfo from './CouponInfo/CouponInfo.vue';
+import OrderRemarks from './OrderRemarks/OrderRemarks.vue';
+import RecommendationModal from './RecommendationModal/RecommendationModal.vue';
+import PayReminderModal from './PayReminderModal/PayReminderModal.vue';
+import { getStorage } from '@utils';
+import { useTimeCounterStopStatus } from '@hooks/marketHooks';
 
-import { useDish } from "@hooks/menuHooks";
+import { useDish } from '@hooks/menuHooks';
 import {
   useMerchantInfo,
   useRecommendationDish,
   useFanpiaoInfo,
   useCouponInfo,
-} from "@hooks/merchantHooks";
-import { useOrder, useOrderDetail } from "@hooks/orderHooks";
-import { useRecommendedCoupon } from "@hooks/payHooks";
-import { useUserMerchantCoupon, useUserAddress } from "@hooks/userHooks";
-import { onBeforeMount, ref, computed, unref, watch } from "vue";
-let pendingOrderId = ref("");
+} from '@hooks/merchantHooks';
+import { useOrder, useOrderDetail } from '@hooks/orderHooks';
+import { useRecommendedCoupon } from '@hooks/payHooks';
+import { useUserMerchantCoupon, useUserAddress } from '@hooks/userHooks';
+import { onBeforeMount, ref, computed, unref, watch } from 'vue';
+let pendingOrderId = ref('');
+import API from '@api';
 export default {
   components: {
     TableInfo,
@@ -101,7 +102,7 @@ export default {
     let { recommendedCoupon, userAvailableMerchantCoupon } =
       useRecommendedCoupon();
     let { requestUserMerchantCoupons } = useUserMerchantCoupon();
-    let recommendationModal = ref("");
+    let recommendationModal = ref('');
     const { orderDetail, getOrderDetailById } = useOrderDetail();
     const { requestFanpiaoList } = useFanpiaoInfo();
     const { requestCouponList } = useCouponInfo();
@@ -113,7 +114,7 @@ export default {
       let orderInfoRes = await getOrderDetailById(orderId);
       // todo  设置订单相关的信息同步到本地
       setOrderInfo({
-        currentType: "ADD",
+        currentType: 'ADD',
         orderId: orderId, //订单id
         remark: orderInfoRes.remark, //订单备注
         billFee: orderInfoRes.billFee, //账单金额
@@ -121,8 +122,8 @@ export default {
         packageFee: 0, //打包费
         discountAmountPrice: 0, //菜品折扣已优惠的价格
         // phoneMemberDiscount: 0, //会员折扣
-        groupDiningEventId: "", //TODO 保留字段
-        appointmentTime: "", //TODO 保留字段
+        groupDiningEventId: '', //TODO 保留字段
+        appointmentTime: '', //TODO 保留字段
         mealType: orderInfoRes.mealType, //就餐模式
         peopleCount: orderInfoRes.peopleCount, //就餐人数
         tableId: orderInfoRes.tableId, //桌台id
@@ -142,7 +143,7 @@ export default {
       }
       let userCoupons = (await requestUserMerchantCoupons(merchantId)) || []; //请求用户已有的商户券包
       // 默认设置用户可使用的券包
-      let maxReduceCostCoupon = "";
+      let maxReduceCostCoupon = '';
       userCoupons.forEach((item) => {
         if (
           item.leastCost <= unref(selectedDishesTotalPrice) &&
@@ -160,7 +161,7 @@ export default {
           });
         } else {
           setOrderInfo({
-            selCouponId: "",
+            selCouponId: '',
             selCouponReduceCost: 0,
           });
         }
@@ -172,13 +173,16 @@ export default {
         // 获取订单相关信息 并且获取商户相关资源
         let orderInfo = await getOrderInfo(pendingOrderId.value);
         merchantId = orderInfo.merchantId;
+        if (unref(merchantInfo) && unref(merchantInfo).posType === 'KERUYUN') {
+          _syncOrder();
+        }
       } else {
         merchantId = unref(merchantInfo).merchantId;
       }
       requestRecommendDishes(merchantId); //请求推荐菜品
       updateUserCoupons(merchantId);
       if (
-        unref(orderInfo).mealType == "TAKE_OUT" &&
+        unref(orderInfo).mealType == 'TAKE_OUT' &&
         !unref(orderInfo).selectedAddress.id
       ) {
         let addressList = await requestUserAddressList();
@@ -268,6 +272,12 @@ export default {
       await getOrderInfo(pendingOrderId.value);
     };
 
+    async function _syncOrder() {
+      if (unref(orderInfo).orderId) {
+        await API.Order.syncOrder(unref(orderInfo).orderId);
+      }
+    }
+
     return {
       merchantInfo,
       selectedDishes,
@@ -296,7 +306,7 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-@import "@design/index.less";
+@import '@design/index.less';
 .create-order-container {
   .box-size(100vw,100vh);
   background: #f8f8f8;

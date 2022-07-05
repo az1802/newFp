@@ -27,7 +27,7 @@
             {{
               userInfo.userId || userId
                 ? userInfo.nickName || userInfo.nickname
-                : "立即登录"
+                : '立即登录'
             }}
           </div>
           <div
@@ -43,7 +43,7 @@
             </div>
           </div>
           <div v-else class="phone-number">
-            {{ phone || "" }}
+            {{ phone || '' }}
           </div>
         </div>
       </div>
@@ -51,7 +51,7 @@
     <div class="count-container">
       <div class="count-wrapper common-card">
         <div class="content" @click="goToDirectPay">
-          <p class="number">{{ stats.sumUsedCoupons || "0" }}</p>
+          <p class="number">{{ stats.sumUsedCoupons || '0' }}</p>
           <p class="desc">用券次数</p>
         </div>
         <div class="content">
@@ -158,6 +158,7 @@ export default {
     position: relative;
     width: 100%;
     height: 42.5334vw;
+    min-height:160px;
 
     .top-bg {
       position: absolute;

@@ -29,12 +29,15 @@
                 会员储值(余额:{{ userWallet.memberCardBalance / 100 }})
               </div>
               <!-- <div class="tooltip">17688479248 切换</div> -->
-              <div class="tooltip get-phone" @click.stop="stop" v-if="!phone">
-                绑定手机号<GetPhoneButton
-                  class="get-phone-btn"
-                  @success="getPhoneSuccess"
-                />
-              </div>
+            </div>
+            <div class="tooltip get-phone" @click.stop="stop" v-if="!phone">
+              查看余额
+              <div class="qt">></div>
+
+              <GetPhoneButton
+                class="get-phone-btn"
+                @success="getPhoneSuccess"
+              />
             </div>
           </div>
           <CustomImgRadio :checked="payMethod == 'SHILAI_MEMBER_CARD_PAY'" />
@@ -117,22 +120,22 @@
   </div>
 </template>
 <script>
-import { ref, onBeforeMount, computed, unref } from "vue";
-import FanpiaoPayMethod from "./FanpiaoPayMethod";
-import { useOrder, useOrderRechargeInfo } from "@hooks/orderHooks";
+import { ref, onBeforeMount, computed, unref } from 'vue';
+import FanpiaoPayMethod from './FanpiaoPayMethod';
+import { useOrder, useOrderRechargeInfo } from '@hooks/orderHooks';
 import {
   useUserMerchantWallet,
   useUserInfo,
   useUserMerchantMemberBalance,
   useUserPhone,
-} from "@hooks/userHooks";
-import { useRechargeInfo, useMerchantInfo } from "@hooks/merchantHooks";
-import { stop, sleep } from "@utils";
+} from '@hooks/userHooks';
+import { useRechargeInfo, useMerchantInfo } from '@hooks/merchantHooks';
+import { stop, sleep } from '@utils';
 export default {
   props: {
     merchantId: {
       type: String,
-      default: "",
+      default: '',
     },
     billFee: {
       type: [String, Number],
@@ -153,7 +156,7 @@ export default {
       let { selRechargeId } = unref(orderRechargeInfo);
       if (selRechargeId == rechargeItem.id) {
         setOrderRechargeInfo({
-          selRechargeId: "",
+          selRechargeId: '',
           selRechargeInfo: {},
         });
       } else {
@@ -180,7 +183,7 @@ export default {
           sleep(1000);
           await requestUserWallet(props.merchantId);
         } else {
-          showToast("绑定手机号失败,请重新操作");
+          showToast('绑定手机号失败,请重新操作');
         }
       },
     };
@@ -188,7 +191,7 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-@import "@design/index.less";
+@import '@design/index.less';
 .pay-method-container {
   .box-size(calc(100% - 30px),unset);
   margin: 0 auto;
@@ -289,15 +292,21 @@ export default {
   }
 }
 .get-phone {
-  .box-size(70px,20px,#E6E6E6);
-  .normal-font(12px,#666);
-  .line-center(20px);
+  .box-size(unset,19px,white);
+  .normal-font(11px,#FE6657);
+  .line-center(19px);
   flex-basis: unset;
-  padding-top: 0.5px;
+  padding: 0 5px;
   display: inline-block;
   text-align: center;
-  border-radius: 3px;
+  border-radius: 1px;
   position: relative;
+  border: 1px solid #ffc2bc;
+  margin-left: 8px;
+  // display: inline-flex;
+  .qt {
+    display: inline-block;
+  }
 }
 .get-phone-btn {
   .fill-box();

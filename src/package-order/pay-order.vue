@@ -53,25 +53,25 @@
   </div>
 </template>
 <script>
-import PayMthodList from "./PayMthodList/payMethodList.vue";
+import PayMthodList from './PayMthodList/payMethodList.vue';
 import {
   useOrder,
   usePayMethod,
   useFanpiaoPayInfo,
   useOrderRechargeInfo,
-} from "@hooks/orderHooks";
+} from '@hooks/orderHooks';
 import {
   useUserMerchantWallet,
   useUserInfo,
   useUserPhone,
-} from "@hooks/userHooks";
+} from '@hooks/userHooks';
 import {
   useFanpiaoInfo,
   useMerchantInfo,
   useRechargeInfo,
-} from "@hooks/merchantHooks";
-import { usePayOrder } from "@hooks/payHooks";
-import { useDish } from "@hooks/menuHooks";
+} from '@hooks/merchantHooks';
+import { usePayOrder } from '@hooks/payHooks';
+import { useDish } from '@hooks/menuHooks';
 import {
   calcRecommendFanpiao,
   fenToYuan,
@@ -80,9 +80,9 @@ import {
   sleep,
   calcFanpiaoDiscountPrice,
   showToast,
-} from "@utils";
+} from '@utils';
 
-import { onBeforeMount, computed, unref, onBeforeUnmount } from "vue";
+import { onBeforeMount, computed, unref, onBeforeUnmount } from 'vue';
 export default {
   components: { PayMthodList },
   setup() {
@@ -149,7 +149,7 @@ export default {
     // 请求钱包信息,计算所有饭票支付相关额
     onBeforeMount(async () => {
       // 获取余额
-      let merchantId = uni.getStorageSync("merchantId");
+      let merchantId = uni.getStorageSync('merchantId');
       await requestMerchantRecharges(merchantId); //获取商户储值列表
       await requestFanpiaoList(merchantId); //TODO 可以移除
       await requestUserWallet(merchantId); //请求用户所有相关d余额
@@ -160,24 +160,24 @@ export default {
 
     onBeforeUnmount(() => {
       //#ifdef MP-WEIXIN
-      setPayMethod("WECHAT_PAY");
+      setPayMethod('WECHAT_PAY');
       //#endif
       //#ifdef MP-ALIPAY
-      setPayMethod("ALIPAY");
+      setPayMethod('ALIPAY');
       //#endif
       setOrderFanpiaoPayInfo({
-        selFanpiaoId: "",
+        selFanpiaoId: '',
         selFanpiaoInfo: {},
       });
       setOrderRechargeInfo({
-        selRechargeId: "",
+        selRechargeId: '',
         selRechargeInfo: {},
       });
     });
     const showBillFee = computed(() => {
       let { billFee } = unref(orderInfo),
         pm = unref(payMethod);
-      if (pm !== "SHILAI_MEMBER_CARD_PAY" && pm !== "FANPIAO_PAY") {
+      if (pm !== 'SHILAI_MEMBER_CARD_PAY' && pm !== 'FANPIAO_PAY') {
         return true;
       } else {
         return false;
@@ -193,33 +193,33 @@ export default {
           discountAmountPrice,
         } = unref(orderInfo),
         pm = unref(payMethod);
-      if (pm == "WECHAT_PAY" || pm == "ALIPAY" || pm == "WALLET") {
+      if (pm == 'WECHAT_PAY' || pm == 'ALIPAY' || pm == 'WALLET') {
         return billFee - selCouponReduceCost - discountAmountPrice;
-      } else if (pm == "SHILAI_MEMBER_CARD_PAY") {
+      } else if (pm == 'SHILAI_MEMBER_CARD_PAY') {
         return billFee;
-      } else if (pm == "MEMBER_PAY") {
+      } else if (pm == 'MEMBER_PAY') {
         let discount = phoneMemberDiscount || 0;
         return ((billFee * (100 - phoneMemberDiscount)) / 100).toFixed(0);
-      } else if (pm == "FANPIAO_PAY") {
+      } else if (pm == 'FANPIAO_PAY') {
         return unref(finalFanpiaoPaidFee);
       }
     });
 
     const payText = computed(() => {
       let pm = unref(payMethod),
-        resText = "";
-      if (pm == "WECHAT_PAY") {
-        resText = "微信支付";
-      } else if (pm == "ALIPAY") {
-        resText = "支付宝支付";
-      } else if (pm == "FANPIAO_PAY") {
+        resText = '';
+      if (pm == 'WECHAT_PAY') {
+        resText = '微信支付';
+      } else if (pm == 'ALIPAY') {
+        resText = '支付宝支付';
+      } else if (pm == 'FANPIAO_PAY') {
         let { selFanpiaoId, selFanpiaoInfo } = unref(orderFanpiaoPayInfo);
         if (selFanpiaoId && selFanpiaoInfo?.totalValue) {
           resText = `购买饭票￥${selFanpiaoInfo.totalValue / 100}并支付`;
         } else {
           resText = `饭票支付`;
         }
-      } else if (pm == "SHILAI_MEMBER_CARD_PAY") {
+      } else if (pm == 'SHILAI_MEMBER_CARD_PAY') {
         let { selRechargeInfo } = unref(orderRechargeInfo);
         let { memberCardBalance } = unref(userWallet);
 
@@ -230,17 +230,17 @@ export default {
           resText = `会员储值￥${
             selRechargeInfo.sellPrice
               ? parseFloat(selRechargeInfo.sellPrice) / 100
-              : ""
+              : ''
           }并支付`;
         } else {
           resText = `会员储值支付`;
         }
-      } else if (pm == "WALLET") {
-        resText = "红包支付";
-      } else if (pm == "MEMBER_PAY") {
-        resText = "会员支付";
+      } else if (pm == 'WALLET') {
+        resText = '红包支付';
+      } else if (pm == 'MEMBER_PAY') {
+        resText = '会员支付';
       } else {
-        resText = "确认支付";
+        resText = '确认支付';
       }
 
       return resText;
@@ -248,10 +248,11 @@ export default {
 
     const showGetPhoneButton = computed(() => {
       return (
-        unref(payMethod) === "FANPIAO_PAY" &&
-        unref(userWallet).fanpiaoBalance >= 50000 &&
-        !unref(phone) &&
-        0
+        (unref(payMethod) === 'FANPIAO_PAY' &&
+          unref(userWallet).fanpiaoBalance >= 50000 &&
+          !unref(phone) &&
+          0) ||
+        (unref(payMethod) === 'SHILAI_MEMBER_CARD_PAY' && !unref(phone))
       );
     });
     async function payOrderInfo() {
@@ -259,7 +260,7 @@ export default {
         return;
       }
       if (unref(showGetPhoneButton)) {
-        showToast("为保障你的饭票安全，请授权手机号", "none", 3000);
+        showToast('请授权手机号之后支付', 'none', 3000);
         return;
       }
       let tempOrderInfo = { ...unref(orderInfo) };
@@ -281,15 +282,15 @@ export default {
       }
       await sleep(1000);
       //#ifdef MP-WEIXIN
-      setPayMethod("WECHAT_PAY");
+      setPayMethod('WECHAT_PAY');
       //#endif
       //#ifdef MP-ALIPAY
-      setPayMethod("ALIPAY");
+      setPayMethod('ALIPAY');
       //#endif
       resetSelDishes([]);
       resetOrder();
       // 跳转到支付成功野蛮
-      navigateTo("ORDER/PAY_SUCCESS", {
+      navigateTo('ORDER/PAY_SUCCESS', {
         orderId: tempOrderInfo.orderId,
         redPacketVal: res.redPacketValue || 0,
       });
@@ -314,7 +315,7 @@ export default {
         billFee || 0
       );
       if (maxFanpiaoDiscount < minFanpiaoDiscount) {
-        return "";
+        return '';
       }
       let minDiscountPrice = Number(
         ((minFanpiaoDiscount || 0) *
@@ -331,7 +332,7 @@ export default {
         : `${minDiscountPrice}元`;
     });
     function toggleFanpiaoPay() {
-      setPayMethod("FANPIAO_PAY");
+      setPayMethod('FANPIAO_PAY');
       let { selFanpiaoId, recommendFanpiaoList } = unref(orderFanpiaoPayInfo);
       if (!selFanpiaoId) {
         let fanpiaoInfo = recommendFanpiaoList[0];
@@ -344,7 +345,7 @@ export default {
     }
     async function getPhoneSuccess(phone) {
       if (!phone) {
-        showToast("授权手机号失败");
+        showToast('授权手机号失败');
       } else {
         setPhone(phone);
       }
@@ -369,7 +370,7 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-@import "@design/index.less";
+@import '@design/index.less';
 .pay-order-page {
   .box-size(100vw,100vh,white);
   .scroll-view {
